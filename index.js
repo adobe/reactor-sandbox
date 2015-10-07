@@ -1,3 +1,5 @@
+'use strict';
+
 var glob = require('glob');
 var path = require('path');
 var replace = require('gulp-replace');
@@ -91,8 +93,8 @@ module.exports = function(gulp) {
     });
 
     try {
-      fs.lstatSync(CONTAINER_TEMPLATE_NAME)
-    } catch(e) {
+      fs.lstatSync(CONTAINER_TEMPLATE_NAME);
+    } catch (e) {
       throw new Error('A container template named ' + CONTAINER_TEMPLATE_NAME +
       ' must exist in the project.');
     }
@@ -115,7 +117,7 @@ module.exports = function(gulp) {
 
     try {
       fs.lstatSync(turbinePath);
-    } catch(e) {
+    } catch (e) {
       throw new Error('Turbine must be installed as a dependency of the project.');
     }
 
