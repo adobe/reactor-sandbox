@@ -6,7 +6,7 @@ var path = require('path');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 var fs = require('fs');
-var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 var webserver = require('gulp-webserver');
 
 var DELEGATE_CAPABILITY_NAMES = [
@@ -99,7 +99,7 @@ gulp.task('buildContainer', function() {
 gulp.task('buildEngine', function() {
   var turbinePath = path.join(__dirname, 'node_modules/turbine');
 
-  exec('gulp buildEngine', {
+  execSync('gulp buildEngine', {
     cwd: turbinePath
   });
 
