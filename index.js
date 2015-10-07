@@ -17,6 +17,10 @@ var ALL_CAPABILITY_NAMES = [
   'resources'
 ].concat(DELEGATE_CAPABILITY_NAMES);
 
+var CONTAINER_TEMPLATE_NAME = 'container.txt';
+var CONTAINER_OUTPUT_NAME = 'container.js';
+var EXTENSION_DESCRIPTOR_NAME = 'extension.json';
+
 function wrapInFunction(content, argNames) {
   var argsStr = argNames ? argNames.join(', ') : '';
   return 'function(' + argsStr + ') {\n' + content + '}\n';
@@ -69,7 +73,8 @@ module.exports = function(gulp) {
     // node_modules.
     // When running this task from within this builder project we really only care
     // about any extensions we find under this project's node_modules.
-    var extensionDescriptorPaths = glob.sync('{node_modules/*/,}extension.json');
+    var extensionDescriptorPaths = glob.sync('{node_modules/*/,}' + EXTENSION_DESCRIPTOR_NAME);
+
     var capabilities = {};
 
     ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
@@ -85,7 +90,14 @@ module.exports = function(gulp) {
       augmentResources(capabilities, extensionDescriptor, extensionPath);
     });
 
-    var container = gulp.src(['container.txt']);
+    try {
+      fs.lstatSync(CONTAINER_TEMPLATE_NAME)
+    } catch(e) {
+      throw new Error('A container template named ' + CONTAINER_TEMPLATE_NAME +
+      ' must exist in the project.');
+    }
+
+    var container = gulp.src([CONTAINER_TEMPLATE_NAME]);
 
     ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
       container = container.pipe(
@@ -94,14 +106,16 @@ module.exports = function(gulp) {
     });
 
     return container
-      .pipe(rename('container.js'))
-      .pipe(gulp.dest('./dist'));
+      .pipe(rename(CONTAINER_OUTPUT_NAME))
+      .pipe(gulp.dest('dist'));
   });
 
   gulp.task('buildEngine', function() {
     var turbinePath = path.join('node_modules/turbine');
 
-    if (!fs.lstatSync(turbinePath).isDirectory()) {
+    try {
+      fs.lstatSync(turbinePath);
+    } catch(e) {
       throw new Error('Turbine must be installed as a dependency of the project.');
     }
 
@@ -112,7 +126,7 @@ module.exports = function(gulp) {
 
     return gulp
       .src([path.join(turbinePath, 'dist/engine.js')])
-      .pipe(gulp.dest('./dist'));
+      .pipe(gulp.dest('dist'));
   });
 
   gulp.task('watch', function() {

@@ -11,8 +11,9 @@
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
-    "gulp-webserver": "^0.9.1",
-    "minimatch": "^3.0.0",
+    "gulp-webserver": "^0.9.1"
+  },
+  "devDependencies": {
     "turbine": "git+ssh://git@git.corp.adobe.com:Activation/turbine.git#split_from_extensions",
     "turbine-extension-dtm": "git+ssh://git@git.corp.adobe.com:Activation/turbine-extension-dtm"
   }
