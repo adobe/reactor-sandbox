@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git@git.corp.adobe.com:Activation/turbine-gulp-builder.git"
   },
-  "devDependencies": {
+  "dependencies": {
     "glob": "^5.0.15",
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
