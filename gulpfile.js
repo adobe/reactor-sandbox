@@ -113,7 +113,10 @@ gulp.task('watch', function() {
 });
 
 gulp.task('serve', function() {
-  return gulp.src('./').pipe(webserver());
+  return gulp.src('./')
+    .pipe(webserver({
+      port: 7000
+    }));
 });
 
 gulp.task('default', ['buildEngine', 'buildContainer', 'serve', 'watch']);
