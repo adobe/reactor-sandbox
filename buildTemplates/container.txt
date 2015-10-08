@@ -7,20 +7,7 @@
     'dataElementDelegates': {{dataElementDelegates}},
     'resources': {{resources}},
     'integrations': {},
-    'rules': [
-      {
-        name: 'User Logged In Condition',
-        events: [
-          {
-            type: 'dtm.click',
-            config: {
-              selector: 'h1'
-            }
-          }
-        ],
-        conditions:[]
-      }
-    ],
+    'rules': [],
     'config': {},
     'dataElements': {},
     'appVersion': '52A',
