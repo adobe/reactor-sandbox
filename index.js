@@ -1,5 +1,7 @@
 'use strict';
 
+var path = require('path');
+
 module.exports = function(gulp) {
   var turbine;
   var projectPackage = require(path.join(process.cwd(), 'package.json'));
