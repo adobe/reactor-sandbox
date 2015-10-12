@@ -1,6 +1,6 @@
 # turbine-gulp-builder
 
-This project provides gulp tasks for building the Turbine engine as well as a Turbine container and can help in testing your project. A turbine container contains code specific to a particular property. It will contain code from extensions installed for the property as well as configurations of the property, extensions, data elements, and rules. Both the container and the engine are necessary for Turbine to be of much use.
+This project provides gulp tasks for building the Turbine engine as well as a Turbine container. It can be a useful tool when manually testing your project. A turbine container contains code specific to a particular property. It will contain code from extensions installed for the property as well as configurations of the property, extensions, data elements, and rules. Both the container and the engine are necessary for Turbine to be of much use.
 
 In order to use this builder within your project, add it to the `devDependencies` of the project's `package.json` and `npm install` it. In your `gulpfile.js`, require the builder and pass in your gulp instance as follows:
 
