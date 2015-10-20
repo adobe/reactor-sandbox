@@ -7,35 +7,7 @@
     'dataElementDelegates': {{dataElementDelegates}},
     'resources': {{resources}},
     'integrations': {},
-    'rules': [
-       {
-         name: 'URL Param Test',
-         events:[
-           {
-             type: 'dtm.click',
-             config: {
-               selector: 'button'
-             },
-           }
-         ],
-         conditions:[
-           {
-             type: 'dtm.path',
-             config: {
-               include: ['%this.id%']
-             },
-           }
-         ],
-         actions: [
-           {
-             type: 'adobeDebug.log',
-             config: {
-               text: '<button id="%this.id%">'
-             }
-           }
-         ]
-       },
-      ],
+    'rules': [],
     'config': {},
     'dataElements': {},
     'appVersion': '52A',
