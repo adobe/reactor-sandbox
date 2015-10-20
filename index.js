@@ -32,19 +32,5 @@ module.exports = function(gulp, options) {
     require(taskFile)(gulp, options);
   });
 
-  var tasks = [
-    'turbine:build',
-    'sandbox:initTemplates',
-    'sandbox:outputContainer',
-    'sandbox:watchContainerSource',
-    'sandbox:outputEngine',
-    'sandbox:outputExtensionViews',
-    'sandbox:outputViewSandboxHTML',
-    'sandbox:outputLibSandboxHTML',
-    'sandbox:outputSandboxIncludes',
-    'sandbox:watchSandboxHTMLTemplates',
-    'sandbox:serve'
-  ];
-
-  gulp.task('sandbox', tasks);
+  gulp.task('sandbox', ['sandbox:sandbox']);
 };
