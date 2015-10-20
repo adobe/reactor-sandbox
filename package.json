@@ -7,6 +7,7 @@
     "url": "git@git.corp.adobe.com:Activation/turbine-gulp-sandbox.git"
   },
   "dependencies": {
+    "del": "^2.0.2",
     "glob": "^5.0.15",
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
@@ -15,7 +16,6 @@
     "turbine": "git+ssh://git@git.corp.adobe.com:Activation/turbine.git"
   },
   "devDependencies": {
-    "del": "^2.0.2",
     "turbine-extension-dtm": "git+ssh://git@git.corp.adobe.com:Activation/turbine-extension-dtm"
   }
 }
