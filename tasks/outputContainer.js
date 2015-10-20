@@ -80,7 +80,7 @@ module.exports = function(gulp) {
       });
 
       extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
-        var extensionDescriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
+        var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
         var extensionPath = path.dirname(extensionDescriptorPath);
         var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
         augmentDelegates(capabilities, extensionDescriptor, libBasePath);
