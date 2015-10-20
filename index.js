@@ -1,8 +1,19 @@
 'use strict';
 
 var path = require('path');
+var glob = require('glob');
 
-module.exports = function(gulp) {
+/**
+ * @param {Object} gulp The gulp object to which tasks should be added.
+ * @param {Object} [options] Task options.
+ * @param {String} [options.buildViewTask] The name of the task that should be run to build the
+ * extension's views. This is optional and should be provided when the extension needs to do some
+ * processing before the views may be consumed. For example, the task might compile React JSX files
+ * using Webpack.
+ */
+module.exports = function(gulp, options) {
+  options = options || {};
+
   var turbine;
   var projectPackage = require(path.join(process.cwd(), 'package.json'));
 
@@ -16,20 +27,24 @@ module.exports = function(gulp) {
 
   turbine(gulp);
 
-  require('./tasks/buildContainer')(gulp);
-  require('./tasks/copyEngine')(gulp);
-  require('./tasks/copyHTMLToOutput')(gulp);
-  require('./tasks/copyTemplates')(gulp);
-  require('./tasks/serve')(gulp);
-  require('./tasks/watch')(gulp);
+  // Require in each task.
+  glob.sync(path.join(__dirname, 'tasks/*.js')).forEach(function(taskFile) {
+    require(taskFile)(gulp, options);
+  });
 
-  gulp.task('default', [
-    'copyTemplates',
-    'copyHTMLToOutput',
-    'buildEngine',
-    'copyEngine',
-    'buildContainer',
-    'serve',
-    'watch'
-  ]);
+  var tasks = [
+    'turbine:build',
+    'sandbox:initTemplates',
+    'sandbox:outputContainer',
+    'sandbox:watchContainerSource',
+    'sandbox:outputEngine',
+    'sandbox:outputExtensionViews',
+    'sandbox:outputViewSandboxHTML',
+    'sandbox:outputLibSandboxHTML',
+    'sandbox:outputSandboxIncludes',
+    'sandbox:watchSandboxHTMLTemplates',
+    'sandbox:serve'
+  ];
+
+  gulp.task('sandbox', tasks);
 };

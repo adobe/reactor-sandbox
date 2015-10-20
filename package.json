@@ -1,10 +1,10 @@
 {
-  "name": "turbine-gulp-builder",
+  "name": "turbine-gulp-sandbox",
   "version": "0.0.1",
   "description": "",
   "repository": {
     "type": "git",
-    "url": "git@git.corp.adobe.com:Activation/turbine-gulp-builder.git"
+    "url": "git@git.corp.adobe.com:Activation/turbine-gulp-sandbox.git"
   },
   "dependencies": {
     "glob": "^5.0.15",
@@ -15,6 +15,7 @@
     "turbine": "git+ssh://git@git.corp.adobe.com:Activation/turbine.git"
   },
   "devDependencies": {
+    "del": "^2.0.2",
     "turbine-extension-dtm": "git+ssh://git@git.corp.adobe.com:Activation/turbine-extension-dtm"
   }
 }
