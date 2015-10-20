@@ -12,6 +12,6 @@ module.exports = function(gulp) {
       path.resolve(__dirname, '../node_modules/turbine');
     return gulp
       .src(path.join(turbinePath, 'dist', 'engine.js'))
-      .pipe(gulp.dest(files.OUTPUT_DIRNAME));
+      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME)));
   });
 };
