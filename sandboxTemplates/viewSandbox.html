@@ -3,17 +3,40 @@
   <head lang="en">
     <meta charset="UTF-8">
     <title>Extension View Sandbox</title>
+    <script src="includes/jschannel.js"></script>
+    <script src="includes/extensionBridge.js"></script>
     <script src="includes/viewSandbox.js"></script>
+    <link href="includes/viewSandbox.css" rel="stylesheet" type="text/css">
   </head>
   <body>
     <h1>Extension View Sandbox</h1>
 
     <p><a href="libSandbox.html">Switch to Extension Library Sandbox</a></p>
 
-    <select id="extensionViewSelector">
-      <!-- view options -->
-    </select>
-    <br><br>
+    <div>
+      Select View:
+      <select id="extensionViewSelector">
+        <!-- view options -->
+      </select>
+    </div>
+
     <iframe id="extensionViewIframe"></iframe>
+
+    <div>
+      <div class="actionPanel">
+        <button id="validateButton">Validate</button>
+        <p><span id="validateOutput"></span></p>
+      </div>
+
+      <div class="actionPanel">
+        <textarea id="setConfigField" class="codeView"></textarea><br>
+        <button id="setConfigButton">Set Config</button>
+      </div>
+
+      <div class="actionPanel">
+        <textarea id="getConfigField" class="codeView"></textarea><br>
+        <button id="getConfigButton">Get Config</button>
+      </div>
+    </div>
   </body>
 </html>

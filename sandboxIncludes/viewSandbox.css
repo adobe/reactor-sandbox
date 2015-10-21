@@ -1,0 +1,15 @@
+.actionPanel {
+  float: left;
+  padding: 12px;
+}
+
+.actionPanel:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.codeView {
+  width: 300px;
+  height: 100px;
+}

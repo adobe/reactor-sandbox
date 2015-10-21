@@ -59,46 +59,57 @@ var augmentResources = function(capabilities, extensionDescriptor, libBasePath) 
   }
 };
 
+var containerTemplatePath = path.join(files.TEMPLATES_DIRNAME, files.CONTAINER_TEMPLATE_FILENAME);
+
 module.exports = function(gulp) {
-  gulp.task(
-    'sandbox:outputContainer',
-    ['sandbox:initTemplates'],
-    function() {
+  var outputContainer = function() {
+    // When running this task from a turbine extension project we want to include the
+    // extension descriptor from that extension as well as any extensions we find under its
+    // node_modules.
+    // When running this task from within this builder project we really only care
+    // about any extensions we find under this project's node_modules.
+    var extensionDescriptorPaths = glob.sync('{node_modules/*/,}' +
+    files.EXTENSION_DESCRIPTOR_FILENAME);
 
-      // When running this task from a turbine extension project we want to include the
-      // extension descriptor from that extension as well as any extensions we find under its
-      // node_modules.
-      // When running this task from within this builder project we really only care
-      // about any extensions we find under this project's node_modules.
-      var extensionDescriptorPaths = glob.sync('{node_modules/*/,}' +
-        files.EXTENSION_DESCRIPTOR_FILENAME);
+    var capabilities = {};
 
-      var capabilities = {};
+    ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
+      capabilities[capabilityName] = {};
+    });
 
-      ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
-        capabilities[capabilityName] = {};
-      });
+    extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
+      var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+      var extensionPath = path.dirname(extensionDescriptorPath);
+      var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
+      augmentDelegates(capabilities, extensionDescriptor, libBasePath);
+      augmentResources(capabilities, extensionDescriptor, libBasePath);
+    });
 
-      extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
-        var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
-        var extensionPath = path.dirname(extensionDescriptorPath);
-        var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
-        augmentDelegates(capabilities, extensionDescriptor, libBasePath);
-        augmentResources(capabilities, extensionDescriptor, libBasePath);
-      });
+    var container = gulp.src(containerTemplatePath);
 
-      var container = gulp.src(
-        path.join(files.TEMPLATES_DIRNAME, files.CONTAINER_TEMPLATE_FILENAME));
+    ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
+      container = container.pipe(
+        replace('{{' + capabilityName + '}}',
+          stringifyUsingLiteralFunctions(capabilities[capabilityName])));
+    });
 
-      ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
-        container = container.pipe(
-          replace('{{' + capabilityName + '}}',
-            stringifyUsingLiteralFunctions(capabilities[capabilityName])));
-      });
+    return container
+      .pipe(rename(files.CONTAINER_OUTPUT_FILENAME))
+      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME)));
+  };
 
-      return container
-        .pipe(rename(files.CONTAINER_OUTPUT_FILENAME))
-        .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME)));
-    }
-  );
+  gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], function() {
+    gulp.watch(
+      [
+        path.resolve(containerTemplatePath),
+        path.join(files.SRC_DIRNAME, files.SRC_FILENAMES)
+      ],
+      function() {
+        console.log('Container source change detected. Republished.');
+        outputContainer();
+      }
+    );
+
+    return outputContainer();
+  });
 };

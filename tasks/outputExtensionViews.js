@@ -14,8 +14,17 @@ module.exports = function(gulp, options) {
   gulp.task('sandbox:outputExtensionViews', dependencyTasks, function() {
     if (extensionDescriptor) {
       var extensionViewFiles = path.join(path.resolve(extensionDescriptor.viewBasePath), '**/*');
-      gulp.src(extensionViewFiles)
-        .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, 'extensionViews')));
+      var outputExtensionViews = function() {
+        return gulp.src(extensionViewFiles)
+          .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, 'extensionViews')));
+      };
+
+      gulp.watch(extensionViewFiles, function() {
+        console.log('Extension view change detected. Republished.');
+        outputExtensionViews();
+      });
+
+      return outputExtensionViews();
     }
   });
 };

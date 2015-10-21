@@ -5,13 +5,11 @@ module.exports = function(gulp) {
     'turbine:build',
     'sandbox:initTemplates',
     'sandbox:outputContainer',
-    'sandbox:watchContainerSource',
     'sandbox:outputEngine',
     'sandbox:outputExtensionViews',
     'sandbox:outputViewSandboxHTML',
     'sandbox:outputLibSandboxHTML',
     'sandbox:outputSandboxIncludes',
-    'sandbox:watchSandboxHTMLTemplates',
     'sandbox:serve'
   ]);
 };
