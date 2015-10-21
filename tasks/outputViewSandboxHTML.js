@@ -6,6 +6,7 @@ var replace = require('gulp-replace');
 var extensionDescriptor = require('./helpers/extensionDescriptor');
 
 var VIEW_GROUPS = {
+  'extensionConfiguration': 'Extension Configuration',
   'eventDelegates': 'Event Delegates',
   'conditionDelegates': 'Condition Delegates',
   'actionDelegates': 'Action Delegates',
