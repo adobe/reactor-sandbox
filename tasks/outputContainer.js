@@ -95,7 +95,7 @@ module.exports = function(gulp) {
 
     return container
       .pipe(rename(files.CONTAINER_OUTPUT_FILENAME))
-      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME)));
+      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
   };
 
   gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], function() {

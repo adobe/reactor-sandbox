@@ -18,6 +18,6 @@ module.exports = function(gulp) {
 
     return gulp
       .src(path.join(turbinePath, 'dist', 'engine.js'))
-      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME)));
+      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
   });
 };
