@@ -10,6 +10,7 @@ module.exports = function(gulp) {
     'sandbox:outputViewSandboxHTML',
     'sandbox:outputLibSandboxHTML',
     'sandbox:outputSandboxIncludes',
+    'sandbox:outputIframeUtilsBundle',
     'sandbox:serve'
   ]);
 };
