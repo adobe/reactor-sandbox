@@ -2,9 +2,7 @@
 
 var path = require('path');
 var files = require('./constants/files');
-
-var source = path.resolve(files.TEMPLATES_DIRNAME, files.LIB_SANDBOX_TEMPLATE_FILENAME);
-
+var source = [path.join(files.TEMPLATES_DIRNAME, '**/*.html')];
 
 module.exports = function(gulp) {
   var outputLibSandboxHTML = function() {
@@ -13,7 +11,7 @@ module.exports = function(gulp) {
       .pipe(gulp.dest(files.OUTPUT_DIRNAME));
   };
 
-  gulp.task('sandbox:outputLibSandboxHTML', ['sandbox:initTemplates'], function() {
+  gulp.task('sandbox:outputSandboxHTMLs', ['sandbox:initTemplates'], function() {
     gulp.watch(source, function() {
       console.log('Library sandbox HTML change detected. Republished.');
       outputLibSandboxHTML();
