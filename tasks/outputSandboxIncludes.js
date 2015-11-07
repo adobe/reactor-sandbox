@@ -27,20 +27,16 @@ module.exports = function(gulp) {
     return eventStream.merge(communicationStream, includesStream);
   });
 
-  var outputSandboxIncludes = function() {
+  gulp.task('sandbox:outputSandboxIncludes', ['sandbox:outputSandboxIncludes:copyFiles'], function() {
     return gulp
       .src([
         path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js/viewSandbox.js')
       ])
       .pipe(insert.prepend('var extensionDescriptor = ' +  JSON.stringify(extensionDescriptor) + ';\n\n'))
       .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
-  };
+  });
 
-  gulp.task('sandbox:outputSandboxIncludes', ['sandbox:outputSandboxIncludes:copyFiles'], function() {
-    gulp.watch(sources, function() {
-      console.log('Sandbox includes change detected. Republished.');
-      outputSandboxIncludes();
-    });
-    return outputSandboxIncludes();
+  gulp.task('sandbox:watchSandboxIncludes', ['sandbox:outputSandboxIncludes'], function() {
+    gulp.watch(sources, ['sandbox:outputSandboxIncludes']);
   });
 };
