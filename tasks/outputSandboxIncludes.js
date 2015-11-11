@@ -3,13 +3,15 @@
 var files = require('./constants/files');
 var path = require('path');
 var eventStream = require('event-stream');
+var insert = require('gulp-insert');
+var extensionDescriptor = require('./helpers/extensionDescriptor');
 
 var sources = [
   path.resolve(__dirname, '..', files.SANDBOX_INCLUDES_DIRNAME, '**/*')
 ];
 
 module.exports = function(gulp) {
-  var outputSandboxIncludes = function() {
+  gulp.task('sandbox:outputSandboxIncludes:copyFiles', function() {
     var communicationStream = gulp
       .src([
         require.resolve('jschannel'),
@@ -23,13 +25,18 @@ module.exports = function(gulp) {
       .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME)));
 
     return eventStream.merge(communicationStream, includesStream);
-  };
+  });
 
-  gulp.task('sandbox:outputSandboxIncludes', function() {
-    gulp.watch(sources, function() {
-      console.log('Sandbox includes change detected. Republished.');
-      outputSandboxIncludes();
-    });
-    return outputSandboxIncludes();
+  gulp.task('sandbox:outputSandboxIncludes', ['sandbox:outputSandboxIncludes:copyFiles'], function() {
+    return gulp
+      .src([
+        path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js/viewSandbox.js')
+      ])
+      .pipe(insert.prepend('var extensionDescriptor = ' +  JSON.stringify(extensionDescriptor) + ';\n\n'))
+      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
+  });
+
+  gulp.task('sandbox:watchSandboxIncludes', ['sandbox:outputSandboxIncludes'], function() {
+    gulp.watch(sources, ['sandbox:outputSandboxIncludes']);
   });
 };
