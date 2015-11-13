@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "del": "^2.0.2",
-    "event-stream": "^3.3.2",
     "glob": "^5.0.15",
     "gulp": "^3.9.0",
     "gulp-insert": "^0.5.0",
@@ -18,7 +17,8 @@
     "jschannel": "^1.0.0",
     "lens-extension-bridge": "git+ssh://git@git.corp.adobe.com:reactor/lens-extension-bridge.git",
     "turbine": "git+ssh://git@git.corp.adobe.com:reactor/turbine.git",
-    "turbine-gulp-iframeutilsbuilder": "git+ssh://git@git.corp.adobe.com:reactor/turbine-gulp-iframeutilsbuilder.git"
+    "turbine-windgoggles": "git+ssh://git@git.corp.adobe.com:reactor/turbine-windgoggles.git",
+    "webpack-stream": "^2.1.1"
   },
   "devDependencies": {
     "turbine-extension-dtm": "git+ssh://git@git.corp.adobe.com:reactor/turbine-extension-dtm",

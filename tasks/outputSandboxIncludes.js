@@ -2,7 +2,7 @@
 
 var files = require('./constants/files');
 var path = require('path');
-var eventStream = require('event-stream');
+var webpack = require('webpack-stream');
 var insert = require('gulp-insert');
 var extensionDescriptor = require('./helpers/extensionDescriptor');
 
@@ -12,22 +12,19 @@ var sources = [
 
 module.exports = function(gulp) {
   gulp.task('sandbox:outputSandboxIncludes:copyFiles', function() {
-    var communicationStream = gulp
-      .src([
-        require.resolve('jschannel'),
-        require.resolve('lens-extension-bridge/src/extensionBridge')
-      ])
-      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
-
-
-    var includesStream = gulp
+    return gulp
       .src(sources)
       .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME)));
-
-    return eventStream.merge(communicationStream, includesStream);
   });
 
-  gulp.task('sandbox:outputSandboxIncludes', ['sandbox:outputSandboxIncludes:copyFiles'], function() {
+  gulp.task('sandbox:outputSandboxIncludes:webpackBuild', function() {
+    return gulp
+      .src([path.join(__dirname, '..', files.SANDBOX_INCLUDES_DIRNAME, '**/viewSandbox.js')])
+      .pipe(webpack({output: {filename: 'viewSandbox.js'}}))
+      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
+  });
+
+  gulp.task('sandbox:outputSandboxIncludes', ['sandbox:outputSandboxIncludes:copyFiles', 'sandbox:outputSandboxIncludes:webpackBuild'], function() {
     return gulp
       .src([
         path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js/viewSandbox.js')
