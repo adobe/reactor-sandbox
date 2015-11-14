@@ -11,7 +11,8 @@ var CAPABILITIES = [
   'events',
   'conditions',
   'actions',
-  'dataElements'
+  'dataElements',
+  'resources'
 ];
 
 function wrapInFunction(content, argNames) {
@@ -25,34 +26,30 @@ function stringifyUsingLiteralFunctions(delegates) {
     .replace(/\\n/g, '\n');
 }
 
-var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePath) {
+var augmentCapabilities = function(extensionOutput, extensionDescriptor, libBasePath) {
   CAPABILITIES.forEach(function(capability) {
     if (extensionDescriptor.hasOwnProperty(capability)) {
       extensionOutput[capability] = extensionOutput[capability] || {};
-      var delegateDescriptors = extensionDescriptor[capability];
+      var capabilityDescriptors = extensionDescriptor[capability];
 
-      delegateDescriptors.forEach(function(delegateDescriptor) {
-        var delegatePath = path.join(libBasePath, delegateDescriptor[files.LIB_PATH_ATTR]);
-        var script = fs.readFileSync(delegatePath, {encoding: 'utf8'});
-        var id = extensionDescriptor.name + '.' +
-          path.basename(delegatePath, path.extname(delegatePath));
+      capabilityDescriptors.forEach(function(capabilityDescriptor) {
+        var capabilityPath = path.join(libBasePath, capabilityDescriptor[files.LIB_PATH_ATTR]);
+        var script = fs.readFileSync(capabilityPath, {encoding: 'utf8'});
+        var id;
+
+        // events, conditions, actions, and data element delegates don't have names. We need
+        // to give them a unique ID.
+        if (capability === 'resources') {
+          id = capabilityDescriptor.name;
+        } else {
+          id = extensionDescriptor.name + '.' +
+            path.basename(capabilityPath, path.extname(capabilityPath));
+        }
+
         extensionOutput[capability][id] = wrapInFunction(script, ['module', 'require']);
       });
     }
   });
-};
-
-var augmentResources = function(extensionOutput, extensionDescriptor, libBasePath) {
-  if (extensionDescriptor.hasOwnProperty('resources')) {
-    extensionOutput.resources = extensionOutput.resources || {};
-    var resourceDescriptors = extensionDescriptor.resources;
-    resourceDescriptors.forEach(function(resourceDescriptor) {
-      var resourcePath = path.join(libBasePath, resourceDescriptor[files.LIB_PATH_ATTR]);
-      var script = fs.readFileSync(resourcePath, {encoding: 'utf8'});
-      var id = resourceDescriptor.name;
-      extensionOutput.resources[id] = wrapInFunction(script, ['module', 'require']);
-    });
-  }
 };
 
 var containerTemplatePath = path.join(files.TEMPLATES_DIRNAME, files.CONTAINER_TEMPLATE_FILENAME);
@@ -80,8 +77,7 @@ module.exports = function(gulp) {
 
       var extensionPath = path.dirname(extensionDescriptorPath);
       var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
-      augmentDelegates(extensionOutput, extensionDescriptor, libBasePath);
-      augmentResources(extensionOutput, extensionDescriptor, libBasePath);
+      augmentCapabilities(extensionOutput, extensionDescriptor, libBasePath);
     });
 
     var container = gulp.src(containerTemplatePath);
