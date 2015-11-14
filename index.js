@@ -27,8 +27,8 @@ module.exports = function(gulp, options) {
 
   turbine(gulp);
 
-  var iframeutilsbuilder = require('turbine-gulp-iframeutilsbuilder');
-  iframeutilsbuilder(gulp);
+  var windgoggles = require('turbine-windgoggles/tasks/index');
+  windgoggles(gulp);
 
   // Require in each task.
   glob.sync(path.join(__dirname, 'tasks/*.js')).forEach(function(taskFile) {

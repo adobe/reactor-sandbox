@@ -4,8 +4,8 @@ var path = require('path');
 var files = require('./constants/files');
 
 module.exports = function(gulp) {
-  gulp.task('sandbox:outputIframeUtilsBundle', ['iframeutilsbuilder:build'], function() {
-    var bundlePath = path.dirname(require.resolve('turbine-gulp-iframeutilsbuilder'));
+  gulp.task('sandbox:outputIframeUtilsBundle', ['windgoggles:buildIframeUtils'], function() {
+    var bundlePath = path.dirname(require.resolve('turbine-windgoggles'));
 
     return gulp
       .src(path.join(bundlePath, 'dist', '/**/*'))

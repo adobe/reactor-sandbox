@@ -11,13 +11,15 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     var viewSelector = document.getElementById('extensionViewSelector');
-    var viewIframe = document.getElementById('extensionViewIframe');
     var validateButton = document.getElementById('validateButton');
     var validateOutput = document.getElementById('validateOutput');
     var getConfigField = document.getElementById('getConfigField');
     var getConfigButton = document.getElementById('getConfigButton');
     var setConfigField = document.getElementById('setConfigField');
     var setConfigButton = document.getElementById('setConfigButton');
+
+    var viewIframe = document.getElementById('extensionViewIframe');
+    var windGogglesIframe = require('turbine-windgoggles')(viewIframe);
 
     // Populate View Selector.
     if (extensionDescriptor) {
@@ -60,19 +62,19 @@
         }
       }
 
-      extensionBridge.validate(viewIframe, schema, function(valid) {
+      windGogglesIframe.validate(schema, function(valid) {
         validateOutput.innerHTML = valid ? 'Valid' : 'Invalid';
       });
     });
 
     getConfigButton.addEventListener('click', function() {
-      extensionBridge.getConfig(viewIframe, function(config) {
+      windGogglesIframe.getConfig(function(config) {
         getConfigField.value = JSON.stringify(config);
       });
     });
 
     setConfigButton.addEventListener('click', function() {
-      extensionBridge.setConfig(viewIframe, JSON.parse(setConfigField.value));
+      windGogglesIframe.setConfig(JSON.parse(setConfigField.value));
     });
   });
 })();
