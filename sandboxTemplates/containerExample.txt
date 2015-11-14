@@ -28,7 +28,7 @@
     dataElements: {
       myDataElement: {
         type: 'mno',
-        config: {}gulp
+        config: {}
       }
     },
     appVersion: '52A',
