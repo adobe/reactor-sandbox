@@ -7,16 +7,12 @@ var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 var files = require('./constants/files');
 
-// The keys are what the attribute names are in the extension descriptor.
-// The values are what the attribute names are in the container.
-// They are different because "delegates" is helpful for distinguishing what we're talking
-// about in the turbine code but it's not really helpful for extension developers.
-var CAPABILITY_MAPPING = {
-  'events': 'eventDelegates',
-  'conditions': 'conditionDelegates',
-  'actions': 'actionDelegates',
-  'dataElements': 'dataElementDelegates'
-};
+var CAPABILITIES = [
+  'events',
+  'conditions',
+  'actions',
+  'dataElements'
+];
 
 function wrapInFunction(content, argNames) {
   var argsStr = argNames ? argNames.join(', ') : '';
@@ -30,22 +26,20 @@ function stringifyUsingLiteralFunctions(delegates) {
 }
 
 var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePath) {
-  for (var descriptorCapabilityKey in CAPABILITY_MAPPING) {
-    var containerCapabilityKey = CAPABILITY_MAPPING[descriptorCapabilityKey];
-
-    if (extensionDescriptor.hasOwnProperty(descriptorCapabilityKey)) {
-      extensionOutput[containerCapabilityKey] = extensionOutput[descriptorCapabilityKey] || {};
-      var delegateDescriptors = extensionDescriptor[descriptorCapabilityKey];
+  CAPABILITIES.forEach(function(capability) {
+    if (extensionDescriptor.hasOwnProperty(capability)) {
+      extensionOutput[capability] = extensionOutput[capability] || {};
+      var delegateDescriptors = extensionDescriptor[capability];
 
       delegateDescriptors.forEach(function(delegateDescriptor) {
         var delegatePath = path.join(libBasePath, delegateDescriptor[files.LIB_PATH_ATTR]);
         var script = fs.readFileSync(delegatePath, {encoding: 'utf8'});
         var id = extensionDescriptor.name + '.' +
           path.basename(delegatePath, path.extname(delegatePath));
-        extensionOutput[containerCapabilityKey][id] = wrapInFunction(script, ['module', 'require']);
+        extensionOutput[capability][id] = wrapInFunction(script, ['module', 'require']);
       });
     }
-  }
+  });
 };
 
 var augmentResources = function(extensionOutput, extensionDescriptor, libBasePath) {

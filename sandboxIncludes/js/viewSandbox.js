@@ -46,7 +46,6 @@
 
           items.forEach(function(item) {
             addOption(optgroup, item.viewPath, item.displayName, item);
-            optgroup.appendChild(option);
           });
 
           viewSelector.appendChild(optgroup);
