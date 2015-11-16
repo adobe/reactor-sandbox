@@ -2,11 +2,10 @@
 
 (function() {
   var VIEW_GROUPS = {
-    'extensionConfiguration': 'Extension Configuration',
-    'eventDelegates': 'Event Delegates',
-    'conditionDelegates': 'Condition Delegates',
-    'actionDelegates': 'Action Delegates',
-    'dataElementDelegates': 'Data Element Delegates'
+    'events': 'Events',
+    'conditions': 'Conditions',
+    'actions': 'Actions',
+    'dataElements': 'Data Elements'
   };
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -23,19 +22,30 @@
 
     // Populate View Selector.
     if (extensionDescriptor) {
+      var addOption = function(parent, viewPath, displayName, descriptor) {
+        var option = document.createElement('option');
+        option.value = viewPath;
+        option.text = displayName;
+        option.descriptor = descriptor;
+        parent.appendChild(option);
+      };
+
+      if (extensionDescriptor.viewPath) {
+        addOption(
+          viewSelector,
+          extensionDescriptor.viewPath,
+          'Extension Configuration',
+          extensionDescriptor);
+      }
+
       Object.keys(VIEW_GROUPS).forEach(function(groupKey) {
         var items = extensionDescriptor[groupKey];
         if (items && items.length) {
           var optgroup = document.createElement('optgroup');
           optgroup.label = VIEW_GROUPS[groupKey];
 
-          items.forEach(function (item) {
-            var option = document.createElement('option');
-            option.value = item.viewPath;
-            option.text = item.displayName;
-            option.descriptor = item;
-
-            optgroup.appendChild(option);
+          items.forEach(function(item) {
+            addOption(optgroup, item.viewPath, item.displayName, item);
           });
 
           viewSelector.appendChild(optgroup);

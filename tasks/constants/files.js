@@ -2,7 +2,7 @@
 
 var files = {
   EXTENSION_DESCRIPTOR_FILENAME: 'extension.json',
-  CONTAINER_TEMPLATE_FILENAME: 'container.txt',
+  CONTAINER_TEMPLATE_FILENAME: 'container.js',
   CONTAINER_OUTPUT_FILENAME: 'container.js',
   OUTPUT_DIRNAME: 'sandbox',
   OUTPUT_INCLUDES_DIRNAME: 'includes',

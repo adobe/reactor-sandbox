@@ -3,63 +3,64 @@
 var fs = require('fs');
 var glob = require('glob');
 var path = require('path');
-var replace = require('gulp-replace');
-var rename = require('gulp-rename');
 var files = require('./constants/files');
 
-var DELEGATE_CAPABILITY_NAMES = [
-  'eventDelegates',
-  'conditionDelegates',
-  'actionDelegates',
-  'dataElementDelegates'
+var CAPABILITIES = [
+  'events',
+  'conditions',
+  'actions',
+  'dataElements',
+  'resources'
 ];
 
-var ALL_CAPABILITY_NAMES = [
-  'resources'
-].concat(DELEGATE_CAPABILITY_NAMES);
+var CONTAINER_TEMPLATE_PATH = path.resolve(
+  files.TEMPLATES_DIRNAME,
+  files.CONTAINER_TEMPLATE_FILENAME);
+
+var CONTAINER_OUTPUT_PATH = path.join(
+  files.OUTPUT_DIRNAME,
+  files.OUTPUT_INCLUDES_DIRNAME,
+  'js',
+  files.CONTAINER_OUTPUT_FILENAME);
 
 function wrapInFunction(content, argNames) {
   var argsStr = argNames ? argNames.join(', ') : '';
   return 'function(' + argsStr + ') {\n' + content + '}\n';
 }
 
-function stringifyUsingLiteralFunctions(delegates) {
-  return JSON.stringify(delegates)
-    .replace(/(".+?":)"(function.+?}\\n)"/g, '$1$2')
+function stringifyUsingLiteralFunctions(container) {
+  return JSON.stringify(container, null, 2)
+    .replace(/(".+?": )"(function.+?})\\n"/g, '$1$2')
     .replace(/\\n/g, '\n');
 }
 
-var augmentDelegates = function(capabilities, extensionDescriptor, libBasePath) {
-  DELEGATE_CAPABILITY_NAMES.forEach(function(capabilityName) {
-    capabilities[capabilityName] = capabilities[capabilityName] || {};
+var augmentCapabilities = function(extensionOutput, extensionDescriptor, libBasePath) {
+  CAPABILITIES.forEach(function(capability) {
+    if (extensionDescriptor.hasOwnProperty(capability)) {
+      extensionOutput[capability] = extensionOutput[capability] || {};
+      var capabilityDescriptors = extensionDescriptor[capability];
 
-    if (extensionDescriptor.hasOwnProperty(capabilityName)) {
-      var delegateDescriptors = extensionDescriptor[capabilityName];
+      capabilityDescriptors.forEach(function(capabilityDescriptor) {
+        var capabilityPath = path.join(libBasePath, capabilityDescriptor[files.LIB_PATH_ATTR]);
+        var id;
 
-      delegateDescriptors.forEach(function(delegateDescriptor) {
-        var delegatePath = path.join(libBasePath, delegateDescriptor[files.LIB_PATH_ATTR]);
-        var script = fs.readFileSync(delegatePath, {encoding: 'utf8'});
-        var id = extensionDescriptor.name + '.' +
-          path.basename(delegatePath, path.extname(delegatePath));
-        capabilities[capabilityName][id] = wrapInFunction(script, ['module', 'require']);
+        // events, conditions, actions, and data element delegates don't have names. We need
+        // to give them a unique ID.
+        if (capability === 'resources') {
+          id = capabilityDescriptor.name;
+        } else {
+          id = extensionDescriptor.name + '.' +
+            path.basename(capabilityPath, path.extname(capabilityPath));
+        }
+
+        if (!extensionOutput[capability][id]) {
+          var script = fs.readFileSync(capabilityPath, {encoding: 'utf8'});
+          extensionOutput[capability][id] = wrapInFunction(script, ['module', 'require']);
+        }
       });
     }
   });
 };
-
-var augmentResources = function(capabilities, extensionDescriptor, libBasePath) {
-  if (extensionDescriptor.hasOwnProperty('resources')) {
-    var resourceDescriptors = extensionDescriptor.resources;
-    resourceDescriptors.forEach(function(resourceDescriptor) {
-      var resourcePath = path.join(libBasePath, resourceDescriptor[files.LIB_PATH_ATTR]);
-      var script = fs.readFileSync(resourcePath, {encoding: 'utf8'});
-      var id = extensionDescriptor.name + '/' + resourceDescriptor.name;
-      capabilities.resources[id] = wrapInFunction(script, ['module', 'require']);
-    });
-  }
-};
-
-var containerTemplatePath = path.join(files.TEMPLATES_DIRNAME, files.CONTAINER_TEMPLATE_FILENAME);
 
 module.exports = function(gulp) {
   var outputContainer = function() {
@@ -71,37 +72,41 @@ module.exports = function(gulp) {
     var extensionDescriptorPaths = glob.sync('{node_modules/*/,}' +
     files.EXTENSION_DESCRIPTOR_FILENAME);
 
-    var capabilities = {};
-
-    ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
-      capabilities[capabilityName] = {};
-    });
+    // Make sure we get the latest.
+    delete require.cache[CONTAINER_TEMPLATE_PATH];
+    var container = require(CONTAINER_TEMPLATE_PATH);
+    var extensionsOutput = container.extensions;
 
     extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
       var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+
+      var extensionOutput = extensionsOutput[extensionDescriptor.name];
+
+      if (!extensionOutput) {
+        extensionOutput = extensionsOutput[extensionDescriptor.name] = {};
+      }
+
+      extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
+
       var extensionPath = path.dirname(extensionDescriptorPath);
       var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
-      augmentDelegates(capabilities, extensionDescriptor, libBasePath);
-      augmentResources(capabilities, extensionDescriptor, libBasePath);
+      augmentCapabilities(extensionOutput, extensionDescriptor, libBasePath);
     });
 
-    var container = gulp.src(containerTemplatePath);
+    container = stringifyUsingLiteralFunctions(container);
+    container = '' +
+      '(function() {\n' +
+      '  window._satellite = window._satellite || {};\n' +
+      '  window._satellite.container = ' + container + '\n' +
+      '})();';
 
-    ALL_CAPABILITY_NAMES.forEach(function(capabilityName) {
-      container = container.pipe(
-        replace('{{' + capabilityName + '}}',
-          stringifyUsingLiteralFunctions(capabilities[capabilityName])));
-    });
-
-    return container
-      .pipe(rename(files.CONTAINER_OUTPUT_FILENAME))
-      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
+    fs.writeFileSync(CONTAINER_OUTPUT_PATH, container);
   };
 
   gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], function() {
     gulp.watch(
       [
-        path.resolve(containerTemplatePath),
+        path.resolve(CONTAINER_TEMPLATE_PATH),
         path.join(files.SRC_DIRNAME, files.SRC_FILENAMES)
       ],
       function() {

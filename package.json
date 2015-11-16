@@ -12,7 +12,6 @@
     "gulp": "^3.9.0",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
-    "gulp-replace": "^0.5.4",
     "gulp-webserver": "^0.9.1",
     "jschannel": "^1.0.0",
     "lens-extension-bridge": "git+ssh://git@git.corp.adobe.com:reactor/lens-extension-bridge.git",
