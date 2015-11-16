@@ -16,9 +16,7 @@
     var getConfigButton = document.getElementById('getConfigButton');
     var setConfigField = document.getElementById('setConfigField');
     var setConfigButton = document.getElementById('setConfigButton');
-
-    var viewIframe = document.getElementById('extensionViewIframe');
-    var windGogglesIframe = require('turbine-windgoggles')(viewIframe);
+    var viewIframeContainer = document.getElementById('iframeContainer');
 
     // Populate View Selector.
     if (extensionDescriptor) {
@@ -53,11 +51,24 @@
       });
     }
 
+    var windGogglesIframe;
     var loadSelectedViewIntoIframe = function() {
+      if (windGogglesIframe) {
+        windGogglesIframe.destroy();
+      }
+
+      var viewIframe = document.createElement('iframe');
+      viewIframe.dataset.frameboyant = true;
+      viewIframe.onload = function() {
+        windGogglesIframe = require('turbine-windgoggles')(viewIframe);
+      };
+
       if (viewSelector.selectedIndex !== -1) {
         var viewPath = viewSelector.options[viewSelector.selectedIndex].value;
         viewIframe.src = 'extensionViews/' + viewPath;
       }
+
+      viewIframeContainer.appendChild(viewIframe);
     };
 
     loadSelectedViewIntoIframe();
