@@ -72,6 +72,8 @@ module.exports = function(gulp) {
     var extensionDescriptorPaths = glob.sync('{node_modules/*/,}' +
     files.EXTENSION_DESCRIPTOR_FILENAME);
 
+    // Make sure we get the latest.
+    delete require.cache[CONTAINER_TEMPLATE_PATH];
     var container = require(CONTAINER_TEMPLATE_PATH);
     var extensionsOutput = container.extensions;
 
