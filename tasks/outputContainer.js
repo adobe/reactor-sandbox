@@ -3,8 +3,6 @@
 var fs = require('fs');
 var glob = require('glob');
 var path = require('path');
-var replace = require('gulp-replace');
-var rename = require('gulp-rename');
 var files = require('./constants/files');
 
 var CAPABILITIES = [
@@ -15,14 +13,24 @@ var CAPABILITIES = [
   'resources'
 ];
 
+var CONTAINER_TEMPLATE_PATH = path.resolve(
+  files.TEMPLATES_DIRNAME,
+  files.CONTAINER_TEMPLATE_FILENAME);
+
+var CONTAINER_OUTPUT_PATH = path.join(
+  files.OUTPUT_DIRNAME,
+  files.OUTPUT_INCLUDES_DIRNAME,
+  'js',
+  files.CONTAINER_OUTPUT_FILENAME);
+
 function wrapInFunction(content, argNames) {
   var argsStr = argNames ? argNames.join(', ') : '';
   return 'function(' + argsStr + ') {\n' + content + '}\n';
 }
 
-function stringifyUsingLiteralFunctions(delegates) {
-  return JSON.stringify(delegates)
-    .replace(/(".+?":)"(function.+?}\\n)"/g, '$1$2')
+function stringifyUsingLiteralFunctions(container) {
+  return JSON.stringify(container, null, 2)
+    .replace(/(".+?": )"(function.+?})\\n"/g, '$1$2')
     .replace(/\\n/g, '\n');
 }
 
@@ -34,7 +42,6 @@ var augmentCapabilities = function(extensionOutput, extensionDescriptor, libBase
 
       capabilityDescriptors.forEach(function(capabilityDescriptor) {
         var capabilityPath = path.join(libBasePath, capabilityDescriptor[files.LIB_PATH_ATTR]);
-        var script = fs.readFileSync(capabilityPath, {encoding: 'utf8'});
         var id;
 
         // events, conditions, actions, and data element delegates don't have names. We need
@@ -46,13 +53,14 @@ var augmentCapabilities = function(extensionOutput, extensionDescriptor, libBase
             path.basename(capabilityPath, path.extname(capabilityPath));
         }
 
-        extensionOutput[capability][id] = wrapInFunction(script, ['module', 'require']);
+        if (!extensionOutput[capability][id]) {
+          var script = fs.readFileSync(capabilityPath, {encoding: 'utf8'});
+          extensionOutput[capability][id] = wrapInFunction(script, ['module', 'require']);
+        }
       });
     }
   });
 };
-
-var containerTemplatePath = path.join(files.TEMPLATES_DIRNAME, files.CONTAINER_TEMPLATE_FILENAME);
 
 module.exports = function(gulp) {
   var outputContainer = function() {
@@ -64,40 +72,39 @@ module.exports = function(gulp) {
     var extensionDescriptorPaths = glob.sync('{node_modules/*/,}' +
     files.EXTENSION_DESCRIPTOR_FILENAME);
 
-    var extensionsOutput = {};
+    var container = require(CONTAINER_TEMPLATE_PATH);
+    var extensionsOutput = container.extensions;
 
     extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
       var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
 
-      var extensionOutput = {
-        displayName: extensionDescriptor.displayName
-      };
+      var extensionOutput = extensionsOutput[extensionDescriptor.name];
 
-      extensionsOutput[extensionDescriptor.name] = extensionOutput;
+      if (!extensionOutput) {
+        extensionOutput = extensionsOutput[extensionDescriptor.name] = {};
+      }
+
+      extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
 
       var extensionPath = path.dirname(extensionDescriptorPath);
       var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
       augmentCapabilities(extensionOutput, extensionDescriptor, libBasePath);
     });
 
-    var container = gulp.src(containerTemplatePath);
+    container = stringifyUsingLiteralFunctions(container);
+    container = '' +
+      '(function() {\n' +
+      '  window._satellite = window._satellite || {};\n' +
+      '  window._satellite.container = ' + container + '\n' +
+      '})();';
 
-    container = container.pipe(
-      replace(
-        '{{extensions}}',
-        stringifyUsingLiteralFunctions(extensionsOutput)
-      )
-    );
-
-    return container
-      .pipe(rename(files.CONTAINER_OUTPUT_FILENAME))
-      .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
+    fs.writeFileSync(CONTAINER_OUTPUT_PATH, container);
   };
 
   gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], function() {
     gulp.watch(
       [
-        path.resolve(containerTemplatePath),
+        path.resolve(CONTAINER_TEMPLATE_PATH),
         path.join(files.SRC_DIRNAME, files.SRC_FILENAMES)
       ],
       function() {
