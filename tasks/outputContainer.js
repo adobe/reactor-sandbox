@@ -4,6 +4,7 @@ var fs = require('fs');
 var glob = require('glob');
 var path = require('path');
 var files = require('./constants/files');
+var mkdirp = require('mkdirp');
 
 var CAPABILITIES = [
   'events',
@@ -20,8 +21,7 @@ var CONTAINER_TEMPLATE_PATH = path.resolve(
 var CONTAINER_OUTPUT_PATH = path.join(
   files.OUTPUT_DIRNAME,
   files.OUTPUT_INCLUDES_DIRNAME,
-  'js',
-  files.CONTAINER_OUTPUT_FILENAME);
+  'js');
 
 function wrapInFunction(content, argNames) {
   var argsStr = argNames ? argNames.join(', ') : '';
@@ -100,7 +100,8 @@ module.exports = function(gulp) {
       '  window._satellite.container = ' + container + '\n' +
       '})();';
 
-    fs.writeFileSync(CONTAINER_OUTPUT_PATH, container);
+    mkdirp.sync(CONTAINER_OUTPUT_PATH);
+    fs.writeFileSync(path.join(CONTAINER_OUTPUT_PATH, files.CONTAINER_OUTPUT_FILENAME), container);
   };
 
   gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], function() {
