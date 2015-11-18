@@ -9,7 +9,7 @@ module.exports = function(gulp) {
     'sandbox:outputExtensionViews',
     'sandbox:outputSandboxHTMLs',
     'sandbox:outputSandboxIncludes',
-    'sandbox:outputIframeUtilsBundle',
+    'sandbox:outputIframeBundle',
     'sandbox:serve',
     'sandbox:watchSandboxIncludes'
   ]);
