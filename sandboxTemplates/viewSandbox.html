@@ -14,7 +14,7 @@
     <div>
       Select View:
       <select id="extensionViewSelector"></select>
-      <button onclick="window.open(document.getElementById('extensionViewIframe').src);">Open View in New Tab</button>
+      <button onclick="window.open(document.querySelector('#iframeContainer iframe').src);">Open View in New Tab</button>
     </div>
 
     <div id="iframeContainer"></div>
