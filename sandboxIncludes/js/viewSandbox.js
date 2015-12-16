@@ -9,6 +9,10 @@
     'dataElements': 'Data Elements'
   };
 
+  var openCodeEditor = function(code, callback) {
+    callback('Edited Code #' + Math.round(Math.random() * 10000));
+  };
+
   document.addEventListener('DOMContentLoaded', function() {
     var viewSelector = document.getElementById('extensionViewSelector');
     var validateButton = document.getElementById('validateButton');
@@ -52,6 +56,7 @@
       viewIframe.dataset.frameboyant = true;
       viewIframe.onload = function() {
         windGogglesIframe = require('turbine-windgoggles')(viewIframe);
+        windGogglesIframe.openCodeEditor = openCodeEditor;
       };
 
       if (viewSelector.selectedIndex !== -1) {
