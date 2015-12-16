@@ -2,6 +2,7 @@
 
 (function() {
   var VIEW_GROUPS = {
+    'configuration': 'Extension Configuration',
     'events': 'Events',
     'conditions': 'Conditions',
     'actions': 'Actions',
@@ -17,25 +18,10 @@
     var setConfigField = document.getElementById('setConfigField');
     var setConfigButton = document.getElementById('setConfigButton');
     var viewIframeContainer = document.getElementById('iframeContainer');
+    var lastSelectedView = localStorage.getItem('lastSelectedView');
 
     // Populate View Selector.
     if (extensionDescriptor) {
-      var addOption = function(parent, viewPath, displayName, descriptor) {
-        var option = document.createElement('option');
-        option.value = viewPath;
-        option.text = displayName;
-        option.descriptor = descriptor;
-        parent.appendChild(option);
-      };
-
-      if (extensionDescriptor.viewPath) {
-        addOption(
-          viewSelector,
-          extensionDescriptor.viewPath,
-          'Extension Configuration',
-          extensionDescriptor);
-      }
-
       Object.keys(VIEW_GROUPS).forEach(function(groupKey) {
         var items = extensionDescriptor[groupKey];
         if (items && items.length) {
@@ -43,7 +29,12 @@
           optgroup.label = VIEW_GROUPS[groupKey];
 
           items.forEach(function(item) {
-            addOption(optgroup, item.viewPath, item.displayName, item);
+            var option = document.createElement('option');
+            option.value = item.viewPath;
+            option.text = item.displayName;
+            option.descriptor = item;
+            option.selected = item.viewPath === lastSelectedView;
+            opts.parent.appendChild(optgroup);
           });
 
           viewSelector.appendChild(optgroup);
@@ -66,6 +57,7 @@
       if (viewSelector.selectedIndex !== -1) {
         var viewPath = viewSelector.options[viewSelector.selectedIndex].value;
         viewIframe.src = 'extensionViews/' + viewPath;
+        localStorage.setItem('lastSelectedView', viewPath);
       }
 
       viewIframeContainer.appendChild(viewIframe);
