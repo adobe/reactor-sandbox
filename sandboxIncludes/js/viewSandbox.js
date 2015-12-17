@@ -38,7 +38,7 @@
             option.text = item.displayName;
             option.descriptor = item;
             option.selected = item.viewPath === lastSelectedView;
-            opts.parent.appendChild(optgroup);
+            optgroup.appendChild(option);
           });
 
           viewSelector.appendChild(optgroup);
