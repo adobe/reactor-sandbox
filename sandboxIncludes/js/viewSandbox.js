@@ -10,7 +10,15 @@
   };
 
   var openCodeEditor = function(code, callback) {
-    callback('Edited Code #' + Math.round(Math.random() * 10000));
+    callback('Edited Code ' + Math.round(Math.random() * 10000));
+  };
+
+  var openRegexTester = function(regex, callback) {
+    callback('Edited Regex ' + Math.round(Math.random() * 10000));
+  };
+
+  var openDataElementSelector = function(callback) {
+    callback('dataElement' + Math.round(Math.random() * 10000));
   };
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -57,6 +65,9 @@
       viewIframe.onload = function() {
         windGogglesIframe = require('turbine-windgoggles')(viewIframe);
         windGogglesIframe.openCodeEditor = openCodeEditor;
+        windGogglesIframe.openRegexTester = openRegexTester;
+        windGogglesIframe.openDataElementSelector = openDataElementSelector;
+        initView();
       };
 
       if (viewSelector.selectedIndex !== -1) {
@@ -68,10 +79,7 @@
       viewIframeContainer.appendChild(viewIframe);
     };
 
-    loadSelectedViewIntoIframe();
-    viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
-
-    validateButton.addEventListener('click', function() {
+    var initView = function() {
       var schema = null;
       if (viewSelector.selectedIndex !== -1) {
         var descriptor = viewSelector.options[viewSelector.selectedIndex].descriptor;
@@ -80,7 +88,23 @@
         }
       }
 
-      windGogglesIframe.validate(schema, function(valid) {
+      windGogglesIframe.init({
+        config: setConfigField.value.length ? JSON.parse(setConfigField.value) : null,
+        schema: schema,
+        propertyConfig: {
+          "domainList": [
+            "adobe.com",
+            "example.com"
+          ]
+        }
+      });
+    };
+
+    loadSelectedViewIntoIframe();
+    viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
+
+    validateButton.addEventListener('click', function() {
+      windGogglesIframe.validate(function(valid) {
         validateOutput.innerHTML = valid ? 'Valid' : 'Invalid';
       });
     });
@@ -91,8 +115,6 @@
       });
     });
 
-    setConfigButton.addEventListener('click', function() {
-      windGogglesIframe.setConfig(JSON.parse(setConfigField.value));
-    });
+    setConfigButton.addEventListener('click', initView);
   });
 })();
