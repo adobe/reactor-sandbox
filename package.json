@@ -14,14 +14,14 @@
     "gulp-rename": "^1.2.2",
     "gulp-webserver": "^0.9.1",
     "jschannel": "^1.0.0",
-    "lens-extension-bridge": "git+ssh://git@git.corp.adobe.com:reactor/lens-extension-bridge.git",
+    "lens-extension-bridge": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com:reactor/lens-extension-bridge.git",
     "mkdirp": "^0.5.1",
-    "turbine": "git+ssh://git@git.corp.adobe.com:reactor/turbine.git",
-    "turbine-windgoggles": "git+ssh://git@git.corp.adobe.com:reactor/turbine-windgoggles.git",
+    "turbine": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com:reactor/turbine.git",
+    "turbine-windgoggles": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com:reactor/turbine-windgoggles.git",
     "webpack-stream": "^2.1.1"
   },
   "devDependencies": {
-    "turbine-extension-dtm": "git+ssh://git@git.corp.adobe.com:reactor/turbine-extension-dtm",
-    "turbine-extension-gua": "git+ssh://git@git.corp.adobe.com:reactor/turbine-extension-gua"
+    "turbine-extension-dtm": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com:reactor/turbine-extension-dtm",
+    "turbine-extension-gua": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com:reactor/turbine-extension-gua"
   }
 }
