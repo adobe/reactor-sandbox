@@ -5,7 +5,19 @@ var files = require('./constants/files');
 var packageDescriptor = require('./helpers/packageDescriptor');
 
 module.exports = function(gulp) {
-  gulp.task('sandbox:outputEngine', ['turbine:build'], function() {
+  var turbinePath = packageDescriptor.name === 'turbine' ?
+    process.cwd() :
+    path.dirname(require.resolve('turbine'));
+
+  var turbine = require(path.join(turbinePath, 'index.js'));
+
+  gulp.task('sandbox:buildEngine', turbine.createBuildTask({
+    // Although the sandbox is for manual testing, ENV_TEST should only be used for running
+    // automated tests.
+    ENV_TEST: false
+  }));
+
+  gulp.task('sandbox:outputEngine', ['sandbox:buildEngine'], function() {
     // Copy the built engine from turbine. Take into consideration that this task may be running
     // from within turbine itself.
     var turbinePath;

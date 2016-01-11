@@ -14,19 +14,6 @@ var glob = require('glob');
 module.exports = function(gulp, options) {
   options = options || {};
 
-  var turbine;
-  var projectPackage = require(path.join(process.cwd(), 'package.json'));
-
-  // If we're running gulp from the turbine repo, use its code to build the engine. If not, use
-  // the builder's turbine dependency instead.
-  if (projectPackage.name === 'turbine') {
-    turbine = require(path.join(process.cwd(), 'index.js'));
-  } else {
-    turbine = require('turbine');
-  }
-
-  turbine(gulp);
-
   var windgoggles = require('turbine-windgoggles/tasks/index');
   windgoggles(gulp);
 
