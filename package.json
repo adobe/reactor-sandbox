@@ -7,8 +7,8 @@
     "url": "git@git.corp.adobe.com:reactor/turbine-gulp-sandbox.git"
   },
   "dependencies": {
-    "del": "^2.0.2",
-    "glob": "^5.0.15",
+    "del": "^2.2.0",
+    "glob": "^6.0.4",
     "gulp": "^3.9.0",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
@@ -18,7 +18,7 @@
     "mkdirp": "^0.5.1",
     "turbine": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine.git",
     "turbine-windgoggles": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine-windgoggles.git",
-    "webpack-stream": "^2.1.1"
+    "webpack-stream": "^3.1.0"
   },
   "devDependencies": {
     "turbine-extension-dtm": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine-extension-dtm.git",
