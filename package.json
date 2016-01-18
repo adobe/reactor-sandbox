@@ -7,6 +7,7 @@
     "url": "git@git.corp.adobe.com:reactor/turbine-gulp-sandbox.git"
   },
   "dependencies": {
+    "ajv": "^3.4.0",
     "del": "^2.2.0",
     "glob": "^6.0.4",
     "gulp": "^3.9.0",
@@ -14,6 +15,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-webserver": "^0.9.1",
     "jschannel": "^1.0.0",
+    "json-loader": "^0.5.4",
     "lens-extension-bridge": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/lens-extension-bridge.git",
     "mkdirp": "^0.5.1",
     "turbine": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine.git",

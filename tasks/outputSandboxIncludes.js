@@ -20,7 +20,18 @@ module.exports = function(gulp) {
   gulp.task('sandbox:outputSandboxIncludes:webpackBuild', function() {
     return gulp
       .src([path.join(__dirname, '..', files.SANDBOX_INCLUDES_DIRNAME, '**/viewSandbox.js')])
-      .pipe(webpack({output: {filename: 'viewSandbox.js'}}))
+      .pipe(webpack({
+        output: {filename: 'viewSandbox.js'},
+        // AJV needs json-loader.
+        module: {
+          loaders: [
+            {
+              'test': /\.json$/,
+              'loader': 'json'
+            }
+          ]
+        }
+      }))
       .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
   });
 

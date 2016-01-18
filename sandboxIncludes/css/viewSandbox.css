@@ -38,3 +38,7 @@ iframe {
   top: 0;
   position: absolute;
 }
+
+.error {
+  color: red;
+}
