@@ -6,8 +6,11 @@ var extensionDescriptor = require('./helpers/extensionDescriptor');
 
 module.exports = function(gulp, options) {
   var dependencyTasks = [];
-  options.dependencyTasks.forEach(function(task) {   dependencyTasks.push(task); });
-
+  if (options) {
+    options.dependencyTasks.forEach(function(task) {
+      dependencyTasks.push(task);
+    });
+  }
 
   gulp.task('sandbox:outputExtensionViews', dependencyTasks, function() {
     if (extensionDescriptor) {
