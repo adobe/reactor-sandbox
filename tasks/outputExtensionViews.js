@@ -2,7 +2,7 @@
 
 var files = require('./constants/files');
 var path = require('path');
-var extensionDescriptor = require('./helpers/extensionDescriptor');
+var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 
 module.exports = function(gulp, options) {
   var dependencyTasks = [];
@@ -13,6 +13,7 @@ module.exports = function(gulp, options) {
   }
 
   gulp.task('sandbox:outputExtensionViews', dependencyTasks, function() {
+    var extensionDescriptor = getExtensionDescriptor();
     if (extensionDescriptor) {
       var extensionViewFiles = path.join(path.resolve(extensionDescriptor.viewBasePath), '**/*');
       var outputExtensionViews = function() {

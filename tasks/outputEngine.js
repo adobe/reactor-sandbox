@@ -2,7 +2,7 @@
 
 var path = require('path');
 var files = require('./constants/files');
-var packageDescriptor = require('./helpers/packageDescriptor');
+var packageDescriptor = require('./helpers/getPackageDescriptor')();
 
 module.exports = function(gulp) {
   var turbinePath = packageDescriptor.name === 'turbine' ?
