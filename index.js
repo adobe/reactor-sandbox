@@ -14,8 +14,8 @@ var glob = require('glob');
 module.exports = function(gulp, options) {
   options = options || {};
 
-  var windgoggles = require('turbine-windgoggles/tasks/index');
-  windgoggles(gulp);
+  var extensionBridge = require('extension-bridge/tasks/index');
+  extensionBridge(gulp);
 
   // Require in each task.
   glob.sync(path.join(__dirname, 'tasks/*.js')).forEach(function(taskFile) {

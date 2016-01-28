@@ -16,10 +16,9 @@
     "gulp-webserver": "^0.9.1",
     "jschannel": "^1.0.0",
     "json-loader": "^0.5.4",
-    "lens-extension-bridge": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/lens-extension-bridge.git",
     "mkdirp": "^0.5.1",
     "turbine": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine.git",
-    "turbine-windgoggles": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine-windgoggles.git",
+    "extension-bridge": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/extension-bridge.git",
     "webpack-stream": "^3.1.0"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 'use strict';
 
-var windGoggles = require('turbine-windgoggles')
+var extensionBridge = require('extension-bridge');
 var Ajv = require('ajv');
 
 var VIEW_GROUPS = {
@@ -57,19 +57,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  var windGogglesIframe;
+  var extensionBridgeIFrame;
   var loadSelectedViewIntoIframe = function() {
-    if (windGogglesIframe) {
-      windGogglesIframe.destroy();
+    if (extensionBridgeIFrame) {
+      extensionBridgeIFrame.destroy();
     }
 
     var viewIframe = document.createElement('iframe');
     viewIframe.dataset.frameboyant = true;
     viewIframe.onload = function() {
-      windGogglesIframe = windGoggles(viewIframe);
-      windGogglesIframe.openCodeEditor = openCodeEditor;
-      windGogglesIframe.openRegexTester = openRegexTester;
-      windGogglesIframe.openDataElementSelector = openDataElementSelector;
+      extensionBridgeIFrame = extensionBridge(viewIframe);
+      extensionBridgeIFrame.openCodeEditor = openCodeEditor;
+      extensionBridgeIFrame.openRegexTester = openRegexTester;
+      extensionBridgeIFrame.openDataElementSelector = openDataElementSelector;
       initView();
     };
 
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
       selectedViewDescriptor = viewSelector.options[viewSelector.selectedIndex].descriptor;
     }
 
-    windGogglesIframe.init({
+    extensionBridgeIFrame.init({
       config: setConfigField.value.length ? JSON.parse(setConfigField.value) : null,
       schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null,
       propertyConfig: {
@@ -103,10 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
   viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
 
   validateButton.addEventListener('click', function() {
-    windGogglesIframe.validate(function(valid) {
+    extensionBridgeIFrame.validate(function(valid) {
       if (valid) {
         if (selectedViewDescriptor && selectedViewDescriptor.schema) {
-          windGogglesIframe.getConfig(function(config) {
+          extensionBridgeIFrame.getConfig(function(config) {
             var ajv = Ajv();
             var matchesSchema = ajv.validate(selectedViewDescriptor.schema, config);
 
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   getConfigButton.addEventListener('click', function() {
-    windGogglesIframe.getConfig(function(config) {
+    extensionBridgeIFrame.getConfig(function(config) {
       getConfigField.value = JSON.stringify(config);
     });
   });
