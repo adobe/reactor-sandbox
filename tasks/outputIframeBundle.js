@@ -4,7 +4,7 @@ var path = require('path');
 var files = require('./constants/files');
 
 module.exports = function(gulp) {
-  gulp.task('sandbox:outputIframeBundle', ['extensionBridge:buildIframe'], function() {
+  gulp.task('sandbox:outputIframeBundle', ['extensionBridge:build'], function() {
     var bundlePath = path.dirname(require.resolve('extension-bridge'));
 
     return gulp

@@ -11,6 +11,8 @@ var VIEW_GROUPS = {
   'dataElements': 'Data Elements'
 };
 
+var LOADING_CLASS_NAME = 'loading';
+
 var openCodeEditor = function(code, callback) {
   callback('Edited Code ' + Math.round(Math.random() * 10000));
 };
@@ -59,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var extensionBridgeIFrame;
   var loadSelectedViewIntoIframe = function() {
+    viewIframeContainer.classList.add(LOADING_CLASS_NAME);
+
     if (extensionBridgeIFrame) {
       extensionBridgeIFrame.destroy();
     }
@@ -70,6 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
       extensionBridgeIFrame.openCodeEditor = openCodeEditor;
       extensionBridgeIFrame.openRegexTester = openRegexTester;
       extensionBridgeIFrame.openDataElementSelector = openDataElementSelector;
+      extensionBridgeIFrame.initialRenderCompleteCallback = function() {
+        viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
+      };
       initView();
     };
 

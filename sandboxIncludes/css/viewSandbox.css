@@ -26,7 +26,7 @@ iframe {
 
 /**
  * Frameboyant removes the body background property of any iframe it controls. This pseudo element
- * has the same dimmensions as the iframe and we can set a background color on it.
+ * has the same dimensions as the iframe and we can set a background color on it.
 */
 #iframeContainer:after {
   background: #fafafa;
@@ -37,6 +37,11 @@ iframe {
   z-index: -2;
   top: 0;
   position: absolute;
+}
+
+#iframeContainer.loading {
+  height: 0px;
+  overflow: hidden;
 }
 
 .error {
