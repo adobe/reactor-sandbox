@@ -30,6 +30,9 @@ module.exports = function(gulp) {
               'loader': 'json'
             }
           ]
+        },
+        node: {
+          fs: 'empty'
         }
       }))
       .pipe(gulp.dest(path.join(files.OUTPUT_DIRNAME, files.OUTPUT_INCLUDES_DIRNAME, 'js')));
