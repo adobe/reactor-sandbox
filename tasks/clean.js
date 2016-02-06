@@ -11,7 +11,7 @@ module.exports = function(gulp) {
       path.resolve(files.OUTPUT_DIRNAME)
     ];
 
-    if (packageDescriptor.name !== 'turbine-gulp-sandbox') {
+    if (packageDescriptor.name !== '@reactor/turbine-gulp-sandbox') {
       paths.push(path.resolve(files.TEMPLATES_DIRNAME));
     }
 

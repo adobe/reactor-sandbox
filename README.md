@@ -6,7 +6,15 @@ In order to create a sandbox within your project, add turbine-gulp-sandbox to th
 
 ```javascript
 var gulp = require('gulp');
-require('turbine-gulp-sandbox')(gulp);
+require('@reactor/turbine-gulp-sandbox')(gulp);
+```
+
+# Dependencies installation
+
+You need to setup the Reactor NPM registry to install all the packages from the `@reactor` scope. Before running `npm install`, run
+
+```
+npm config set @reactor:registry https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local/
 ```
 
 ## Building
@@ -39,7 +47,7 @@ gulp.task('buildView', function() {
   // Process your view here.
 });
 
-require('turbine-gulp-sandbox')(gulp, {
+require('@reactor/turbine-gulp-sandbox')(gulp, {
   dependencyTasks: ['buildView']
 });
 ```
