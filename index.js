@@ -14,7 +14,7 @@ var glob = require('glob');
 module.exports = function(gulp, options) {
   options = options || {};
 
-  var extensionBridge = require('extension-bridge/tasks/index');
+  var extensionBridge = require('@reactor/extension-bridge/tasks/index');
   extensionBridge(gulp);
 
   // Require in each task.

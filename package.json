@@ -1,10 +1,17 @@
 {
-  "name": "turbine-gulp-sandbox",
+  "name": "@reactor/turbine-gulp-sandbox",
   "version": "0.0.1",
-  "description": "",
+  "description": "Gulp tasks for creating a sandbox in which you can manually test your Turbine extension.",
+  "author": {
+    "name": "DTM",
+    "email": "DTM-Engineering@adobe.com"
+  },
   "repository": {
     "type": "git",
     "url": "git@git.corp.adobe.com:reactor/turbine-gulp-sandbox.git"
+  },
+  "publishConfig": {
+    "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local"
   },
   "dependencies": {
     "ajv": "^3.4.0",
@@ -17,12 +24,11 @@
     "jschannel": "^1.0.0",
     "json-loader": "^0.5.4",
     "mkdirp": "^0.5.1",
-    "turbine": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine.git",
-    "extension-bridge": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/extension-bridge.git",
+    "@reactor/turbine": "^1.0.0",
+    "@reactor/extension-bridge": "^0.0.10",
     "webpack-stream": "^3.1.0"
   },
   "devDependencies": {
-    "turbine-extension-dtm": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine-extension-dtm.git",
-    "turbine-extension-gua": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/turbine-extension-gua.git"
+    "@reactor/turbine-extension-dtm": "^0.0.1"
   }
 }

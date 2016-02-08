@@ -5,9 +5,9 @@ var files = require('./constants/files');
 var packageDescriptor = require('./helpers/getPackageDescriptor')();
 
 module.exports = function(gulp) {
-  var turbinePath = packageDescriptor.name === 'turbine' ?
+  var turbinePath = packageDescriptor.name === '@reactor/turbine' ?
     process.cwd() :
-    path.dirname(require.resolve('turbine'));
+    path.dirname(require.resolve('@reactor/turbine'));
 
   var turbine = require(path.join(turbinePath, 'index.js'));
 
@@ -22,10 +22,10 @@ module.exports = function(gulp) {
     // from within turbine itself.
     var turbinePath;
 
-    if (packageDescriptor.name === 'turbine') {
+    if (packageDescriptor.name === '@reactor/turbine') {
       turbinePath = process.cwd();
     } else {
-      turbinePath = path.dirname(require.resolve('turbine'));
+      turbinePath = path.dirname(require.resolve('@reactor/turbine'));
     }
 
     return gulp
