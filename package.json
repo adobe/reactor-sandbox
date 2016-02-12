@@ -27,8 +27,5 @@
     "@reactor/turbine": "^1.0.0",
     "@reactor/extension-bridge": "^0.0.10",
     "webpack-stream": "^3.1.0"
-  },
-  "devDependencies": {
-    "@reactor/turbine-extension-dtm": "^0.0.1"
   }
 }
