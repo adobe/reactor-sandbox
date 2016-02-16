@@ -29,11 +29,13 @@ document.addEventListener('DOMContentLoaded', function() {
   var viewSelector = document.getElementById('extensionViewSelector');
   var validateButton = document.getElementById('validateButton');
   var validateOutput = document.getElementById('validateOutput');
-  var getConfigField = document.getElementById('getConfigField');
-  var getConfigButton = document.getElementById('getConfigButton');
-  var setConfigField = document.getElementById('setConfigField');
-  var setConfigButton = document.getElementById('setConfigButton');
+  var getSettingsField = document.getElementById('getSettingsField');
+  var getSettingsButton = document.getElementById('getSettingsButton');
+  var initField = document.getElementById('initField');
+  var initButton = document.getElementById('initButton');
   var viewIframeContainer = document.getElementById('iframeContainer');
+  var openNewTabButton = document.getElementById('newTabButton');
+
   var lastSelectedView = localStorage.getItem('lastSelectedView');
   var selectedViewDescriptor;
 
@@ -59,6 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  var getViewURLFromSelector = function() {
+    if (viewSelector.selectedIndex !== -1) {
+      var viewPath = viewSelector.options[viewSelector.selectedIndex].value;
+      localStorage.setItem('lastSelectedView', viewPath);
+      return 'extensionViews/' + viewPath;
+    }
+  };
+
   var extensionBridgeIFrame;
   var loadSelectedViewIntoIframe = function() {
     viewIframeContainer.classList.add(LOADING_CLASS_NAME);
@@ -80,10 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
       initView();
     };
 
-    if (viewSelector.selectedIndex !== -1) {
-      var viewPath = viewSelector.options[viewSelector.selectedIndex].value;
-      viewIframe.src = 'extensionViews/' + viewPath;
-      localStorage.setItem('lastSelectedView', viewPath);
+    var viewURL = getViewURLFromSelector();
+    if (viewURL) {
+      viewIframe.src = viewURL;
     }
 
     viewIframeContainer.appendChild(viewIframe);
@@ -95,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     extensionBridgeIFrame.init({
-      config: setConfigField.value.length ? JSON.parse(setConfigField.value) : null,
+      settings: initField.value.length ? JSON.parse(initField.value) : null,
       schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null,
       propertyConfig: {
         domainList: [
@@ -109,19 +118,28 @@ document.addEventListener('DOMContentLoaded', function() {
   loadSelectedViewIntoIframe();
   viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
 
+  var openViewInNewTab = function() {
+    var viewURL = getViewURLFromSelector();
+
+    if (viewURL) {
+      window.open(viewURL);
+    }
+  };
+  openNewTabButton.addEventListener('click', openViewInNewTab);
+
   validateButton.addEventListener('click', function() {
     extensionBridgeIFrame.validate(function(valid) {
       if (valid) {
         if (selectedViewDescriptor && selectedViewDescriptor.schema) {
-          extensionBridgeIFrame.getConfig(function(config) {
+          extensionBridgeIFrame.getSettings(function(settings) {
             var ajv = Ajv();
-            var matchesSchema = ajv.validate(selectedViewDescriptor.schema, config);
+            var matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
 
             if (matchesSchema) {
               validateOutput.innerHTML = 'Valid';
             } else {
               validateOutput.innerHTML =
-                '<span class="error">Config does not match schema</span>';
+                '<span class="error">Settings object does not match schema</span>';
             }
           });
         } else {
@@ -133,11 +151,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  getConfigButton.addEventListener('click', function() {
-    extensionBridgeIFrame.getConfig(function(config) {
-      getConfigField.value = JSON.stringify(config);
+  getSettingsButton.addEventListener('click', function() {
+    extensionBridgeIFrame.getSettings(function(settings) {
+      getSettingsField.value = JSON.stringify(settings);
     });
   });
 
-  setConfigButton.addEventListener('click', initView);
+  initButton.addEventListener('click', initView);
 });

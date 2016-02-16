@@ -14,7 +14,7 @@
     <div>
       Select View:
       <select id="extensionViewSelector"></select>
-      <button onclick="window.open(document.querySelector('#iframeContainer iframe').src);">Open View in New Tab</button>
+      <button id="newTabButton">Open View in New Tab</button>
     </div>
 
     <div id="iframeContainer"></div>
@@ -26,13 +26,13 @@
       </div>
 
       <div class="actionPanel">
-        <textarea id="setConfigField" class="codeView"></textarea><br>
-        <button id="setConfigButton">Set Config</button>
+        <textarea id="initField" class="codeView"></textarea><br>
+        <button id="initButton">Init</button>
       </div>
 
       <div class="actionPanel">
-        <textarea id="getConfigField" class="codeView"></textarea><br>
-        <button id="getConfigButton">Get Config</button>
+        <textarea id="getSettingsField" class="codeView"></textarea><br>
+        <button id="getSettingsButton">Get Settings</button>
       </div>
     </div>
   </body>
