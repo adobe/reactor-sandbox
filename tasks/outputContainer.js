@@ -6,12 +6,11 @@ var path = require('path');
 var files = require('./constants/files');
 var mkdirp = require('mkdirp');
 
-var CAPABILITIES = [
+var DELEGATE_TYPES = [
   'events',
   'conditions',
   'actions',
-  'dataElements',
-  'resources'
+  'dataElements'
 ];
 
 var CONTAINER_TEMPLATE_PATH = path.resolve(
@@ -34,32 +33,49 @@ function stringifyUsingLiteralFunctions(container) {
     .replace(/\\n/g, '\n');
 }
 
-var augmentCapabilities = function(extensionOutput, extensionDescriptor, libBasePath) {
-  CAPABILITIES.forEach(function(capability) {
-    if (extensionDescriptor.hasOwnProperty(capability)) {
-      extensionOutput[capability] = extensionOutput[capability] || {};
-      var capabilityDescriptors = extensionDescriptor[capability];
+var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePath) {
+  extensionOutput.delegates = extensionOutput.delegates || {};
 
-      capabilityDescriptors.forEach(function(capabilityDescriptor) {
-        var capabilityPath = path.join(libBasePath, capabilityDescriptor[files.LIB_PATH_ATTR]);
-        var id;
+  DELEGATE_TYPES.forEach(function(delegateType) {
+    if (extensionDescriptor.hasOwnProperty(delegateType)) {
+      var delegateDescriptors = extensionDescriptor[delegateType];
 
-        // events, conditions, actions, and data element delegates don't have names. We need
-        // to give them a unique ID.
-        if (capability === 'resources') {
-          id = capabilityDescriptor.name;
-        } else {
-          id = extensionDescriptor.name + '.' +
-            path.basename(capabilityPath, path.extname(capabilityPath));
-        }
+      if (delegateDescriptors) {
+        delegateDescriptors.forEach(function(delegateDescriptor) {
+          var id = extensionDescriptor.name + '/' + delegateType + '/' + delegateDescriptor.name;
 
-        if (!extensionOutput[capability][id]) {
-          var script = fs.readFileSync(capabilityPath, {encoding: 'utf8'});
-          extensionOutput[capability][id] = wrapInFunction(script, ['module', 'require']);
-        }
-      });
+          if (!extensionOutput.delegates[id]) {
+            var delegateLibPath = path.join(libBasePath, delegateDescriptor[files.LIB_PATH_ATTR]);
+            var script = fs.readFileSync(delegateLibPath, {encoding: 'utf8'});
+            extensionOutput.delegates[id] = {
+              displayName: delegateDescriptor.displayName,
+              script: wrapInFunction(script, ['module', 'require'])
+            };
+          }
+        });
+      }
     }
   });
+};
+
+var augmentResources = function(extensionOutput, extensionDescriptor, libBasePath) {
+  extensionOutput.resources = extensionOutput.resources || {};
+
+  var resourceDescriptors = extensionDescriptor.resources;
+
+  if (resourceDescriptors) {
+    resourceDescriptors.forEach(function(resourceDescriptor) {
+      var id = extensionDescriptor.name + '/resources/' + resourceDescriptor.name;
+
+      if (!extensionOutput.resources[id]) {
+        var resourceLibPath = path.join(libBasePath, resourceDescriptor[files.LIB_PATH_ATTR]);
+        var script = fs.readFileSync(resourceLibPath, {encoding: 'utf8'});
+        extensionOutput.resources[id] = {
+          script: wrapInFunction(script, ['module', 'require'])
+        };
+      }
+    });
+  }
 };
 
 module.exports = function(gulp) {
@@ -80,17 +96,24 @@ module.exports = function(gulp) {
     extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
       var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
 
+      // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because
+      // Extension A may be pulled in from node_modules AND the extension developer using the
+      // sandbox may have already coded in some stuff for Extension A within their container.js
+      // template. This is a common use case when an extension developer wants to test certain
+      // extension configurations.
       var extensionOutput = extensionsOutput[extensionDescriptor.name];
 
       if (!extensionOutput) {
         extensionOutput = extensionsOutput[extensionDescriptor.name] = {};
       }
 
+      extensionOutput.name = extensionOutput.name || extensionDescriptor.name;
       extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
 
       var extensionPath = path.dirname(extensionDescriptorPath);
       var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
-      augmentCapabilities(extensionOutput, extensionDescriptor, libBasePath);
+      augmentDelegates(extensionOutput, extensionDescriptor, libBasePath);
+      augmentResources(extensionOutput, extensionDescriptor, libBasePath);
     });
 
     container = stringifyUsingLiteralFunctions(container);

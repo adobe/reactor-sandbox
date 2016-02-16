@@ -6,7 +6,7 @@ module.exports = function(gulp) {
     'sandbox:outputContainer',
     'sandbox:outputEngine',
     'sandbox:outputExtensionViews',
-    'sandbox:outputSandboxHTMLs',
+    'sandbox:outputSandboxHtml',
     'sandbox:outputSandboxIncludes',
     'sandbox:outputIframeBundle',
     'sandbox:serve',

@@ -11,7 +11,7 @@ module.exports = function(gulp) {
       .pipe(gulp.dest(files.OUTPUT_DIRNAME));
   };
 
-  gulp.task('sandbox:outputSandboxHTMLs', ['sandbox:initTemplates'], function() {
+  gulp.task('sandbox:outputSandboxHtml', ['sandbox:initTemplates'], function() {
     gulp.watch(source, function() {
       console.log('Library sandbox HTML change detected. Republished.');
       outputLibSandboxHTML();
