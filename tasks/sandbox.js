@@ -1,14 +1,18 @@
 'use strict';
 
 module.exports = function(gulp) {
-  gulp.task('sandbox:sandbox', [
+  gulp.task('sandbox:compile', [
     'sandbox:initTemplates',
     'sandbox:outputContainer',
     'sandbox:outputEngine',
     'sandbox:outputExtensionViews',
     'sandbox:outputSandboxHtml',
     'sandbox:outputSandboxIncludes',
-    'sandbox:outputIframeBundle',
+    'sandbox:outputIframeBundle'
+  ]);
+
+  gulp.task('sandbox:sandbox', [
+    'sandbox:compile',
     'sandbox:serve',
     'sandbox:watchSandboxIncludes'
   ]);
