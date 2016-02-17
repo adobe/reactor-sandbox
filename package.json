@@ -24,7 +24,7 @@
     "jschannel": "^1.0.0",
     "json-loader": "^0.5.4",
     "mkdirp": "^0.5.1",
-    "@reactor/turbine": "^1.0.0",
+    "@reactor/turbine": "^2.0.0",
     "@reactor/extension-bridge": "^0.0.10",
     "webpack-stream": "^3.1.0"
   }
