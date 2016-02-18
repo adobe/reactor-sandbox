@@ -14,18 +14,18 @@
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local"
   },
   "dependencies": {
-    "ajv": "^3.4.0",
+    "ajv": "^3.7.0",
     "del": "^2.2.0",
-    "glob": "^6.0.4",
-    "gulp": "^3.9.0",
+    "glob": "^7.0.0",
+    "gulp": "^3.9.1",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-webserver": "^0.9.1",
     "jschannel": "^1.0.0",
     "json-loader": "^0.5.4",
     "mkdirp": "^0.5.1",
-    "@reactor/turbine": "^2.0.0",
-    "@reactor/extension-bridge": "^0.0.10",
+    "@reactor/turbine": "^2.1.0",
+    "@reactor/extension-bridge": "^1.0.0",
     "webpack-stream": "^3.1.0"
   }
 }
