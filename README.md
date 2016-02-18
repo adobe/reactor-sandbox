@@ -1,4 +1,5 @@
 # turbine-gulp-sandbox
+[![Build Status][status-image]][status-url] [![NPM version][npm-image]][npm-url] [![NPM Dependencies][npm-dependencies-image]][npm-dependencies-url]
 
 This project provides gulp tasks for creating a sandbox in which you can manually test your extension. In addition to building web pages as starting points, this project builds the Turbine engine as well as a Turbine container to be used within those web pages. A Turbine container contains code specific to a particular DTM property. It will contain code from extensions installed for the property as well as configurations of the property, extensions, data elements, and rules. Both the container and the engine are necessary for DTM to be of much use.
 
@@ -49,3 +50,10 @@ By doing so, your task will also be run when running `gulp sandbox`.
 ## Cleaning
 
 If you ever want to remove the sandbox-related files from your project you can run `gulp sandbox:clean`.
+
+[status-url]: https://dtm-builder.ut1.mcps.adobe.net/job/turbine-gulp-sandbox
+[status-image]: https://dtm-builder.ut1.mcps.adobe.net/buildStatus/icon?job=turbine-gulp-sandbox
+[npm-url]: https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/turbine-gulp-sandbox/-/@reactor
+[npm-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor/job/turbine-gulp-sandbox/ws/badges/npm.svg
+[npm-dependencies-url]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor/job/turbine-gulp-sandbox/ws/dependencies.txt
+[npm-dependencies-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor/job/turbine-gulp-sandbox/ws/badges/dependencies.svg
