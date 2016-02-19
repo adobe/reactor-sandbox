@@ -14,6 +14,9 @@ module.exports = function(gulp) {
   gulp.task('sandbox:sandbox', [
     'sandbox:compile',
     'sandbox:serve',
+    'sandbox:watchOutputContainer',
+    'sandbox:watchOutputExtensionViews',
+    'sandbox:watchOutputSandboxHtml',
     'sandbox:watchSandboxIncludes'
   ]);
 };

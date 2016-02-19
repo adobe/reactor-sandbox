@@ -127,7 +127,9 @@ module.exports = function(gulp) {
     fs.writeFileSync(path.join(CONTAINER_OUTPUT_PATH, files.CONTAINER_OUTPUT_FILENAME), container);
   };
 
-  gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], function() {
+  gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], outputContainer);
+
+  gulp.task('sandbox:watchOutputContainer', ['sandbox:initTemplates'], function() {
     gulp.watch(
       [
         path.resolve(CONTAINER_TEMPLATE_PATH),
@@ -138,7 +140,5 @@ module.exports = function(gulp) {
         outputContainer();
       }
     );
-
-    return outputContainer();
   });
 };
