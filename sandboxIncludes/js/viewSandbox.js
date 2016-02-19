@@ -11,7 +11,13 @@ var VIEW_GROUPS = {
   'dataElements': 'Data Elements'
 };
 
+var NOT_AVAILABLE = '--N/A--';
+
 var LOADING_CLASS_NAME = 'loading';
+
+var clearSelectOptions = function (comboBox) {
+  comboBox.innerHTML = '';
+};
 
 var openCodeEditor = function(code, callback) {
   callback('Edited Code ' + Math.round(Math.random() * 10000));
@@ -26,6 +32,7 @@ var openDataElementSelector = function(callback) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+  var viewGroupSelector = document.getElementById('viewGroupSelector');
   var viewSelector = document.getElementById('extensionViewSelector');
   var validateButton = document.getElementById('validateButton');
   var validateOutput = document.getElementById('validateOutput');
@@ -37,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var openNewTabButton = document.getElementById('newTabButton');
 
   var lastSelectedView = localStorage.getItem('lastSelectedView');
+  var lastSelectedViewGroup = localStorage.getItem('lastSelectedViewGroup');
   var selectedViewDescriptor;
 
   // Populate View Selector.
@@ -44,22 +52,66 @@ document.addEventListener('DOMContentLoaded', function() {
     Object.keys(VIEW_GROUPS).forEach(function(groupKey) {
       var items = extensionDescriptor[groupKey];
       if (items && items.length) {
-        var optgroup = document.createElement('optgroup');
-        optgroup.label = VIEW_GROUPS[groupKey];
-
-        items.forEach(function(item) {
-          var option = document.createElement('option');
-          option.value = item.viewPath;
-          option.text = item.displayName;
-          option.descriptor = item;
-          option.selected = item.viewPath === lastSelectedView;
-          optgroup.appendChild(option);
-        });
-
-        viewSelector.appendChild(optgroup);
+        var option = document.createElement('option');
+        option.value = groupKey;
+        option.text = VIEW_GROUPS[groupKey];
+        option.selected = groupKey === lastSelectedViewGroup;
+        viewGroupSelector.appendChild(option);
       }
     });
   }
+
+  var getCategorizedItems = function(items) {
+    var groupedItems = {};
+
+    items.forEach(function(item) {
+      var categoryName = item.categoryName || NOT_AVAILABLE;
+      if (!groupedItems[categoryName]) {
+        groupedItems[categoryName] = [];
+      }
+      groupedItems[categoryName].push(item);
+    });
+
+    return groupedItems;
+  };
+
+  var populateViewSelector = function() {
+    clearSelectOptions(viewSelector);
+    var groupKey = viewGroupSelector.value;
+    localStorage.setItem('lastSelectedViewGroup', groupKey);
+
+    var categorizedItems = getCategorizedItems(extensionDescriptor[groupKey]);
+    Object.keys(categorizedItems).sort().forEach(function(categoryName) {
+      var parentNode;
+
+      // Don't create `optgroup` node if the items don't belong to any category.
+      // These items should be appended directly to the viewSelector node.
+      if (categoryName !== NOT_AVAILABLE) {
+        parentNode = document.createElement('optgroup');
+        parentNode.label = categoryName;
+
+        viewSelector.appendChild(parentNode);
+      } else {
+        parentNode = viewSelector;
+      }
+
+      var items = categorizedItems[categoryName];
+      items.forEach(function(item) {
+        var option = document.createElement('option');
+        option.value = item.viewPath;
+        option.text = item.displayName;
+        option.descriptor = item;
+        option.selected = item.viewPath === lastSelectedView;
+        parentNode.appendChild(option);
+      });
+    });
+  };
+
+  populateViewSelector();
+  viewGroupSelector.addEventListener('change', function() {
+    populateViewSelector();
+    loadSelectedViewIntoIframe();
+  });
 
   var getViewURLFromSelector = function() {
     if (viewSelector.selectedIndex !== -1) {
