@@ -69,24 +69,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  var extensionBridgeIFrame;
+  var iframeExtensionBridge;
   var loadSelectedViewIntoIframe = function() {
     viewIframeContainer.classList.add(LOADING_CLASS_NAME);
 
-    if (extensionBridgeIFrame) {
-      extensionBridgeIFrame.destroy();
+    if (iframeExtensionBridge) {
+      iframeExtensionBridge.destroy();
     }
 
     var viewIframe = document.createElement('iframe');
     viewIframe.dataset.frameboyant = true;
     viewIframe.onload = function() {
-      extensionBridgeIFrame = extensionBridge(viewIframe);
-      extensionBridgeIFrame.openCodeEditor = openCodeEditor;
-      extensionBridgeIFrame.openRegexTester = openRegexTester;
-      extensionBridgeIFrame.openDataElementSelector = openDataElementSelector;
-      extensionBridgeIFrame.initialRenderCompleteCallback = function() {
+      iframeExtensionBridge = extensionBridge(viewIframe);
+      iframeExtensionBridge.openCodeEditor = openCodeEditor;
+      iframeExtensionBridge.openRegexTester = openRegexTester;
+      iframeExtensionBridge.openDataElementSelector = openDataElementSelector;
+      iframeExtensionBridge.initialRenderComplete.then(function() {
         viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
-      };
+      });
       initView();
     };
 
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
       selectedViewDescriptor = viewSelector.options[viewSelector.selectedIndex].descriptor;
     }
 
-    extensionBridgeIFrame.init({
+    iframeExtensionBridge.init({
       settings: initField.value.length ? JSON.parse(initField.value) : null,
       schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null,
       propertyConfig: {
@@ -128,10 +128,10 @@ document.addEventListener('DOMContentLoaded', function() {
   openNewTabButton.addEventListener('click', openViewInNewTab);
 
   validateButton.addEventListener('click', function() {
-    extensionBridgeIFrame.validate(function(valid) {
+    iframeExtensionBridge.validate(function(valid) {
       if (valid) {
         if (selectedViewDescriptor && selectedViewDescriptor.schema) {
-          extensionBridgeIFrame.getSettings(function(settings) {
+          iframeExtensionBridge.getSettings(function(settings) {
             var ajv = Ajv();
             var matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
 
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   getSettingsButton.addEventListener('click', function() {
-    extensionBridgeIFrame.getSettings(function(settings) {
+    iframeExtensionBridge.getSettings(function(settings) {
       getSettingsField.value = JSON.stringify(settings);
     });
   });
