@@ -140,6 +140,12 @@ document.addEventListener('DOMContentLoaded', function() {
         viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
       });
       initView();
+
+      // LiveReload will reload the iframe content whenever we change the source of the views.
+      viewIframe.contentWindow.onbeforeunload = function() {
+        viewIframe.onload = null;
+        loadSelectedViewIntoIframe();
+      };
     };
 
     var viewURL = getViewURLFromSelector();
