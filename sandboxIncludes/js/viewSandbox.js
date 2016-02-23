@@ -12,6 +12,7 @@ var VIEW_GROUPS = {
 };
 
 var NOT_AVAILABLE = '--N/A--';
+var OTHER = 'Other';
 
 var LOADING_CLASS_NAME = 'loading';
 
@@ -72,6 +73,17 @@ document.addEventListener('DOMContentLoaded', function() {
       groupedItems[categoryName].push(item);
     });
 
+    Object.keys(groupedItems).forEach(function(categoryName) {
+      groupedItems[categoryName].sort(function(a, b) {
+        if (a.displayName < b.displayName) {
+          return -1;
+        } else if (a.displayName > b.displayName) {
+          return 1;
+        } else {
+          return 0;
+      });
+    });
+
     return groupedItems;
   };
 
@@ -81,7 +93,23 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('lastSelectedViewGroup', groupKey);
 
     var categorizedItems = getCategorizedItems(extensionDescriptor[groupKey]);
-    Object.keys(categorizedItems).sort().forEach(function(categoryName) {
+    Object.keys(categorizedItems).sort(function(a, b) {
+      var categoriesToBePlacedLast = [NOT_AVAILABLE, OTHER];
+
+      for (var i = 0; i < categoriesToBePlacedLast.length; i++) {
+        if (a === categoriesToBePlacedLast[i] || b === categoriesToBePlacedLast[i]) {
+          return a === categoriesToBePlacedLast[i] ? 1 : -1;
+        }
+      }
+
+      if (a < b) {
+        return -1;
+      } else if (a > b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }).forEach(function(categoryName) {
       var parentNode;
 
       // Don't create `optgroup` node if the items don't belong to any category.
