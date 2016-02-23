@@ -3,6 +3,10 @@
 var webserver = require('gulp-webserver');
 var files = require('./constants/files');
 var path = require('path');
+var argv = require('yargs')
+  .default('livereload', false)
+  .argv;
+
 
 module.exports = function(gulp) {
   gulp.task('sandbox:serve',
@@ -13,7 +17,7 @@ module.exports = function(gulp) {
           host: '0.0.0.0',
           https: true,
           port: 7000,
-          livereload: true,
+          livereload: argv.livereload,
           open: files.LIB_SANDBOX_TEMPLATE_FILENAME
         }));
     });
