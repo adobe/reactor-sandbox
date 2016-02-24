@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@reactor/extension-bridge": "^2.0.0",
-    "@reactor/turbine": "^2.1.0",
-    "ajv": "^3.7.1",
+    "@reactor/turbine": "^3.0.0",
+    "ajv": "^3.7.2",
     "del": "^2.2.0",
     "glob": "^7.0.0",
     "gulp": "^3.9.1",
@@ -27,6 +27,6 @@
     "json-loader": "^0.5.4",
     "mkdirp": "^0.5.1",
     "webpack-stream": "^3.1.0",
-    "yargs": "^4.1.0"
+    "yargs": "^4.2.0"
   }
 }
