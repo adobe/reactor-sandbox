@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  propertyConfig: {},
+  propertySettings: {},
   rules: [],
   dataElements: {},
   appVersion: '52A',
