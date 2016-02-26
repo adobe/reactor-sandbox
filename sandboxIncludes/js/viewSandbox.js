@@ -161,13 +161,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var viewIframe = document.createElement('iframe');
     viewIframe.dataset.frameboyant = true;
     viewIframe.onload = function() {
-      iframeExtensionBridge = extensionBridge(viewIframe);
-      iframeExtensionBridge.openCodeEditor = openCodeEditor;
-      iframeExtensionBridge.openRegexTester = openRegexTester;
-      iframeExtensionBridge.openDataElementSelector = openDataElementSelector;
-      iframeExtensionBridge.initialRenderComplete.then(function() {
-        viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
+      iframeExtensionBridge = extensionBridge(viewIframe, {
+        openCodeEditor: openCodeEditor,
+        openRegexTester: openRegexTester,
+        openDataElementSelector: openDataElementSelector,
+        onInitialRenderComplete: function() {
+          viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
+        }
       });
+
       initView();
 
       // LiveReload will reload the iframe content whenever we change the source of the views.
