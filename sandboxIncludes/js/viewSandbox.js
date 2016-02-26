@@ -159,7 +159,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     var viewIframe = document.createElement('iframe');
-    viewIframe.dataset.frameboyant = true;
     viewIframe.onload = function() {
       iframeExtensionBridge = extensionBridge(viewIframe, {
         openCodeEditor: openCodeEditor,
