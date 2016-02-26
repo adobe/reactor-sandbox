@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
     iframeExtensionBridge.init({
       settings: initField.value.length ? JSON.parse(initField.value) : null,
       schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null,
-      propertyConfig: {
+      propertySettings: {
         domainList: [
           'adobe.com',
           'example.com'
