@@ -54,6 +54,6 @@ If you ever want to remove the sandbox-related files from your project you can r
 [status-url]: https://dtm-builder.ut1.mcps.adobe.net/job/turbine-gulp-sandbox
 [status-image]: https://dtm-builder.ut1.mcps.adobe.net/buildStatus/icon?job=turbine-gulp-sandbox
 [npm-url]: https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/turbine-gulp-sandbox/-/@reactor
-[npm-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor/job/turbine-gulp-sandbox/ws/badges/npm.svg
-[npm-dependencies-url]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor/job/turbine-gulp-sandbox/ws/dependencies.txt
-[npm-dependencies-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor/job/turbine-gulp-sandbox/ws/badges/dependencies.svg
+[npm-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/turbine-gulp-sandbox/ws/badges/npm.svg
+[npm-dependencies-url]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/turbine-gulp-sandbox/ws/dependencies.txt
+[npm-dependencies-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/turbine-gulp-sandbox/ws/badges/dependencies.svg
