@@ -48,6 +48,12 @@ document.addEventListener('DOMContentLoaded', function() {
   var lastSelectedViewGroup = localStorage.getItem('lastSelectedViewGroup');
   var selectedViewDescriptor;
 
+  // Extension configuration is not an array by default because it's only one.
+  if (extensionDescriptor.configuration) {
+    extensionDescriptor.configuration.displayName = extensionDescriptor.displayName;
+    extensionDescriptor.configuration = [extensionDescriptor.configuration];
+  }
+
   // Populate View Selector.
   if (extensionDescriptor) {
     Object.keys(VIEW_GROUPS).forEach(function(groupKey) {
