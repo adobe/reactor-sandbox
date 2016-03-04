@@ -1,6 +1,6 @@
 'use strict';
 
-var extensionBridge = require('@reactor/extension-bridge');
+var extensionBridge = require('@reactor/extension-support-bridge');
 var Ajv = require('ajv');
 
 var VIEW_GROUPS = {

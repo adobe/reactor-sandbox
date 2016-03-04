@@ -1,6 +1,6 @@
 {
-  "name": "@reactor/turbine-gulp-sandbox",
-  "version": "3.0.2",
+  "name": "@reactor/extension-support-sandbox",
+  "version": "1.0.0",
   "description": "Gulp tasks for creating a sandbox in which you can manually test your Turbine extension.",
   "author": {
     "name": "DTM",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@git.corp.adobe.com:reactor/turbine-gulp-sandbox.git"
+    "url": "git@git.corp.adobe.com:reactor/extension-support-sandbox.git"
   },
   "publishConfig": {
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local"
   },
   "dependencies": {
-    "@reactor/extension-bridge": "^3.1.0",
-    "@reactor/turbine": "^5.0.0",
+    "@reactor/extension-support-bridge": "^1.0.0",
+    "@reactor/turbine": "^7.0.0",
     "ajv": "^3.7.2",
     "del": "^2.2.0",
     "glob": "^7.0.0",

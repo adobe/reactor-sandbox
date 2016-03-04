@@ -1,13 +1,13 @@
-# turbine-gulp-sandbox
+# extension-support-sandbox
 [![Build Status][status-image]][status-url] [![NPM version][npm-image]][npm-url] [![NPM Dependencies][npm-dependencies-image]][npm-dependencies-url]
 
 This project provides gulp tasks for creating a sandbox in which you can manually test your extension. In addition to building web pages as starting points, this project builds the Turbine engine as well as a Turbine container to be used within those web pages. A Turbine container contains code specific to a particular DTM property. It will contain code from extensions installed for the property as well as configurations of the property, extensions, data elements, and rules. Both the container and the engine are necessary for DTM to be of much use.
 
-In order to create a sandbox within your project, add turbine-gulp-sandbox to the `devDependencies` of your project's `package.json` and `npm install` it. In your `gulpfile.js`, require the builder and pass in your gulp instance as follows:
+In order to create a sandbox within your project, add extension-support-sandbox to the `devDependencies` of your project's `package.json` and `npm install` it. In your `gulpfile.js`, require the builder and pass in your gulp instance as follows:
 
 ```javascript
 var gulp = require('gulp');
-require('@reactor/turbine-gulp-sandbox')(gulp);
+require('@reactor/extension-support-sandbox')(gulp);
 ```
 
 ## Building
@@ -31,7 +31,7 @@ It is recommended you don't commit `sandboxTemplates` or `sandbox` into your ver
 
 ## Preprocessing extension views
 
-As mentioned previously, this project provides a sandbox by which you can manually test your extension's views. It may be that your extension views require some preprocessing. Maybe your views use JSX, Stylus, or some other tech that needs preprocessing before they can be displayed within the sandbox. To handle these cases, create a gulp task that performs the preprocessing and pass the name of that task to turbine-gulp-sandbox as follows:
+As mentioned previously, this project provides a sandbox by which you can manually test your extension's views. It may be that your extension views require some preprocessing. Maybe your views use JSX, Stylus, or some other tech that needs preprocessing before they can be displayed within the sandbox. To handle these cases, create a gulp task that performs the preprocessing and pass the name of that task to extension-support-sandbox as follows:
 
 ```javacript
 var gulp = require('gulp');
@@ -40,7 +40,7 @@ gulp.task('buildView', function() {
   // Process your view here.
 });
 
-require('@reactor/turbine-gulp-sandbox')(gulp, {
+require('@reactor/extension-support-sandbox')(gulp, {
   dependencyTasks: ['buildView']
 });
 ```
@@ -51,9 +51,9 @@ By doing so, your task will also be run when running `gulp sandbox`.
 
 If you ever want to remove the sandbox-related files from your project you can run `gulp sandbox:clean`.
 
-[status-url]: https://dtm-builder.ut1.mcps.adobe.net/job/turbine-gulp-sandbox
-[status-image]: https://dtm-builder.ut1.mcps.adobe.net/buildStatus/icon?job=turbine-gulp-sandbox
-[npm-url]: https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/turbine-gulp-sandbox/-/@reactor
-[npm-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/turbine-gulp-sandbox/ws/badges/npm.svg
-[npm-dependencies-url]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/turbine-gulp-sandbox/ws/dependencies.txt
-[npm-dependencies-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/turbine-gulp-sandbox/ws/badges/dependencies.svg
+[status-url]: https://dtm-builder.ut1.mcps.adobe.net/job/extension-support-sandbox
+[status-image]: https://dtm-builder.ut1.mcps.adobe.net/buildStatus/icon?job=extension-support-sandbox
+[npm-url]: https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/extension-support-sandbox/-/@reactor
+[npm-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/badges/npm.svg
+[npm-dependencies-url]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/dependencies.txt
+[npm-dependencies-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/badges/dependencies.svg
