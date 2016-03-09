@@ -16,7 +16,7 @@ var OTHER = 'Other';
 
 var LOADING_CLASS_NAME = 'loading';
 
-var clearSelectOptions = function (comboBox) {
+var clearSelectOptions = function(comboBox) {
   comboBox.innerHTML = '';
 };
 
@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var lastSelectedView = localStorage.getItem('lastSelectedView');
   var lastSelectedViewGroup = localStorage.getItem('lastSelectedViewGroup');
-  var selectedViewDescriptor;
 
   // Extension configuration is not an array by default because it's only one.
   if (extensionDescriptor.configuration) {
@@ -175,7 +174,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
 
-      initView();
+      var selectedViewDescriptor = getSelectedViewDescriptor();
+
+      var initOptions = {
+        settings: null,
+        extensionConfigurations: [
+          {
+            id: 'EC123',
+            name: 'Example Extension Configuration',
+            enabled: true,
+            settings: {
+              foo: 'bar'
+            }
+          }
+        ],
+        propertySettings: {
+          domainList: [
+            'adobe.com',
+            'example.com'
+          ]
+        },
+        schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
+      };
+
+      initField.value = JSON.stringify(initOptions, null, 2);
+      iframeExtensionBridge.init(initOptions);
 
       // LiveReload will reload the iframe content whenever we change the source of the views.
       viewIframe.contentWindow.onbeforeunload = function() {
@@ -192,21 +215,10 @@ document.addEventListener('DOMContentLoaded', function() {
     viewIframeContainer.appendChild(viewIframe);
   };
 
-  var initView = function() {
+  var getSelectedViewDescriptor = function() {
     if (viewSelector.selectedIndex !== -1) {
-      selectedViewDescriptor = viewSelector.options[viewSelector.selectedIndex].descriptor;
+      return viewSelector.options[viewSelector.selectedIndex].descriptor;
     }
-
-    iframeExtensionBridge.init({
-      settings: initField.value.length ? JSON.parse(initField.value) : null,
-      schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null,
-      propertySettings: {
-        domainList: [
-          'adobe.com',
-          'example.com'
-        ]
-      }
-    });
   };
 
   loadSelectedViewIntoIframe();
@@ -224,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
   validateButton.addEventListener('click', function() {
     iframeExtensionBridge.validate(function(valid) {
       if (valid) {
+        var selectedViewDescriptor = getSelectedViewDescriptor();
         if (selectedViewDescriptor && selectedViewDescriptor.schema) {
           iframeExtensionBridge.getSettings(function(settings) {
             var ajv = Ajv();
@@ -251,5 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  initButton.addEventListener('click', initView);
+  initButton.addEventListener('click', function() {
+    iframeExtensionBridge.init(JSON.parse(initField.value));
+  });
 });
