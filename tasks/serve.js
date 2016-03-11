@@ -18,7 +18,7 @@ module.exports = function(gulp) {
           https: true,
           port: 7000,
           livereload: argv.livereload,
-          open: files.LIB_SANDBOX_TEMPLATE_FILENAME
+          open: files.VIEW_SANDBOX_TEMPLATE_FILENAME
         }));
     });
 };

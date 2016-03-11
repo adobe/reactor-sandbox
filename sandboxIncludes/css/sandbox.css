@@ -1,6 +1,24 @@
+body {
+  padding: 12px;
+}
+
+.nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .actionPanel {
   float: left;
   padding: 12px;
+}
+
+.actionPanel:first-child {
+  padding-left: 0;
+}
+
+.actionPanel:last-child {
+  padding-right: 0;
 }
 
 .actionPanel:after {
@@ -10,8 +28,10 @@
 }
 
 .codeView {
-  width: 300px;
-  height: 100px;
+  display: block;
+  width: 550px;
+  height: 350px;
+  margin-top: 8px;
 }
 
 iframe {
@@ -46,4 +66,8 @@ iframe {
 
 .error {
   color: red;
+}
+
+#validateOutput {
+  font-size: 24px;
 }
