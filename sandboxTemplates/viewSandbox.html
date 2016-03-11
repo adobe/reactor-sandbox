@@ -2,18 +2,23 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>Extension View Sandbox</title>
+    <title>Reactor Extension View Sandbox</title>
+
+    <link rel="stylesheet" href="//assets.adobedtm.com/activation/reactor/coralui/3.11.0/css/coral.css">
+    <script src="//assets.adobedtm.com/activation/reactor/coralui/3.11.0/js/libs/jquery.js"></script>
+    <script src="//assets.adobedtm.com/activation/reactor/coralui/3.11.0/js/coral.js"></script>
+
     <script src="includes/js/viewSandbox.js"></script>
-    <link href="includes/css/viewSandbox.css" rel="stylesheet" type="text/css">
+    <link href="includes/css/sandbox.css" rel="stylesheet" type="text/css">
     <script>
       window.Coral = window.Coral || {};
       Coral.options = { typeKitId: 'buj6cmr'};
     </script>
   </head>
-  <body>
-    <h1>Extension View Sandbox</h1>
+  <body class="coral--light">
+    <a class="nav" is="coral-anchorbutton" variant="quiet" href="libSandbox.html">Go to library sandbox</a>
 
-    <p><a href="libSandbox.html">Switch to Extension Library Sandbox</a></p>
+    <h1 class="coral-Heading coral-Heading--1">Reactor Extension View Sandbox</h1>
 
     <div>
       Select View:
@@ -26,18 +31,18 @@
 
     <div>
       <div class="actionPanel">
-        <button id="validateButton">Validate</button>
+        <button is="coral-button" id="initButton">Init</button>
+        <textarea is="coral-textarea" id="initField" class="codeView"></textarea><br>
+      </div>
+
+      <div class="actionPanel">
+        <button is="coral-button" id="getSettingsButton">Get Settings</button>
+        <textarea is="coral-textarea" id="getSettingsField" class="codeView"></textarea><br>
+      </div>
+
+      <div class="actionPanel">
+        <button is="coral-button" id="validateButton">Validate</button>
         <p><span id="validateOutput"></span></p>
-      </div>
-
-      <div class="actionPanel">
-        <textarea id="initField" class="codeView"></textarea><br>
-        <button id="initButton">Init</button>
-      </div>
-
-      <div class="actionPanel">
-        <textarea id="getSettingsField" class="codeView"></textarea><br>
-        <button id="getSettingsButton">Get Settings</button>
       </div>
     </div>
   </body>
