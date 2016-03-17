@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@reactor/extension-support-bridge": "^1.0.0",
-    "@reactor/turbine": "^7.0.0",
+    "@reactor/turbine": "^8.0.0",
     "ajv": "^3.7.2",
     "del": "^2.2.0",
     "glob": "^7.0.0",
