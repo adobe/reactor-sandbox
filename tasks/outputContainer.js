@@ -58,19 +58,19 @@ var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePat
   });
 };
 
-var augmentResources = function(extensionOutput, extensionDescriptor, libBasePath) {
-  extensionOutput.resources = extensionOutput.resources || {};
+var augmentHelpers = function(extensionOutput, extensionDescriptor, libBasePath) {
+  extensionOutput.helpers = extensionOutput.helpers || {};
 
-  var resourceDescriptors = extensionDescriptor.resources;
+  var helperDescriptors = extensionDescriptor.helpers;
 
-  if (resourceDescriptors) {
-    resourceDescriptors.forEach(function(resourceDescriptor) {
-      var id = extensionDescriptor.name + '/resources/' + resourceDescriptor.name;
+  if (helperDescriptors) {
+    helperDescriptors.forEach(function(helperDescriptor) {
+      var id = extensionDescriptor.name + '/helpers/' + helperDescriptor.name;
 
-      if (!extensionOutput.resources[id]) {
-        var resourceLibPath = path.join(libBasePath, resourceDescriptor[files.LIB_PATH_ATTR]);
-        var script = fs.readFileSync(resourceLibPath, {encoding: 'utf8'});
-        extensionOutput.resources[id] = {
+      if (!extensionOutput.helpers[id]) {
+        var helperLibPath = path.join(libBasePath, helperDescriptor[files.LIB_PATH_ATTR]);
+        var script = fs.readFileSync(helperLibPath, {encoding: 'utf8'});
+        extensionOutput.helpers[id] = {
           script: wrapInFunction(script, ['module', 'require'])
         };
       }
@@ -113,7 +113,7 @@ module.exports = function(gulp) {
       var extensionPath = path.dirname(extensionDescriptorPath);
       var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
       augmentDelegates(extensionOutput, extensionDescriptor, libBasePath);
-      augmentResources(extensionOutput, extensionDescriptor, libBasePath);
+      augmentHelpers(extensionOutput, extensionDescriptor, libBasePath);
     });
 
     container = stringifyUsingLiteralFunctions(container);

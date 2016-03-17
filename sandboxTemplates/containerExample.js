@@ -57,8 +57,8 @@ module.exports = {
           script: function(module, require) {}
         }
       },
-      resources: {
-        'exampleExtension/resources/myExampleResource': {
+      helpers: {
+        'exampleExtension/helpers/myExampleResource': {
           script: function(module, require) {}
         }
       }
