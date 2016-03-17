@@ -61,15 +61,15 @@ var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePat
 var augmentHelpers = function(extensionOutput, extensionDescriptor, libBasePath) {
   extensionOutput.helpers = extensionOutput.helpers || {};
 
-  var resourceDescriptors = extensionDescriptor.helpers;
+  var helperDescriptors = extensionDescriptor.helpers;
 
-  if (resourceDescriptors) {
-    resourceDescriptors.forEach(function(resourceDescriptor) {
-      var id = extensionDescriptor.name + '/helpers/' + resourceDescriptor.name;
+  if (helperDescriptors) {
+    helperDescriptors.forEach(function(helperDescriptor) {
+      var id = extensionDescriptor.name + '/helpers/' + helperDescriptor.name;
 
       if (!extensionOutput.helpers[id]) {
-        var resourceLibPath = path.join(libBasePath, resourceDescriptor[files.LIB_PATH_ATTR]);
-        var script = fs.readFileSync(resourceLibPath, {encoding: 'utf8'});
+        var helperLibPath = path.join(libBasePath, helperDescriptor[files.LIB_PATH_ATTR]);
+        var script = fs.readFileSync(helperLibPath, {encoding: 'utf8'});
         extensionOutput.helpers[id] = {
           script: wrapInFunction(script, ['module', 'require'])
         };
