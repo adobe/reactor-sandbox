@@ -27,7 +27,7 @@ body {
   clear: both;
 }
 
-.codeView {
+.CodeMirror {
   display: block;
   width: 550px;
   height: 350px;

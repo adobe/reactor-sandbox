@@ -8,6 +8,15 @@
     <script src="//assets.adobedtm.com/activation/reactor/coralui/3.11.0/js/libs/jquery.js"></script>
     <script src="//assets.adobedtm.com/activation/reactor/coralui/3.11.0/js/coral.js"></script>
 
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/codemirror.css" rel="stylesheet" type="text/css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/addon/lint/lint.css" rel="stylesheet" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/codemirror.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/mode/javascript/javascript.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/addon/lint/lint.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/addon/lint/json-lint.js"></script>
+
     <script src="includes/js/viewSandbox.js"></script>
     <link href="includes/css/sandbox.css" rel="stylesheet" type="text/css">
     <script>
@@ -32,12 +41,12 @@
     <div>
       <div class="actionPanel">
         <button is="coral-button" id="initButton">Init</button>
-        <textarea is="coral-textarea" id="initField" class="codeView"></textarea><br>
+        <div id="initEditorContainer"></div>
       </div>
 
       <div class="actionPanel">
         <button is="coral-button" id="getSettingsButton">Get Settings</button>
-        <textarea is="coral-textarea" id="getSettingsField" class="codeView"></textarea><br>
+        <div id="getSettingsEditorContainer"></div>
       </div>
 
       <div class="actionPanel">

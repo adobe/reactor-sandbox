@@ -16,6 +16,19 @@ var OTHER = 'Other';
 
 var LOADING_CLASS_NAME = 'loading';
 
+var codeMirrorConfig = {
+  lineNumbers: true,
+  mode: 'application/json',
+  gutters: ['CodeMirror-lint-markers'],
+  lint: true,
+  value: '{}',
+  extraKeys: {
+    'Tab': function(cm) {
+      cm.replaceSelection('  ' , 'end');
+    }
+  }
+};
+
 var clearSelectOptions = function(comboBox) {
   comboBox.innerHTML = '';
 };
@@ -33,14 +46,18 @@ var openDataElementSelector = function(callback) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+
+
   var viewGroupSelector = document.getElementById('viewGroupSelector');
   var viewSelector = document.getElementById('extensionViewSelector');
   var validateButton = document.getElementById('validateButton');
   var validateOutput = document.getElementById('validateOutput');
-  var getSettingsField = document.getElementById('getSettingsField');
-  var getSettingsButton = document.getElementById('getSettingsButton');
-  var initField = document.getElementById('initField');
+  var initEditor =
+    CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
   var initButton = document.getElementById('initButton');
+  var getSettingsEditor =
+    CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
+  var getSettingsButton = document.getElementById('getSettingsButton');
   var viewIframeContainer = document.getElementById('iframeContainer');
   var openNewTabButton = document.getElementById('newTabButton');
 
@@ -197,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
       };
 
-      initField.value = JSON.stringify(initOptions, null, 2);
+      initEditor.setValue(JSON.stringify(initOptions, null, 2));
       iframeExtensionBridge.init(initOptions);
 
       // LiveReload will reload the iframe content whenever we change the source of the views.
@@ -260,11 +277,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   getSettingsButton.addEventListener('click', function() {
     iframeExtensionBridge.getSettings(function(settings) {
-      getSettingsField.value = JSON.stringify(settings);
+      getSettingsEditor.setValue(JSON.stringify(settings));
     });
   });
 
   initButton.addEventListener('click', function() {
-    iframeExtensionBridge.init(JSON.parse(initField.value));
+    iframeExtensionBridge.init(JSON.parse(initEditor.getValue()));
   });
 });
