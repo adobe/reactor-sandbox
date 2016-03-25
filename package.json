@@ -1,6 +1,6 @@
 {
   "name": "@reactor/extension-support-sandbox",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Gulp tasks for creating a sandbox in which you can manually test your Turbine extension.",
   "author": {
     "name": "DTM",
