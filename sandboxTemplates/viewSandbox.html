@@ -8,14 +8,14 @@
     <script src="//assets.adobedtm.com/activation/reactor/coralui/3.11.0/js/libs/jquery.js"></script>
     <script src="//assets.adobedtm.com/activation/reactor/coralui/3.11.0/js/coral.js"></script>
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/codemirror.css" rel="stylesheet" type="text/css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/addon/lint/lint.css" rel="stylesheet" type="text/css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/codemirror.css" rel="stylesheet" type="text/css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.css" rel="stylesheet" type="text/css">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/codemirror.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/mode/javascript/javascript.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/codemirror.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/mode/javascript/javascript.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/addon/lint/lint.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.0/addon/lint/json-lint.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/json-lint.js"></script>
 
     <script src="includes/js/viewSandbox.js"></script>
     <link href="includes/css/sandbox.css" rel="stylesheet" type="text/css">
@@ -25,33 +25,35 @@
     </script>
   </head>
   <body class="coral--light">
-    <a class="nav" is="coral-anchorbutton" variant="quiet" href="libSandbox.html">Go to library sandbox</a>
+    <div class="container">
+      <div class="views">
+        <a class="nav" is="coral-anchorbutton" variant="quiet" href="libSandbox.html">Go to library sandbox</a>
 
-    <h1 class="coral-Heading coral-Heading--1">Reactor Extension View Sandbox</h1>
+        <h1 class="coral-Heading coral-Heading--1">Reactor Extension View Sandbox</h1>
 
-    <div>
-      Select View:
-      <select id="viewGroupSelector"></select>
-      <select id="extensionViewSelector"></select>
-      <button id="newTabButton">Open View in New Tab</button>
-    </div>
+        <div>
+          Select View:
+          <select id="viewGroupSelector"></select>
+          <select id="extensionViewSelector"></select>
+          <button id="newTabButton">Open View in New Tab</button>
+        </div>
 
-    <div id="iframeContainer"></div>
-
-    <div>
-      <div class="actionPanel">
-        <button is="coral-button" id="initButton">Init</button>
-        <div id="initEditorContainer"></div>
+        <div id="iframeContainer"></div>
       </div>
+      <div class="inputs">
+        <div class="actionPanel" id="initPanel">
+          <div><button is="coral-button" id="initButton">Init</button></div>
+          <div id="initEditorContainer"></div>
+        </div>
+        <div class="actionPanel" id="settingsPannel">
+          <div><button is="coral-button" id="getSettingsButton">Get Settings</button></div>
+          <div id="getSettingsEditorContainer"></div>
+        </div>
 
-      <div class="actionPanel">
-        <button is="coral-button" id="getSettingsButton">Get Settings</button>
-        <div id="getSettingsEditorContainer"></div>
-      </div>
-
-      <div class="actionPanel">
-        <button is="coral-button" id="validateButton">Validate</button>
-        <p><span id="validateOutput"></span></p>
+        <div class="actionPanel" id="validatePanel">
+          <button is="coral-button" id="validateButton">Validate</button>
+          <p><span id="validateOutput"></span></p>
+        </div>
       </div>
     </div>
   </body>
