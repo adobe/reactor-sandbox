@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   getSettingsButton.addEventListener('click', function() {
     iframeExtensionBridge.getSettings(function(settings) {
-      getSettingsEditor.setValue(JSON.stringify(settings));
+      getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
     });
   });
 
