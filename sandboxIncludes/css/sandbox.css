@@ -84,6 +84,7 @@ iframe {
 #validatePanel {
   padding-right: 0;
   flex-grow: 0;
+  max-width: 110px;
 }
 
 #initPanel {
@@ -96,6 +97,6 @@ iframe {
   margin: 12px 0;
   max-height: 100%;
   overflow: hidden;
-  min-width: 550px;
+  min-width: 250px;
   min-height: 350px;
 }
