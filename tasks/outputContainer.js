@@ -27,9 +27,21 @@ function wrapInFunction(content, argNames) {
   return 'function(' + argsStr + ') {\n' + content + '}\n';
 }
 
+/**
+ * Stringifies a container object into a JSON string. In so doing, any value that is a string
+ * whose content is a function will, in essence, be stripped of its quotes. This is an important
+ * part in making the delegate code from the extension an executable function once it is emitted.
+ * @param {Object} container
+ * @returns {string}
+ */
 function stringifyUsingLiteralFunctions(container) {
   return JSON.stringify(container, null, 2)
-    .replace(/(".+?": )"(function.+?})\\n"/g, '$1$2')
+    .replace(/(".+?": )("function.+?}\\n")/g, function(match, p1, p2) {
+      // Since we're stripping the value of its quotes AFTER the container has been stringified,
+      // we need to JSON-parse the value since things like double-quotes inside the function
+      // will have been escaped using slashes during the stringify process.
+      return p1 + JSON.parse(p2);
+    })
     .replace(/\\n/g, '\n');
 }
 
