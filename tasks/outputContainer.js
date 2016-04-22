@@ -27,23 +27,9 @@ function wrapInFunction(content, argNames) {
   return 'function(' + argsStr + ') {\n' + content + '}\n';
 }
 
-/**
- * Stringifies a container object into a JSON string. In so doing, any value that is a string
- * whose content is a function will, in essence, be stripped of its quotes. This is an important
- * part in making the delegate code from the extension an executable function once it is emitted.
- * @param {Object} container
- * @returns {string}
- */
-function stringifyUsingLiteralFunctions(container) {
-  return JSON.stringify(container, null, 2)
-    .replace(/(".+?": )("function.+?}\\n")/g, function(match, p1, p2) {
-      // Since we're stripping the value of its quotes AFTER the container has been stringified,
-      // we need to JSON-parse the value since things like double-quotes inside the function
-      // will have been escaped using slashes during the stringify process.
-      return p1 + JSON.parse(p2);
-    })
-    .replace(/\\n/g, '\n');
-}
+var getDelegateToken = function(path) {
+  return '{{delegate:' + path + '}}';
+};
 
 var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePath) {
   extensionOutput.delegates = extensionOutput.delegates || {};
@@ -58,10 +44,13 @@ var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePat
 
           if (!extensionOutput.delegates[id]) {
             var delegateLibPath = path.join(libBasePath, delegateDescriptor[files.LIB_PATH_ATTR]);
-            var script = fs.readFileSync(delegateLibPath, {encoding: 'utf8'});
             extensionOutput.delegates[id] = {
               displayName: delegateDescriptor.displayName,
-              script: wrapInFunction(script, ['module', 'require'])
+              // We use a special token that indicates that after the container is serialized
+              // to JSON that the token should be replaced with an actual, executable function
+              // which wraps the delegate code. We can't just set the value to a function right
+              // now because it wouldn't be properly serialized.
+              script: getDelegateToken(delegateLibPath)
             };
           }
         });
@@ -81,9 +70,12 @@ var augmentHelpers = function(extensionOutput, extensionDescriptor, libBasePath)
 
       if (!extensionOutput.helpers[id]) {
         var helperLibPath = path.join(libBasePath, helperDescriptor[files.LIB_PATH_ATTR]);
-        var script = fs.readFileSync(helperLibPath, {encoding: 'utf8'});
         extensionOutput.helpers[id] = {
-          script: wrapInFunction(script, ['module', 'require'])
+          // We use a special token that indicates that after the container is serialized
+          // to JSON that the token should be replaced with an actual, executable function
+          // which wraps the delegate code. We can't just set the value to a function right
+          // now because it wouldn't be properly serialized.
+          script: getDelegateToken(helperLibPath)
         };
       }
     });
@@ -128,7 +120,16 @@ module.exports = function(gulp) {
       augmentHelpers(extensionOutput, extensionDescriptor, libBasePath);
     });
 
-    container = stringifyUsingLiteralFunctions(container);
+    container = JSON.stringify(container, null, 2);
+
+    // Replace all delegate tokens in the JSON with executable functions that contain the 
+    // extension's delegate code.
+    container = container.replace(/"\{\{delegate:(.+?)\}\}"/g, function(match, path) {
+      var script = fs.readFileSync(path, {encoding: 'utf8'});
+      script = wrapInFunction(script, ['module', 'require']);
+      return script;
+    });
+
     container = '' +
       '(function() {\n' +
       '  window._satellite = window._satellite || {};\n' +
