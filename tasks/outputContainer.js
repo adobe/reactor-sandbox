@@ -93,6 +93,10 @@ module.exports = function(gulp) {
     var container = require(CONTAINER_TEMPLATE_PATH);
     var extensionsOutput = container.extensions;
 
+    if (!extensionsOutput) {
+      extensionsOutput = container.extensions = {};
+    }
+
     extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
       var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
 
