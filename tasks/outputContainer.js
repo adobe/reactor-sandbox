@@ -87,10 +87,10 @@ module.exports = function(gulp) {
     // When running this task from a turbine extension project we want to include the
     // extension descriptor from that extension as well as any extensions we find under its
     // node_modules.
-    // When running this task from within this builder project we really only care
-    // about any extensions we find under this project's node_modules.
-    var extensionDescriptorPaths = glob.sync('{node_modules/*/,}' +
-    files.EXTENSION_DESCRIPTOR_FILENAME);
+    // When running this task from within this builder project we care about any extensions we find
+    // under this project's node_modules or under a folder starting with @(as for npm scopes).
+    var extensionDescriptorPaths =
+      glob.sync('{node_modules/*/,node_modules/@*/*/,}' + files.EXTENSION_DESCRIPTOR_FILENAME);
 
     // Make sure we get the latest.
     delete require.cache[CONTAINER_TEMPLATE_PATH];
