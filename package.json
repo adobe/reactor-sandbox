@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@reactor/extension-support-bridge": "^1.0.0",
-    "@reactor/turbine": "^8.0.0",
-    "ajv": "^3.7.2",
+    "@reactor/turbine": "^9.0.0",
+    "ajv": "^4.0.4",
     "del": "^2.2.0",
-    "glob": "^7.0.0",
+    "glob": "^7.0.3",
     "gulp": "^3.9.1",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
@@ -26,7 +26,7 @@
     "jschannel": "^1.0.0",
     "json-loader": "^0.5.4",
     "mkdirp": "^0.5.1",
-    "webpack-stream": "^3.1.0",
-    "yargs": "^4.2.0"
+    "webpack-stream": "^3.2.0",
+    "yargs": "^4.6.0"
   }
 }
