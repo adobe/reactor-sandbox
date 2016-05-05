@@ -6,12 +6,15 @@ var path = require('path');
 var files = require('./constants/files');
 var mkdirp = require('mkdirp');
 
-var DELEGATE_TYPES = [
+var FEATURE_TYPES = [
   'events',
   'conditions',
   'actions',
-  'dataElements'
+  'dataElements',
+  'sharedModules'
 ];
+
+var PATH_REQUIRE_REGEX = /require\(['"](\.{1,2}.*?)['"]\)/g;
 
 var CONTAINER_TEMPLATE_PATH = path.resolve(
   files.TEMPLATES_DIRNAME,
@@ -27,59 +30,85 @@ function wrapInFunction(content, argNames) {
   return 'function(' + argsStr + ') {\n' + content + '}\n';
 }
 
-var getDelegateToken = function(path) {
-  return '{{delegate:' + path + '}}';
+var getModuleToken = function(path) {
+  return '{{module:' + path + '}}';
 };
 
-var augmentDelegates = function(extensionOutput, extensionDescriptor, libBasePath) {
-  extensionOutput.delegates = extensionOutput.delegates || {};
+var getRequiredPaths = function(script) {
+  var match;
+  var paths = [];
 
-  DELEGATE_TYPES.forEach(function(delegateType) {
-    if (extensionDescriptor.hasOwnProperty(delegateType)) {
-      var delegateDescriptors = extensionDescriptor[delegateType];
+  while (match = PATH_REQUIRE_REGEX.exec(script)) {
+    paths.push(match[1]);
+  }
 
-      if (delegateDescriptors) {
-        delegateDescriptors.forEach(function(delegateDescriptor) {
-          var id = extensionDescriptor.name + '/' + delegateType + '/' + delegateDescriptor.name;
+  return paths;
+};
 
-          if (!extensionOutput.delegates[id]) {
-            var delegateLibPath = path.join(libBasePath, delegateDescriptor[files.LIB_PATH_ATTR]);
-            extensionOutput.delegates[id] = {
-              displayName: delegateDescriptor.displayName,
-              // We use a special token that indicates that after the container is serialized
-              // to JSON that the token should be replaced with an actual, executable function
-              // which wraps the delegate code. We can't just set the value to a function right
-              // now because it wouldn't be properly serialized.
-              script: getDelegateToken(delegateLibPath)
-            };
-          }
-        });
-      }
+var augmentModule = function(modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) {
+  var script = fs.readFileSync(modulePath, {encoding: 'utf8'});
+  var requiredRelativePaths = getRequiredPaths(script);
+
+  requiredRelativePaths.forEach(function(requiredRelativePath) {
+    var requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
+    augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
+  });
+
+  var referencePath = path.join(extensionName, path.relative(extensionPath, modulePath));
+
+  var moduleOutput = modulesOutput[referencePath];
+
+  if (!moduleOutput) {
+    moduleOutput = modulesOutput[referencePath] = {
+      // We use a special token that indicates that after the container is serialized
+      // to JSON that the token should be replaced with an actual, executable function
+      // which wraps the delegate code. We can't just set the value to a function right
+      // now because it wouldn't be properly serialized.
+      script: getModuleToken(modulePath)
+    };
+  }
+
+  Object.keys(moduleMeta).forEach(function(key) {
+    if (!moduleOutput.hasOwnProperty(key)) {
+      moduleOutput[key] = moduleMeta[key];
     }
   });
 };
 
-var augmentHelpers = function(extensionOutput, extensionDescriptor, libBasePath) {
-  extensionOutput.helpers = extensionOutput.helpers || {};
+var augmentModules = function(extensionOutput, extensionDescriptor, extensionPath) {
+  extensionOutput.modules = extensionOutput.modules || {};
 
-  var helperDescriptors = extensionDescriptor.helpers;
+  FEATURE_TYPES.forEach(function(featureType) {
+    if (extensionDescriptor.hasOwnProperty(featureType)) {
+      var featureDescriptors = extensionDescriptor[featureType];
 
-  if (helperDescriptors) {
-    helperDescriptors.forEach(function(helperDescriptor) {
-      var id = extensionDescriptor.name + '/helpers/' + helperDescriptor.name;
+      if (featureDescriptors) {
+        featureDescriptors.forEach(function(featureDescriptor) {
+          var modulePath = path.join(
+            extensionPath,
+            extensionDescriptor.libBasePath || '',
+            featureDescriptor.libPath);
 
-      if (!extensionOutput.helpers[id]) {
-        var helperLibPath = path.join(libBasePath, helperDescriptor[files.LIB_PATH_ATTR]);
-        extensionOutput.helpers[id] = {
-          // We use a special token that indicates that after the container is serialized
-          // to JSON that the token should be replaced with an actual, executable function
-          // which wraps the delegate code. We can't just set the value to a function right
-          // now because it wouldn't be properly serialized.
-          script: getDelegateToken(helperLibPath)
-        };
+          var moduleMeta = {};
+
+          if (featureType === 'sharedModules') {
+            moduleMeta.sharedName = featureDescriptor.name;
+          }
+          
+          if (featureDescriptor.displayName) {
+            moduleMeta.displayName = featureDescriptor.displayName;
+          }
+
+          augmentModule(
+            extensionOutput.modules,
+            extensionDescriptor.name,
+            extensionPath,
+            modulePath,
+            moduleMeta);
+        });
       }
-    });
-  }
+    }
+  });
 };
 
 module.exports = function(gulp) {
@@ -103,6 +132,7 @@ module.exports = function(gulp) {
 
     extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
       var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+      var extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
 
       // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because
       // Extension A may be pulled in from node_modules AND the extension developer using the
@@ -118,17 +148,14 @@ module.exports = function(gulp) {
       extensionOutput.name = extensionOutput.name || extensionDescriptor.name;
       extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
 
-      var extensionPath = path.dirname(extensionDescriptorPath);
-      var libBasePath = path.join(extensionPath, extensionDescriptor.libBasePath);
-      augmentDelegates(extensionOutput, extensionDescriptor, libBasePath);
-      augmentHelpers(extensionOutput, extensionDescriptor, libBasePath);
+      augmentModules(extensionOutput, extensionDescriptor, extensionPath);
     });
 
     container = JSON.stringify(container, null, 2);
 
     // Replace all delegate tokens in the JSON with executable functions that contain the 
     // extension's delegate code.
-    container = container.replace(/"\{\{delegate:(.+?)\}\}"/g, function(match, path) {
+    container = container.replace(/"\{\{module:(.+?)\}\}"/g, function(match, path) {
       var script = fs.readFileSync(path, {encoding: 'utf8'});
       script = wrapInFunction(script, ['module', 'require']);
       return script;
