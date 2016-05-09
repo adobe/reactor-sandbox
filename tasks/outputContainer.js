@@ -14,7 +14,7 @@ var FEATURE_TYPES = [
   'sharedModules'
 ];
 
-var PATH_REQUIRE_REGEX = /require\(['"](\.{1,2}.*?)['"]\)/g;
+var PATH_REQUIRE_REGEX = /require\(['"](\.{1,2}\/.*?)['"]\)/g;
 
 var CONTAINER_TEMPLATE_PATH = path.resolve(
   files.TEMPLATES_DIRNAME,
@@ -46,6 +46,9 @@ var getRequiredPaths = function(script) {
 };
 
 var augmentModule = function(modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) {
+  // The file is currently read here to scan for relative paths being required. It's then read
+  // again later after the container's object has been converted to JSON and module tokens
+  // are replaced with module contents. We could cache the contents in memory later if necessary.
   var script = fs.readFileSync(modulePath, {encoding: 'utf8'});
   var requiredRelativePaths = getRequiredPaths(script);
 
@@ -54,8 +57,14 @@ var augmentModule = function(modulesOutput, extensionName, extensionPath, module
     augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
   });
 
+  // The reference path is a unique path that starts with the extension name, then a slash,
+  // then the path to the file within the extension's directory.
   var referencePath = path.join(extensionName, path.relative(extensionPath, modulePath));
 
+  // It's possible this module has already been added to the output. If it has, we just need to
+  // merge any new meta information that hasn't already been stored for the module. This supports
+  // certain cases where a module could be an action delegate AND required via relative path
+  // by an event delegate AND be a shared module.
   var moduleOutput = modulesOutput[referencePath];
 
   if (!moduleOutput) {
@@ -68,6 +77,7 @@ var augmentModule = function(modulesOutput, extensionName, extensionPath, module
     };
   }
 
+  // Merge meta information.
   Object.keys(moduleMeta).forEach(function(key) {
     if (!moduleOutput.hasOwnProperty(key)) {
       moduleOutput[key] = moduleMeta[key];
