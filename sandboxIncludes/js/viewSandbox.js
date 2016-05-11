@@ -198,10 +198,18 @@ document.addEventListener('DOMContentLoaded', function() {
         extensionConfigurations: [
           {
             id: 'EC123',
-            name: 'Example Extension Configuration',
+            name: 'Example Configuration A',
             enabled: true,
             settings: {
               foo: 'bar'
+            }
+          },
+          {
+            id: 'EC124',
+            name: 'Example Configuration B',
+            enabled: true,
+            settings: {
+              baz: 'qux'
             }
           }
         ],
