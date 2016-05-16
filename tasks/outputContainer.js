@@ -155,7 +155,6 @@ module.exports = function(gulp) {
         extensionOutput = extensionsOutput[extensionDescriptor.name] = {};
       }
 
-      extensionOutput.name = extensionOutput.name || extensionDescriptor.name;
       extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
 
       augmentModules(extensionOutput, extensionDescriptor, extensionPath);
