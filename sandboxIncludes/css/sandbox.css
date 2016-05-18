@@ -67,6 +67,7 @@ iframe {
 .inputs {
   flex-grow: 1;
   display: flex;
+  z-index: 0;
 }
 
 .actionPanel {
