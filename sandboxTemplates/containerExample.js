@@ -6,19 +6,19 @@ module.exports = {
       name: 'Example Rule',
       events: [
         {
-          delegateId: 'exampleExtension/events/click',
+          modulePath: 'exampleExtension/src/lib/eventDelegates/click.js',
           settings: {}
         }
       ],
       conditions: [
         {
-          delegateId: 'exampleExtension/conditions/operatingSystem',
+          modulePath: 'exampleExtension/src/lib/conditions/operatingSystem.js',
           settings: {}
         }
       ],
       actions: [
         {
-          delegateId: 'exampleExtension/actions/sendBeacon',
+          modulePath: 'exampleExtension/src/lib/actions/sendBeacon.js',
           settings: {}
         }
       ]
@@ -26,7 +26,7 @@ module.exports = {
   ],
   dataElements: {
     myDataElement: {
-      delegateId: 'exampleExtension/dataElements/javascriptVariable',
+      modulePath: 'exampleExtension/src/lib/dataElements/javascriptVariable.js',
       settings: {}
     }
   },
@@ -39,33 +39,35 @@ module.exports = {
           settings: {}
         }
       },
-      delegates: {
-        'exampleExtension/events/click': {
+      modules: {
+        'exampleExtension/src/lib/events/click.js': {
           displayName: 'Click',
           script: function(module, require) {}
         },
-        'exampleExtension/conditions/operatingSystem': {
+        'exampleExtension/src/lib/conditions/operatingSystem.js': {
           displayName: 'Operating System',
           script: function(module, require) {}
         },
-        'exampleExtension/actions/sendBeacon': {
+        'exampleExtension/src/lib/actions/sendBeacon.js': {
           displayName: 'Send Beacon',
           script: function(module, require) {}
         },
-        'exampleExtension/dataElements/javascriptVariable': {
+        'exampleExtension/src/lib/dataElements/javascriptVariable.js': {
           displayName: 'JavaScript Variable',
           script: function(module, require) {}
-        }
-      },
-      helpers: {
-        'exampleExtension/helpers/myExampleResource': {
+        },
+        'exampleExtension/src/lib/sharedModules/myExampleModule.js': {
+          sharedName: 'myExampleModule',
           script: function(module, require) {}
         }
       }
     }
   },
   propertySettings: {},
-  appVersion: '52A',
-  buildDate: '2015-03-16 20:55:42 UTC',
-  publishDate: '2015-03-16 14:43:44 -0600'
+  buildInfo: {
+    appVersion: '52A',
+    buildDate: '2015-03-16 20:55:42 UTC',
+    publishDate: '2015-03-16 14:43:44 -0600',
+    environment: 'development'
+  }
 };
