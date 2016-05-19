@@ -31,8 +31,7 @@ module.exports = {
     }
   },
   extensions: {
-    EXa: {
-      name: 'exampleExtension',
+    exampleExtension: {
       displayName: 'Example Extension',
       configurations: {
         ECa: {
