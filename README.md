@@ -57,3 +57,50 @@ If you ever want to remove the sandbox-related files from your project you can r
 [npm-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/badges/npm.svg
 [npm-dependencies-url]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/dependencies.txt
 [npm-dependencies-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/badges/dependencies.svg
+
+## How to set up and use extension-support-sandbox inside your extension
+
+For using this project inside your repository (and also when you are developing a Reactor extension) you will need to have [Node.js](https://nodejs.org/en/) installed on your computer. Do a Google search for finding the best method to install it on your computer. Once you install Node.js you will also have access to the `npm` package manager for JavaScript. You need a version of npm greater than 2.7.0. You can check the installed version by running
+```
+npm -v
+```
+
+After you have installed Node.js and NPM on your machine, you need to initialize your project. You need to create a folder and run
+
+```
+npm init
+```
+
+from inside it. You will need to provide the information required on the screen. At this moment you should have a file called `package.json` inside your folder.
+
+Next step would be to install [gulp.js](http://gulpjs.com/). You need to install it globally and also as a dependency in your project. For doing this you should run:
+ ```
+ npm install -g gulp
+ npm install gulp --save-dev
+ ```
+
+You then need to add `extension-support-sandbox` inside your project. The available versions can be found under the [extension-support-bridge](https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/extension-support-bridge/-/@reactor) package within Artifactory. For installing the latest version on your computer you can run the following commands inside your folder:
+```
+echo "@reactor:registry=https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local/" > .npmrc
+npm install @reactor/extension-support-sandbox --save-dev
+```
+
+You will then need to create a file called `gulpfile.js` with the following content:
+```
+'use strict';
+
+var gulp = require('gulp');
+require('@reactor/extension-support-sandbox')(gulp);
+```
+
+Next, add [Turbine](https://git.corp.adobe.com/reactor/turbine) as a dependency by running:
+```
+npm install @reactor/turbine --save-dev
+```
+
+At this moment you can test that the sandbox is running as expected by running:
+```
+gulp sandbox
+```
+
+You can now start creating your extension. Happy coding!
