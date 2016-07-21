@@ -2,6 +2,7 @@
 
 var extensionBridge = require('@reactor/extension-support-bridge');
 var Ajv = require('ajv');
+var objectAssign = require('object-assign');
 
 var VIEW_GROUPS = {
   'configuration': 'Extension Configuration',
@@ -173,71 +174,77 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   var iframeExtensionBridge;
+
+
+  var createIframe = function() {
+    iframeExtensionBridge = document.createElement('iframe');
+    viewIframeContainer.appendChild(iframeExtensionBridge);
+    extensionBridge(iframeExtensionBridge);
+    iframeExtensionBridge.bridge.api = objectAssign(iframeExtensionBridge.bridge.api, {
+      openCodeEditor: openCodeEditor,
+      openRegexTester: openRegexTester,
+      openDataElementSelector: openDataElementSelector,
+      onInitialRenderComplete: function() {
+        viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
+      }
+    });
+  };
+
   var loadSelectedViewIntoIframe = function() {
     viewIframeContainer.classList.add(LOADING_CLASS_NAME);
-
-    if (iframeExtensionBridge) {
-      iframeExtensionBridge.destroy();
+    if(!iframeExtensionBridge) {
+      createIframe();
     }
 
-    var viewIframe = document.createElement('iframe');
-    viewIframe.onload = function() {
-      iframeExtensionBridge = extensionBridge(viewIframe, {
-        openCodeEditor: openCodeEditor,
-        openRegexTester: openRegexTester,
-        openDataElementSelector: openDataElementSelector,
-        onInitialRenderComplete: function() {
-          viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
-        }
-      });
-
-      var selectedViewDescriptor = getSelectedViewDescriptor();
-
-      var initOptions = {
-        settings: null,
-        extensionConfigurations: [
-          {
-            id: 'EC123',
-            name: 'Example Configuration A',
-            enabled: true,
-            settings: {
-              foo: 'bar'
-            }
-          },
-          {
-            id: 'EC124',
-            name: 'Example Configuration B',
-            enabled: true,
-            settings: {
-              baz: 'qux'
-            }
+    var selectedViewDescriptor = getSelectedViewDescriptor();
+    var initOptions = {
+      settings: null,
+      extensionConfigurations: [
+        {
+          id: 'EC123',
+          name: 'Example Configuration A',
+          enabled: true,
+          settings: {
+            foo: 'bar'
           }
-        ],
-        propertySettings: {
-          domainList: [
-            'adobe.com',
-            'example.com'
-          ]
         },
-        schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
-      };
+        {
+          id: 'EC124',
+          name: 'Example Configuration B',
+          enabled: true,
+          settings: {
+            baz: 'qux'
+          }
+        }
+      ],
+      propertySettings: {
+        domainList: [
+          'adobe.com',
+          'example.com'
+        ]
+      },
+      schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
+    };
 
-      initEditor.setValue(JSON.stringify(initOptions, null, 2));
-      iframeExtensionBridge.init(initOptions);
+    iframeExtensionBridge.bridge.configuration = objectAssign(
+      {},
+      iframeExtensionBridge.bridge.configuration,
+      initOptions
+    );
 
-      // LiveReload will reload the iframe content whenever we change the source of the views.
-      viewIframe.contentWindow.onbeforeunload = function() {
-        viewIframe.onload = null;
-        loadSelectedViewIntoIframe();
-      };
+    initEditor.setValue(JSON.stringify(initOptions, null, 2));
+
+    // LiveReload will reload the iframe content whenever we change the source of the views.
+    iframeExtensionBridge.contentWindow.onbeforeunload = function() {
+      iframeExtensionBridge.onload = null;
+      loadSelectedViewIntoIframe();
     };
 
     var viewURL = getViewURLFromSelector();
+    console.log(viewURL);
     if (viewURL) {
-      viewIframe.src = viewURL;
+      iframeExtensionBridge.bridge.configuration.src = viewURL;
     }
-
-    viewIframeContainer.appendChild(viewIframe);
   };
 
   var getSelectedViewDescriptor = function() {
@@ -259,11 +266,11 @@ document.addEventListener('DOMContentLoaded', function() {
   openNewTabButton.addEventListener('click', openViewInNewTab);
 
   validateButton.addEventListener('click', function() {
-    iframeExtensionBridge.validate(function(valid) {
+    iframeExtensionBridge.bridge.api.validate(function(valid) {
       if (valid) {
         var selectedViewDescriptor = getSelectedViewDescriptor();
         if (selectedViewDescriptor && selectedViewDescriptor.schema) {
-          iframeExtensionBridge.getSettings(function(settings) {
+          iframeExtensionBridge.bridge.api.getSettings(function(settings) {
             var ajv = Ajv();
             var matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
 
@@ -284,12 +291,16 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   getSettingsButton.addEventListener('click', function() {
-    iframeExtensionBridge.getSettings(function(settings) {
+    iframeExtensionBridge.bridge.api.getSettings(function(settings) {
       getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
     });
   });
 
   initButton.addEventListener('click', function() {
-    iframeExtensionBridge.init(JSON.parse(initEditor.getValue()));
+    iframeExtensionBridge.bridge.configuration = objectAssign(
+      {},
+      iframeExtensionBridge.bridge.configuration,
+      JSON.parse(initEditor.getValue())
+    );
   });
 });
