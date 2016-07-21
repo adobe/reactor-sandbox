@@ -191,8 +191,8 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   var loadSelectedViewIntoIframe = function() {
-    viewIframeContainer.classList.add(LOADING_CLASS_NAME);
     if(!iframeExtensionBridge) {
+      viewIframeContainer.classList.add(LOADING_CLASS_NAME);
       createIframe();
     }
 
@@ -241,7 +241,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     var viewURL = getViewURLFromSelector();
-    console.log(viewURL);
     if (viewURL) {
       iframeExtensionBridge.bridge.configuration.src = viewURL;
     }
