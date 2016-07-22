@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
     CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
   var getSettingsButton = document.getElementById('getSettingsButton');
   var viewIframeContainer = document.getElementById('iframeContainer');
-  var openNewTabButton = document.getElementById('newTabButton');
 
   var lastSelectedView = localStorage.getItem('lastSelectedView');
   var lastSelectedViewGroup = localStorage.getItem('lastSelectedViewGroup');
@@ -88,13 +87,15 @@ document.addEventListener('DOMContentLoaded', function() {
   var getCategorizedItems = function(items) {
     var groupedItems = {};
 
-    items.forEach(function(item) {
-      var categoryName = item.categoryName || NOT_AVAILABLE;
-      if (!groupedItems[categoryName]) {
-        groupedItems[categoryName] = [];
-      }
-      groupedItems[categoryName].push(item);
-    });
+    if (items) {
+      items.forEach(function(item) {
+        var categoryName = item.categoryName || NOT_AVAILABLE;
+        if (!groupedItems[categoryName]) {
+          groupedItems[categoryName] = [];
+        }
+        groupedItems[categoryName].push(item);
+      });
+    }
 
     Object.keys(groupedItems).forEach(function(categoryName) {
       groupedItems[categoryName].sort(function(a, b) {
@@ -254,15 +255,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   loadSelectedViewIntoIframe();
   viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
-
-  var openViewInNewTab = function() {
-    var viewURL = getViewURLFromSelector();
-
-    if (viewURL) {
-      window.open(viewURL);
-    }
-  };
-  openNewTabButton.addEventListener('click', openViewInNewTab);
 
   validateButton.addEventListener('click', function() {
     iframeExtensionBridge.bridge.api.validate(function(valid) {
