@@ -93,11 +93,6 @@ var gulp = require('gulp');
 require('@reactor/extension-support-sandbox')(gulp);
 ```
 
-Next, add [Turbine](https://git.corp.adobe.com/reactor/turbine) as a dependency by running:
-```
-npm install @reactor/turbine --save-dev
-```
-
 At this moment you can test that the sandbox is running as expected by running:
 ```
 gulp sandbox
