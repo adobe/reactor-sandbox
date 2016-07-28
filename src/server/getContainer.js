@@ -4,7 +4,6 @@ var fs = require('fs');
 var glob = require('glob');
 var path = require('path');
 var files = require('./constants/files');
-var mkdirp = require('mkdirp');
 
 var FEATURE_TYPES = [
   'events',
@@ -16,14 +15,14 @@ var FEATURE_TYPES = [
 
 var PATH_REQUIRE_REGEX = /require\(['"](\.{1,2}\/.*?)['"]\)/g;
 
-var CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.TEMPLATES_DIRNAME,
-  files.CONTAINER_TEMPLATE_FILENAME);
+var DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
+  files.CLIENT_PATH,
+  files.CONTAINER_FILENAME
+);
 
-var CONTAINER_OUTPUT_PATH = path.join(
-  files.OUTPUT_DIRNAME,
-  files.OUTPUT_INCLUDES_DIRNAME,
-  'js');
+var CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
+  files.CONSUMER_OVERRIDES_PATH,
+  files.CONTAINER_FILENAME);
 
 function wrapInFunction(content, argNames) {
   var argsStr = argNames ? argNames.join(', ') : '';
@@ -121,77 +120,72 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
   });
 };
 
-module.exports = function(gulp) {
-  var outputContainer = function() {
-    // When running this task from a turbine extension project we want to include the
-    // extension descriptor from that extension as well as any extensions we find under its
-    // node_modules.
-    // When running this task from within this builder project we care about any extensions we find
-    // under this project's node_modules or under a folder starting with @(as for npm scopes).
-    var extensionDescriptorPaths =
-      glob.sync('{node_modules/*/,node_modules/@*/*/,}' + files.EXTENSION_DESCRIPTOR_FILENAME);
+module.exports = function() {
+  // When running this task from a turbine extension project we want to include the
+  // extension descriptor from that extension as well as any extensions we find under its
+  // node_modules.
+  // When running this task from within this builder project we care about any extensions we find
+  // under this project's node_modules or under a folder starting with @(as for npm scopes).
+  var extensionDescriptorPaths =
+    glob.sync('{node_modules/*/,node_modules/@*/*/,}' + files.EXTENSION_DESCRIPTOR_FILENAME);
 
+  var container;
+
+  // Try to use the consumer-defined container first and fallback to the default if they haven't
+  // provided one.
+  try {
     // Make sure we get the latest.
-    delete require.cache[CONTAINER_TEMPLATE_PATH];
-    var container = require(CONTAINER_TEMPLATE_PATH);
-    var extensionsOutput = container.extensions;
+    delete require.cache[CONSUMER_CONTAINER_TEMPLATE_PATH];
+    container = require(CONSUMER_CONTAINER_TEMPLATE_PATH);
+  } catch (error) {
+    if (error.code === 'MODULE_NOT_FOUND') {
+      // Make sure we get the latest.
+      delete require.cache[DEFAULT_CONTAINER_TEMPLATE_PATH];
+      container = require(DEFAULT_CONTAINER_TEMPLATE_PATH);
+    }
+  }
 
-    if (!extensionsOutput) {
-      extensionsOutput = container.extensions = {};
+  var extensionsOutput = container.extensions;
+
+  if (!extensionsOutput) {
+    extensionsOutput = container.extensions = {};
+  }
+
+  extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
+    var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+    var extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
+
+    // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because
+    // Extension A may be pulled in from node_modules AND the extension developer using the
+    // sandbox may have already coded in some stuff for Extension A within their container.js
+    // template. This is a common use case when an extension developer wants to test certain
+    // extension configurations.
+    var extensionOutput = extensionsOutput[extensionDescriptor.name];
+
+    if (!extensionOutput) {
+      extensionOutput = extensionsOutput[extensionDescriptor.name] = {};
     }
 
-    extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
-      var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
-      var extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
+    extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
 
-      // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because
-      // Extension A may be pulled in from node_modules AND the extension developer using the
-      // sandbox may have already coded in some stuff for Extension A within their container.js
-      // template. This is a common use case when an extension developer wants to test certain
-      // extension configurations.
-      var extensionOutput = extensionsOutput[extensionDescriptor.name];
-
-      if (!extensionOutput) {
-        extensionOutput = extensionsOutput[extensionDescriptor.name] = {};
-      }
-
-      extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
-
-      augmentModules(extensionOutput, extensionDescriptor, extensionPath);
-    });
-
-    container = JSON.stringify(container, null, 2);
-
-    // Replace all delegate tokens in the JSON with executable functions that contain the 
-    // extension's delegate code.
-    container = container.replace(/"\{\{module:(.+?)\}\}"/g, function(match, path) {
-      var script = fs.readFileSync(path, {encoding: 'utf8'});
-      script = wrapInFunction(script, ['module', 'require']);
-      return script;
-    });
-
-    container = '' +
-      '(function() {\n' +
-      '  window._satellite = window._satellite || {};\n' +
-      '  window._satellite.container = ' + container + '\n' +
-      '})();';
-
-    mkdirp.sync(CONTAINER_OUTPUT_PATH);
-    fs.writeFileSync(path.join(CONTAINER_OUTPUT_PATH, files.CONTAINER_OUTPUT_FILENAME), container);
-  };
-
-  gulp.task('sandbox:outputContainer', ['sandbox:initTemplates'], outputContainer);
-
-  gulp.task('sandbox:watchOutputContainer', ['sandbox:initTemplates'], function() {
-    gulp.watch(
-      [
-        path.resolve(CONTAINER_TEMPLATE_PATH),
-        path.join(files.SRC_DIRNAME, files.SRC_FILENAMES)
-      ],
-      function() {
-        console.log('Container source change detected. Republished.');
-        outputContainer();
-      }
-    );
+    augmentModules(extensionOutput, extensionDescriptor, extensionPath);
   });
+
+  container = JSON.stringify(container, null, 2);
+
+  // Replace all delegate tokens in the JSON with executable functions that contain the
+  // extension's delegate code.
+  container = container.replace(/"\{\{module:(.+?)\}\}"/g, function(match, path) {
+    var script = fs.readFileSync(path, {encoding: 'utf8'});
+    script = wrapInFunction(script, ['module', 'require']);
+    return script;
+  });
+
+  container = '' +
+    '(function() {\n' +
+    '  window._satellite = window._satellite || {};\n' +
+    '  window._satellite.container = ' + container + '\n' +
+    '})();';
+
+  return container;
 };
