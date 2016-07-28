@@ -30,7 +30,7 @@
     "@reactor/turbine": "*"
   },
   "bin": {
-    "run-extension-sandbox": "./src/server/run.js",
-    "generate-extension-sandbox-files": "./src/server/generateConsumerFiles.js"
+    "run-reactor-sandbox": "./src/server/run.js",
+    "init-reactor-sandbox": "./src/server/generateConsumerFiles.js"
   }
 }
