@@ -44,7 +44,9 @@ var webpackConfig = {
     ]
   },
   node: {
-    fs: 'empty' // Why is this here?
+    // We had an error similar with the one described here:
+    // https://github.com/josephsavona/valuable/issues/9
+    fs: 'empty'
   },
   output: {
     path: '/',
