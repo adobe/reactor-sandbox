@@ -38,28 +38,29 @@ module.exports = {
           settings: {}
         }
       },
-      modules: {
-        'exampleExtension/src/lib/events/click.js': {
-          displayName: 'Click',
-          script: function(module, require) {}
-        },
-        'exampleExtension/src/lib/conditions/operatingSystem.js': {
-          displayName: 'Operating System',
-          script: function(module, require) {}
-        },
-        'exampleExtension/src/lib/actions/sendBeacon.js': {
-          displayName: 'Send Beacon',
-          script: function(module, require) {}
-        },
-        'exampleExtension/src/lib/dataElements/javascriptVariable.js': {
-          displayName: 'JavaScript Variable',
-          script: function(module, require) {}
-        },
-        'exampleExtension/src/lib/sharedModules/myExampleModule.js': {
-          sharedName: 'myExampleModule',
-          script: function(module, require) {}
-        }
-      }
+      // This will be populated automatically based on features found in extension.json.
+      // modules: {
+      //   'exampleExtension/src/lib/events/click.js': {
+      //     displayName: 'Click',
+      //     script: function(module, require) {}
+      //   },
+      //   'exampleExtension/src/lib/conditions/operatingSystem.js': {
+      //     displayName: 'Operating System',
+      //     script: function(module, require) {}
+      //   },
+      //   'exampleExtension/src/lib/actions/sendBeacon.js': {
+      //     displayName: 'Send Beacon',
+      //     script: function(module, require) {}
+      //   },
+      //   'exampleExtension/src/lib/dataElements/javascriptVariable.js': {
+      //     displayName: 'JavaScript Variable',
+      //     script: function(module, require) {}
+      //   },
+      //   'exampleExtension/src/lib/sharedModules/myExampleModule.js': {
+      //     sharedName: 'myExampleModule',
+      //     script: function(module, require) {}
+      //   }
+      // }
     }
   },
   propertySettings: {},
