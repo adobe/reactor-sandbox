@@ -3,7 +3,7 @@
 var fs = require('fs');
 var glob = require('glob');
 var path = require('path');
-var files = require('./constants/files');
+var files = require('../constants/files');
 
 var FEATURE_TYPES = [
   'events',
@@ -16,12 +16,12 @@ var FEATURE_TYPES = [
 var PATH_REQUIRE_REGEX = /require\(['"](\.{1,2}\/.*?)['"]\)/g;
 
 var DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.CLIENT_PATH,
+  files.CLIENT_SRC_PATH,
   files.CONTAINER_FILENAME
 );
 
 var CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.CONSUMER_OVERRIDES_PATH,
+  files.CONSUMER_CLIENT_SRC_PATH,
   files.CONTAINER_FILENAME);
 
 function wrapInFunction(content, argNames) {
