@@ -30,6 +30,6 @@
     "@reactor/turbine": "*"
   },
   "bin": {
-    "reactor-sandbox": "./src/scripts/index.js"
+    "reactor-sandbox": "./src/tasks/index.js"
   }
 }
