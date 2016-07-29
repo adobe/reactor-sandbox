@@ -12,7 +12,7 @@ var files = require('./constants/files');
 module.exports = function() {
   [
     files.CONTAINER_FILENAME,
-    files.VIEW_SANDBOX_HTML_FILENAME
+    files.LIB_SANDBOX_HTML_FILENAME
   ].forEach(function(filename) {
     fs.copy(
       path.resolve(files.CLIENT_SRC_PATH, filename),

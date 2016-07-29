@@ -18,6 +18,7 @@ var files = {
   // path when sandbox is npm linked into a project.
   TURBINE_ENGINE_PATH: path.resolve('node_modules/@reactor/turbine/dist', ENGINE_FILENAME),
   VIEW_SANDBOX_HTML_FILENAME: 'viewSandbox.html',
+  LIB_SANDBOX_HTML_FILENAME: 'libSandbox.html',
   DIST_PATH: path.resolve('sandbox'),
   EXTENSION_VIEWS_DIRNAME: 'extensionViews'
 };
