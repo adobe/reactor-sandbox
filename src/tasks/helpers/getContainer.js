@@ -4,6 +4,7 @@ var fs = require('fs');
 var glob = require('glob');
 var path = require('path');
 var files = require('../constants/files');
+var getRequiredPaths = require('@reactor/get-required-paths');
 
 var FEATURE_TYPES = [
   'events',
@@ -12,8 +13,6 @@ var FEATURE_TYPES = [
   'dataElements',
   'sharedModules'
 ];
-
-var PATH_REQUIRE_REGEX = /require\(['"](\.{1,2}\/.*?)['"]\)/g;
 
 var DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
   files.CLIENT_SRC_PATH,
@@ -33,23 +32,12 @@ var getModuleToken = function(path) {
   return '{{module:' + path + '}}';
 };
 
-var getRequiredPaths = function(script) {
-  var match;
-  var paths = [];
-
-  while (match = PATH_REQUIRE_REGEX.exec(script)) {
-    paths.push(match[1]);
-  }
-
-  return paths;
-};
-
 var augmentModule = function(modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) {
   // The file is currently read here to scan for relative paths being required. It's then read
   // again later after the container's object has been converted to JSON and module tokens
   // are replaced with module contents. We could cache the contents in memory later if necessary.
-  var script = fs.readFileSync(modulePath, {encoding: 'utf8'});
-  var requiredRelativePaths = getRequiredPaths(script);
+  var source = fs.readFileSync(modulePath, {encoding: 'utf8'});
+  var requiredRelativePaths = getRequiredPaths(source);
 
   requiredRelativePaths.forEach(function(requiredRelativePath) {
     var requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
