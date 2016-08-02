@@ -1,55 +1,60 @@
 # extension-support-sandbox
 [![Build Status][status-image]][status-url] [![NPM version][npm-image]][npm-url] [![NPM Dependencies][npm-dependencies-image]][npm-dependencies-url]
 
-This project provides gulp tasks for creating a sandbox in which you can manually test your extension. In addition to building web pages as starting points, this project builds the Turbine engine as well as a Turbine container to be used within those web pages. A Turbine container contains code specific to a particular DTM property. It will contain code from extensions installed for the property as well as configurations of the property, extensions, data elements, and rules. Both the container and the engine are necessary for DTM to be of much use.
+This project provides a sandbox in which you can manually test your extension. You can test both (1) your views that will eventually appear in the DTM application and (2) your library logic that will eventually run on the user's website.
 
-In order to create a sandbox within your project, add extension-support-sandbox to the `devDependencies` of your project's `package.json` and `npm install` it. In your `gulpfile.js`, require the builder and pass in your gulp instance as follows:
+## Installing the Sandbox
+
+To use this project you will need to have [Node.js](https://nodejs.org/en/) installed on your computer. Do a Google search for finding the best method to install it on your computer's operating system. Once you install Node.js you will also have access to the [npm](https://www.npmjs.com/) package manager for JavaScript. You will need a version of npm greater than 2.7.0. You can check the installed version by running
+
+```
+npm -v
+```
+
+After you have installed Node.js on your machine, you will need to initialize your project. Create a folder for your project if you don't already have one. Inside the folder, run
+
+```
+npm init
+```
+
+You will need to provide the information requested on the screen. After this process is complete, you should have a file called `package.json` inside your folder.
+
+You will then need to install both turbine and extension-support-sandbox and save them in your project's [`devDependencies`](https://docs.npmjs.com/files/package.json#devdependencies) by running
+```
+echo "@reactor:registry=https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local/" > .npmrc
+npm install @reactor/turbine @reactor/extension-support-sandbox --save-dev
+```
+
+While that will install the latest version, you my find a list of all versions under the [turbine package](https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/turbine/-/@reactor) and [extension-support-sandbox package](https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/extension-support-sandbox/-/@reactor) within Artifactory.
+
+## Running the Sandbox
+
+To run the sandbox, run `node_modules/.bin/reactor-sandbox` from the command line within your project's directory. A server will be started at [http://localhost:3000](http://localhost:3000). If you navigate to that address in your browser, you will see the view sandbox which allows you to test your views. You'll need to have previously created a view in your extension for it to show up in the sandbox. You can switch between views you would like to test using the controls toward the top of the page.
+
+You may also click on the "Go to library sandbox" button at the top-right of the page to navigate to the library sandbox where you can test your library logic. See [Configuring the Sandbox](#configuring-the-sandbox) for how to configure the library sandbox for proper testing.
+
+Rather than type the path to the `reactor-sandbox` script each time you would like the run the sandbox, you may wish to set up a [script alias](https://docs.npmjs.com/misc/scripts) by adding a `scripts` node to your `package.json` as follows:
 
 ```javascript
-var gulp = require('gulp');
-require('@reactor/extension-support-sandbox')(gulp);
+{
+  ...
+  "scripts": {
+    "sandbox": "reactor-sandbox"
+  }
+  ...
+}
 ```
 
-## Building
+Once this is in place, you may then run the sandbox by executing the command `npm run sandbox` from the command line.
 
-To build the sandbox, run `gulp sandbox` from the command line within your project's directory. You will notice two directories produced within your project:
+## Configuring the Sandbox
 
-* `sandboxTemplates` - This contains a template for the container as well as templates HTML pages you may use to manually test the library and view portions of your extension. These files will not be overwritten when you run `gulp sandbox` again.
-  * `container.txt` can be modified, for example, to contain rules or data elements you would like to manually test. This template will be used to product a complete container.js that can be used in tandem with the Turbine engine that will also be built.
-  * `libSandbox.html` includes script tags to load the Turbine engine and container and can be modified to manually test whatever you would like. For example, if you're testing that your awesome new "focus" event delegate works, you can add a text input to the web page to ensure your dummy rule fires when a form element receives focus.
-  * `viewSandbox.html` includes the necessary tools to load your extension views into an iframe. Along with being able to see what your views look like, you can test the APIs for validating, retrieving a configuration object, etc.
+To configure the portion of the sandbox that allows you to test your library logic, you'll want to run `node_modules/.bin/reactor-sandbox init` from the command line within your project's directory. This will generate a directory within your project named `.sandbox` that contains two files you may edit to configure the sandbox:
 
-* `sandbox` - This contains the built container and engine as well as the HTML test pages. The files listed below will be overwritten as they are built and should be considered very temporary.
-  * `container.js` is compiled using the `container.txt` file found in `sandboxTemplates`. All of the delegate and helper portions of `container.txt` are populated using any extensions found in your project. This includes your project itself if it is an extension as well as any extensions found in your project's `node_modules`. As such, if you would like to include other extensions in the container, `npm install` those extensions as dependencies of your project and run `gulp sandbox` again.
-  * `engine.js` is built from the `turbine` project.
-  * `libSandbox.html` is copied from `sandboxTemplates`.
-  * `viewSandbox.html` is copied from `sandboxTemplates` but it is also populated with data about your extension that will help you test your extension views. This data is derived from your extension's `extension.json` file.
+  * `container.js` When DTM publishes a library, it consists of two parts: (1) a data structure that stores information about saved rules, data elements, and extension configurations and (2) an engine to operate on such a data structure. `container.js` is the data structure (not the engine) that you may modify to simulate saved rules, data elements, and extension configurations. This template will be used to produce a complete `container.js` (JavaScript from your extension will be added) which will be used in tandem with the Turbine engine inside the sandbox. If you need help understanding how to modify `container.js` for your needs, please let the DTM team know and we can help you out.
+  * `libSandbox.html` includes some simple HTML along with script tags to load a complete `container.js` and the Turbine engine. `libSandbox.html` can be modified to manually test whatever you would like. For example, if you're testing that your awesome new "focus" event feature works, you can add a text input to the web page to ensure your dummy rule fires when a form element receives focus.
 
-You will notice that a server starts which serves `libSandbox.html` at `http://localhost:7000/libSandbox.html`. Use this to manually test whatever you're developing. As you make changes to your source files or the sandbox templates, gulp should automatically rebuild and update your browser.
-
-It is recommended you don't commit `sandboxTemplates` or `sandbox` into your version control system.
-
-## Preprocessing extension views
-
-As mentioned previously, this project provides a sandbox by which you can manually test your extension's views. It may be that your extension views require some preprocessing. Maybe your views use JSX, Stylus, or some other tech that needs preprocessing before they can be displayed within the sandbox. To handle these cases, create a gulp task that performs the preprocessing and pass the name of that task to extension-support-sandbox as follows:
-
-```javacript
-var gulp = require('gulp');
-
-gulp.task('buildView', function() {
-  // Process your view here.
-});
-
-require('@reactor/extension-support-sandbox')(gulp, {
-  dependencyTasks: ['buildView']
-});
-```
-
-By doing so, your task will also be run when running `gulp sandbox`.
-
-## Cleaning
-
-If you ever want to remove the sandbox-related files from your project you can run `gulp sandbox:clean`.
+You are welcome to commit `.sandbox` to your version control repository.
 
 [status-url]: https://dtm-builder.ut1.mcps.adobe.net/job/extension-support-sandbox
 [status-image]: https://dtm-builder.ut1.mcps.adobe.net/buildStatus/icon?job=extension-support-sandbox
@@ -57,45 +62,3 @@ If you ever want to remove the sandbox-related files from your project you can r
 [npm-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/badges/npm.svg
 [npm-dependencies-url]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/dependencies.txt
 [npm-dependencies-image]: https://dtm-builder.ut1.mcps.adobe.net/view/Reactor-Frontend/job/extension-support-sandbox/ws/badges/dependencies.svg
-
-## How to set up and use extension-support-sandbox inside your extension
-
-For using this project inside your repository (and also when you are developing a Reactor extension) you will need to have [Node.js](https://nodejs.org/en/) installed on your computer. Do a Google search for finding the best method to install it on your computer. Once you install Node.js you will also have access to the `npm` package manager for JavaScript. You need a version of npm greater than 2.7.0. You can check the installed version by running
-```
-npm -v
-```
-
-After you have installed Node.js and NPM on your machine, you need to initialize your project. You need to create a folder and run
-
-```
-npm init
-```
-
-from inside it. You will need to provide the information required on the screen. At this moment you should have a file called `package.json` inside your folder.
-
-Next step would be to install [gulp.js](http://gulpjs.com/). You need to install it globally and also as a dependency in your project. For doing this you should run:
- ```
- npm install -g gulp
- npm install gulp --save-dev
- ```
-
-You then need to add `extension-support-sandbox` inside your project. The available versions can be found under the [extension-support-bridge](https://artifactory.corp.adobe.com/artifactory/webapp/#/artifacts/browse/tree/General/npm-mcps-release-local/@reactor/extension-support-bridge/-/@reactor) package within Artifactory. For installing the latest version on your computer you can run the following commands inside your folder:
-```
-echo "@reactor:registry=https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local/" > .npmrc
-npm install @reactor/extension-support-sandbox --save-dev
-```
-
-You will then need to create a file called `gulpfile.js` with the following content:
-```
-'use strict';
-
-var gulp = require('gulp');
-require('@reactor/extension-support-sandbox')(gulp);
-```
-
-At this moment you can test that the sandbox is running as expected by running:
-```
-gulp sandbox
-```
-
-You can now start creating your extension. Happy coding!
