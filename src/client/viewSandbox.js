@@ -224,6 +224,9 @@ document.addEventListener('DOMContentLoaded', function() {
           'example.com'
         ]
       },
+      tokens: {
+        imsAccess: 'X34DF56GHHBBFFGH'
+      },
       schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
     };
 
