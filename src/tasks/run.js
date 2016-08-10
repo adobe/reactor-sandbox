@@ -11,6 +11,7 @@ var webpack = require('webpack');
 var webpackMiddleware = require('webpack-dev-middleware');
 var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
+var extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
 var getContainer = require('./helpers/getContainer');
 var files = require('./constants/files');
 
@@ -31,6 +32,42 @@ module.exports = function() {
 
   app.get('/' + files.EXTENSION_DESCRIPTOR_SCRIPT_FILENAME, function(req, res) {
     res.send(getExtensionDescriptorScript());
+  });
+
+  // Server hosted lib files from inside extensions.
+  app.get('/hostedLibFiles/:extensionName/:extensionVersion/:file', function (req, res) {
+    var params = req.params;
+    var extensionName = params.extensionName;
+    var extensionVersion = params.extensionVersion;
+    var file = params.file;
+
+    // Get the descriptor that matches the extension name and the version from the request.
+    var extensionDescriptorPath =
+      extensionDescriptorPaths.filter(function(extensionDescriptorPath) {
+        var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+        return extensionDescriptor.name === extensionName
+          && extensionDescriptor.version === extensionVersion;
+      })[0];
+
+    if (!extensionDescriptorPath) {
+      res.status(404).send('Cannot GET ' + req.originalUrl);
+      return;
+    }
+
+    var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+    // If no hosted files are defined in the descriptor, do nothing.
+    var hostedFilePath = (extensionDescriptor['hostedLibFiles'] || [])
+      .filter(function(hostedFilePath) {
+        return hostedFilePath.endsWith(file);
+      })[0];
+
+    if (!hostedFilePath) {
+      res.status(404).send('Cannot GET ' + req.originalUrl);
+      return;
+    }
+
+    var extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
+    res.sendFile(path.join(extensionPath, hostedFilePath));
   });
 
   // Produces viewSandbox.js

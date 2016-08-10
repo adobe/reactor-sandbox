@@ -1,10 +1,10 @@
 'use strict';
 
 var fs = require('fs');
-var glob = require('glob');
 var path = require('path');
 var files = require('../constants/files');
 var getRequiredPaths = require('@reactor/get-required-paths');
+var extensionDescriptorPaths = require('./extensionDescriptorPaths');
 
 var FEATURE_TYPES = [
   'events',
@@ -91,7 +91,7 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
           if (featureType === 'sharedModules') {
             moduleMeta.sharedName = featureDescriptor.name;
           }
-          
+
           if (featureDescriptor.displayName) {
             moduleMeta.displayName = featureDescriptor.displayName;
           }
@@ -114,9 +114,6 @@ module.exports = function() {
   // node_modules.
   // When running this task from within this builder project we care about any extensions we find
   // under this project's node_modules or under a folder starting with @(as for npm scopes).
-  var extensionDescriptorPaths =
-    glob.sync('{node_modules/*/,node_modules/@*/*/,}' + files.EXTENSION_DESCRIPTOR_FILENAME);
-
   var container;
 
   // Try to use the consumer-defined container first and fallback to the default if they haven't
@@ -155,6 +152,8 @@ module.exports = function() {
     }
 
     extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
+    extensionOutput.hostedLibFilesBaseUrl =
+      '/hostedLibFiles/' + extensionDescriptor.name + '/' + extensionDescriptor.version + '/';
 
     augmentModules(extensionOutput, extensionDescriptor, extensionPath);
   });
