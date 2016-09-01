@@ -65,9 +65,9 @@ module.exports = {
   },
   propertySettings: {},
   buildInfo: {
-    appVersion: '52A',
-    buildDate: '2015-03-16 20:55:42 UTC',
-    publishDate: '2015-03-16 14:43:44 -0600',
+    turbineVersion: '14.0.0',
+    turbineBuildDate: '2016-07-01T18:10:34Z',
+    buildDate: '2016-08-01T12:10:33Z',
     environment: 'development'
   }
 };
