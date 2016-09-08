@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       ],
       propertySettings: {
-        domainList: [
+        domains: [
           'adobe.com',
           'example.com'
         ]
@@ -227,8 +227,8 @@ document.addEventListener('DOMContentLoaded', function() {
       tokens: {
         imsAccess: 'X34DF56GHHBBFFGH'
       },
-      companyInfo: {
-        mcOrgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      company: {
+        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
       },
       schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
     };
