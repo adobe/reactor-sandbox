@@ -227,6 +227,9 @@ document.addEventListener('DOMContentLoaded', function() {
       tokens: {
         imsAccess: 'X34DF56GHHBBFFGH'
       },
+      companyInfo: {
+        mcOrgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      },
       schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
     };
 
