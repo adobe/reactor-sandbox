@@ -222,7 +222,10 @@ document.addEventListener('DOMContentLoaded', function() {
         domains: [
           'adobe.com',
           'example.com'
-        ]
+        ],
+        linkDelay: 100,
+        euCookieName: 'sat_track',
+        undefinedVarsReturnEmpty: false
       },
       tokens: {
         imsAccess: 'X34DF56GHHBBFFGH'
