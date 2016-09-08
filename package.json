@@ -14,7 +14,7 @@
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local"
   },
   "dependencies": {
-    "@reactor/extension-support-bridge": "^4.0.3",
+    "@reactor/extension-support-bridge": "^5.2.0",
     "@reactor/get-required-paths": "^1.0.0",
     "@reactor/jschannel": "^1.0.0",
     "ajv": "^4.1.3",
