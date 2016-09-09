@@ -63,7 +63,15 @@ module.exports = {
     //   }
     // }
   },
-  propertySettings: {},
+  propertySettings: {
+    domains: [
+      'adobe.com',
+      'example.com'
+    ],
+    linkDelay: 100,
+    euCookieName: 'sat_track',
+    undefinedVarsReturnEmpty: false
+  },
   buildInfo: {
     turbineVersion: '14.0.0',
     turbineBuildDate: '2016-07-01T18:10:34Z',
