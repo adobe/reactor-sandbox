@@ -30,6 +30,10 @@ var codeMirrorConfig = {
   }
 };
 
+var getRandomValue = function(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 var clearSelectOptions = function(comboBox) {
   comboBox.innerHTML = '';
 };
@@ -44,6 +48,32 @@ var openRegexTester = function(regex, callback) {
 
 var openDataElementSelector = function(callback) {
   callback('dataElement' + Math.round(Math.random() * 10000));
+};
+
+var openCssSelector = function(callback) {
+  var tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi',
+    'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col',
+    'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt',
+    'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4',
+    'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins',
+    'kbd', 'keygen', 'label', 'legend', 'li', 'link', 'main', 'map', 'mark', 'menu', 'menuitem',
+    'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p',
+    'param', 'pre', 'progress', 'q', 'rb', 'rp', 'rt', 'rtc', 'ruby', 's', 'samp', 'script',
+    'section', 'select', 'small', 'source', 'span', 'strong', 'style', 'sub', 'summary', 'sup',
+    'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr',
+    'track', 'u', 'ul', 'var', 'video', 'wbr'];
+
+  var selector = [' ', ', ', ' > ', ' + ', ' ~ '];
+  var result = [];
+
+  for (var i = 0, l = getRandomValue(1, 5); i < l; i++) {
+    result.push(tags[getRandomValue(0, tags.length)]);
+    result.push(selector[getRandomValue(0, selector.length)]);
+  }
+
+  result.pop();
+
+  callback(result.join(''));
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -185,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
       openCodeEditor: openCodeEditor,
       openRegexTester: openRegexTester,
       openDataElementSelector: openDataElementSelector,
+      openCssSelector: openCssSelector,
       onInitialRenderComplete: function() {
         viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
       }
