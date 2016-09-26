@@ -67,8 +67,8 @@ var openCssSelector = function(callback) {
   var result = [];
 
   for (var i = 0, l = getRandomValue(1, 5); i < l; i++) {
-    result.push(tags[getRandomValue(0, tags.length)]);
-    result.push(selector[getRandomValue(0, selector.length)]);
+    result.push(tags[getRandomValue(0, tags.length - 1)]);
+    result.push(selector[getRandomValue(0, selector.length - 1)]);
   }
 
   result.pop();
