@@ -5,12 +5,35 @@ var Ajv = require('ajv');
 var objectAssign = require('object-assign');
 
 var VIEW_GROUPS = {
-  'configuration': 'Extension Configuration',
-  'events': 'Events',
-  'conditions': 'Conditions',
-  'actions': 'Actions',
-  'dataElements': 'Data Elements'
+  CONFIGURATION: 'configuration',
+  EVENTS: 'events',
+  CONDITIONS: 'conditions',
+  ACTIONS: 'actions',
+  DATA_ELEMENTS: 'dataElements'
 };
+
+var viewGroupOptionDescriptors = [
+  {
+    value: VIEW_GROUPS.CONFIGURATION,
+    label: 'Extension Configuration'
+  },
+  {
+    value: VIEW_GROUPS.EVENTS,
+    label: 'Events'
+  },
+  {
+    value: VIEW_GROUPS.CONDITIONS,
+    label: 'Conditions'
+  },
+  {
+    value: VIEW_GROUPS.ACTIONS,
+    label: 'Actions'
+  },
+  {
+    value: VIEW_GROUPS.DATA_ELEMENTS,
+    label: 'Data Elements'
+  }
+];
 
 var NOT_AVAILABLE = '--N/A--';
 var OTHER = 'Other';
@@ -77,8 +100,6 @@ var openCssSelector = function(callback) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-
-
   var viewGroupSelector = document.getElementById('viewGroupSelector');
   var viewSelector = document.getElementById('extensionViewSelector');
   var validateButton = document.getElementById('validateButton');
@@ -96,19 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Extension configuration is not an array by default because it's only one.
   if (extensionDescriptor.configuration) {
-    extensionDescriptor.configuration.displayName = extensionDescriptor.displayName;
     extensionDescriptor.configuration = [extensionDescriptor.configuration];
   }
 
   // Populate View Selector.
   if (extensionDescriptor) {
-    Object.keys(VIEW_GROUPS).forEach(function(groupKey) {
-      var items = extensionDescriptor[groupKey];
+    viewGroupOptionDescriptors.forEach(function(optionDescriptor) {
+      var items = extensionDescriptor[optionDescriptor.value];
       if (items && items.length) {
         var option = document.createElement('option');
-        option.value = groupKey;
-        option.text = VIEW_GROUPS[groupKey];
-        option.selected = groupKey === lastSelectedViewGroup;
+        option.value = optionDescriptor.value;
+        option.text = optionDescriptor.label;
+        option.selected = optionDescriptor.value === lastSelectedViewGroup;
         viewGroupSelector.appendChild(option);
       }
     });
@@ -188,6 +208,14 @@ document.addEventListener('DOMContentLoaded', function() {
         parentNode.appendChild(option);
       });
     });
+
+    // If Extension Configuration is the selected "group", there's no need to show
+    // the second select because there's never more than one view in that group.
+    if (groupKey === VIEW_GROUPS.CONFIGURATION) {
+      viewSelector.setAttribute('hidden', 'hidden');
+    } else {
+      viewSelector.removeAttribute('hidden');
+    }
   };
 
   populateViewSelector();
