@@ -6,19 +6,19 @@ module.exports = {
     //   name: 'Example Rule',
     //   events: [
     //     {
-    //       modulePath: 'exampleExtension/src/lib/eventDelegates/click.js',
+    //       modulePath: 'example-extension/src/lib/events/click.js',
     //       settings: {}
     //     }
     //   ],
     //   conditions: [
     //     {
-    //       modulePath: 'exampleExtension/src/lib/conditions/operatingSystem.js',
+    //       modulePath: 'example-extension/src/lib/conditions/operatingSystem.js',
     //       settings: {}
     //     }
     //   ],
     //   actions: [
     //     {
-    //       modulePath: 'exampleExtension/src/lib/actions/sendBeacon.js',
+    //       modulePath: 'example-extension/src/lib/actions/sendBeacon.js',
     //       settings: {}
     //     }
     //   ]
@@ -26,12 +26,12 @@ module.exports = {
   ],
   dataElements: {
     // myDataElement: {
-    //   modulePath: 'exampleExtension/src/lib/dataElements/javascriptVariable.js',
+    //   modulePath: 'example-extension/src/lib/dataElements/javascriptVariable.js',
     //   settings: {}
     // }
   },
   extensions: {
-    // exampleExtension: {
+    // 'example-extension': {
     //   displayName: 'Example Extension',
     //   configurations: [
     //     {
