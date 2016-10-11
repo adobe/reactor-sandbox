@@ -14,11 +14,16 @@ var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScri
 var extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
 var getContainer = require('./helpers/getContainer');
 var files = require('./constants/files');
+var validateExtensionDescriptor = require('./helpers/validateExtensionDescriptor');
 
 var PORT = 3000;
 
 module.exports = function() {
   var extensionDescriptor = getExtensionDescriptor();
+
+  if (!validateExtensionDescriptor(extensionDescriptor)) {
+    return;
+  }
 
   var app = express();
 

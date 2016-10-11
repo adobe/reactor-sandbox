@@ -1,7 +1,7 @@
 {
   "name": "@reactor/extension-support-sandbox",
   "version": "7.6.0",
-  "description": "Gulp tasks for creating a sandbox in which you can manually test your Turbine extension.",
+  "description": "Tasks for creating a sandbox in which you can manually test Turbine extensions.",
   "author": {
     "name": "DTM",
     "email": "DTM-Engineering@adobe.com"
@@ -17,7 +17,8 @@
     "@reactor/extension-support-bridge": "^5.2.0",
     "@reactor/get-required-paths": "^1.0.0",
     "@reactor/jschannel": "^1.0.0",
-    "ajv": "^4.1.3",
+    "@reactor/turbine-schemas": "^1.0.0",
+    "ajv": "^4.7.7",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "glob": "^7.0.3",

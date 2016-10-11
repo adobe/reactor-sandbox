@@ -12,8 +12,15 @@ var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
 var getContainer = require('./helpers/getContainer');
 var files = require('./constants/files');
+var validateExtensionDescriptor = require('./helpers/validateExtensionDescriptor');
 
 module.exports = function() {
+  var extensionDescriptor = getExtensionDescriptor();
+
+  if (!validateExtensionDescriptor(extensionDescriptor)) {
+    return;
+  }
+
   fs.ensureDirSync(files.DIST_PATH);
 
   fs.writeFileSync(path.resolve(files.DIST_PATH, files.EXTENSION_DESCRIPTOR_SCRIPT_FILENAME),
@@ -26,7 +33,7 @@ module.exports = function() {
   webpackConfig.output.path = files.DIST_PATH;
   webpack(webpackConfig).run(function() {});
 
-  var extensionViewsPath = path.resolve(getExtensionDescriptor().viewBasePath);
+  var extensionViewsPath = path.resolve(extensionDescriptor.viewBasePath);
   fs.copySync(extensionViewsPath, path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME));
 
   fs.copySync(files.CLIENT_SRC_PATH, files.DIST_PATH);
