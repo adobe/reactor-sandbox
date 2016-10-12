@@ -9,6 +9,7 @@ var fs = require('fs');
 var express = require('express');
 var webpack = require('webpack');
 var webpackMiddleware = require('webpack-dev-middleware');
+var chalk = require('chalk');
 var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
 var extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
@@ -19,16 +20,20 @@ var validateExtensionDescriptor = require('./helpers/validateExtensionDescriptor
 var PORT = 3000;
 
 module.exports = function() {
-  var extensionDescriptor = getExtensionDescriptor();
-
-  if (!validateExtensionDescriptor(extensionDescriptor)) {
-    return;
-  }
-
+  var validationError;
   var app = express();
 
   app.get('/' + files.CONTAINER_FILENAME, function(req, res) {
-    res.send(getContainer());
+    // Always pull the latest extension descriptor. The extension developer may have changed it
+    // since the last request.
+    validationError = validateExtensionDescriptor(getExtensionDescriptor());
+
+    if (validationError) {
+      console.error(chalk.red(validationError));
+      res.status(500).send(validationError);
+    } else {
+      res.send(getContainer());
+    }
   });
 
   app.get('/' + files.ENGINE_FILENAME, function(req, res) {
@@ -74,6 +79,16 @@ module.exports = function() {
     var extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
     res.sendFile(path.join(extensionPath, hostedFilePath));
   });
+
+  var extensionDescriptor = getExtensionDescriptor();
+  validationError = validateExtensionDescriptor(extensionDescriptor);
+
+  // If there is a validation error, we're going to let express still run. This gives the
+  // extension developer a chance to fix their extension.json or whatever without having to
+  // re-run the sandbox.
+  if (validationError) {
+    console.error(chalk.red(validationError));
+  }
 
   // Produces viewSandbox.js
   var webpackConfig = require('./webpack.viewSandbox.config');
