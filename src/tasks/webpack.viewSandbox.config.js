@@ -7,6 +7,9 @@ module.exports = {
   },
   // AJV needs json-loader.
   module: {
+    // Without this webpack will log a warning.
+    // https://github.com/epoberezkin/ajv/pull/288#issuecomment-253286408
+    noParse: /node_modules\/ajv\/dist\/ajv.bundle.js/,
     loaders: [
       {
         'test': /\.json$/,
