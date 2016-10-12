@@ -8,6 +8,7 @@
 var path = require('path');
 var fs = require('fs-extra');
 var webpack = require('webpack');
+var chalk = require('chalk');
 var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
 var getContainer = require('./helpers/getContainer');
@@ -16,8 +17,10 @@ var validateExtensionDescriptor = require('./helpers/validateExtensionDescriptor
 
 module.exports = function() {
   var extensionDescriptor = getExtensionDescriptor();
+  var validationError = validateExtensionDescriptor(extensionDescriptor);
 
-  if (!validateExtensionDescriptor(extensionDescriptor)) {
+  if (validationError) {
+    console.log(chalk.red(validationError));
     return;
   }
 
