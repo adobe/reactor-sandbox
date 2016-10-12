@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@reactor/extension-support-bridge": "^5.2.0",
+    "@reactor/extension-support-validator": "^1.0.0",
     "@reactor/get-required-paths": "^1.0.0",
     "@reactor/jschannel": "^1.0.0",
     "@reactor/turbine-schemas": "^1.0.0",

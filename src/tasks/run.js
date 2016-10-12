@@ -10,12 +10,12 @@ var express = require('express');
 var webpack = require('webpack');
 var webpackMiddleware = require('webpack-dev-middleware');
 var chalk = require('chalk');
+var validateExtensionDescriptor = require('@reactor/extension-support-validator');
 var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
 var extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
 var getContainer = require('./helpers/getContainer');
 var files = require('./constants/files');
-var validateExtensionDescriptor = require('./helpers/validateExtensionDescriptor');
 
 var PORT = 3000;
 

@@ -9,11 +9,11 @@ var path = require('path');
 var fs = require('fs-extra');
 var webpack = require('webpack');
 var chalk = require('chalk');
+var validateExtensionDescriptor = require('@reactor/extension-support-validator');
 var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
 var getContainer = require('./helpers/getContainer');
 var files = require('./constants/files');
-var validateExtensionDescriptor = require('./helpers/validateExtensionDescriptor');
 
 module.exports = function() {
   var extensionDescriptor = getExtensionDescriptor();
