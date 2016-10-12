@@ -21,7 +21,7 @@ module.exports = function() {
 
   if (validationError) {
     console.log(chalk.red(validationError));
-    return;
+    process.exit(1);
   }
 
   fs.ensureDirSync(files.DIST_PATH);
