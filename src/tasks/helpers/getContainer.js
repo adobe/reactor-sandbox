@@ -28,8 +28,9 @@ function wrapInFunction(content, argNames) {
   return 'function(' + argsStr + ') {\n' + content + '}\n';
 }
 
-var getModuleToken = function(path) {
-  return '{{module:' + path + '}}';
+var FUNCTION_TOKEN_REGEX = /"\{\{sandbox:function:(.+?)\}\}"/g;
+var getFunctionToken = function(fnStr) {
+  return '{{sandbox:function:' + fnStr + '}}';
 };
 
 var augmentModule = function(modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) {
@@ -60,7 +61,7 @@ var augmentModule = function(modulesOutput, extensionName, extensionPath, module
       // to JSON that the token should be replaced with an actual, executable function
       // which wraps the delegate code. We can't just set the value to a function right
       // now because it wouldn't be properly serialized.
-      script: getModuleToken(modulePath)
+      script: getFunctionToken(wrapInFunction(source, ['module', 'require']))
     };
   }
 
@@ -158,14 +159,21 @@ module.exports = function() {
     augmentModules(extensionOutput, extensionDescriptor, extensionPath);
   });
 
-  container = JSON.stringify(container, null, 2);
+  // Stringify the container so we can wrap it with some additional code (see down below).
+  container = JSON.stringify(container, function(key, value) {
+    // When consumers have placed functions in their container, we need to maintain them as
+    // executable functions in the final output. Consumers may place functions in their container
+    // in order to simulate the "function" transform that typically occurs on the server.
+    if (typeof value === 'function') {
+      return getFunctionToken(value.toString());
+    }
 
-  // Replace all delegate tokens in the JSON with executable functions that contain the
-  // extension's delegate code.
-  container = container.replace(/"\{\{module:(.+?)\}\}"/g, function(match, path) {
-    var script = fs.readFileSync(path, {encoding: 'utf8'});
-    script = wrapInFunction(script, ['module', 'require']);
-    return script;
+    return value;
+  }, 2);
+
+  // Replace all function tokens in the JSON with executable functions.
+  container = container.replace(FUNCTION_TOKEN_REGEX, function(match, fnStr) {
+    return fnStr.replace(/\\n/g, '\n'); // Makes line breaks real again.
   });
 
   container = '' +
