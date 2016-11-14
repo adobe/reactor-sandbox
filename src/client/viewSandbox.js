@@ -1,10 +1,13 @@
 'use strict';
 
-var extensionBridge = require('@reactor/extension-support-bridge');
-var Ajv = require('ajv');
-var objectAssign = require('object-assign');
+import Promise from 'native-promise-only-ponyfill';
+import { loadIframe, setPromise, setDebug } from '@reactor/extension-support-bridge';
+import Ajv from 'ajv';
 
-var VIEW_GROUPS = {
+setPromise(Promise);
+// setDebug(true);
+
+const VIEW_GROUPS = {
   CONFIGURATION: 'configuration',
   EVENTS: 'events',
   CONDITIONS: 'conditions',
@@ -12,7 +15,7 @@ var VIEW_GROUPS = {
   DATA_ELEMENTS: 'dataElements'
 };
 
-var viewGroupOptionDescriptors = [
+const viewGroupOptionDescriptors = [
   {
     value: VIEW_GROUPS.CONFIGURATION,
     label: 'Extension Configuration'
@@ -35,46 +38,37 @@ var viewGroupOptionDescriptors = [
   }
 ];
 
-var NOT_AVAILABLE = '--N/A--';
-var OTHER = 'Other';
+const NOT_AVAILABLE = '--N/A--';
+const OTHER = 'Other';
 
-var LOADING_CLASS_NAME = 'loading';
-
-var codeMirrorConfig = {
+const codeMirrorConfig = {
   lineNumbers: true,
   mode: 'application/json',
   gutters: ['CodeMirror-lint-markers'],
   lint: true,
   value: '{}',
   extraKeys: {
-    'Tab': function(cm) {
+    'Tab': cm => {
       cm.replaceSelection('  ' , 'end');
     }
   }
 };
 
-var getRandomValue = function(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
+const getRandomValue = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
-var clearSelectOptions = function(comboBox) {
-  comboBox.innerHTML = '';
-};
+const clearSelectOptions = comboBox => comboBox.innerHTML = '';
 
-var openCodeEditor = function(code, callback) {
-  callback('Edited Code ' + Math.round(Math.random() * 10000));
-};
+const openCodeEditor = code =>
+  Promise.resolve('Edited Code ' + Math.round(Math.random() * 10000));
 
-var openRegexTester = function(regex, callback) {
-  callback('Edited Regex ' + Math.round(Math.random() * 10000));
-};
+const openRegexTester = regex =>
+  Promise.resolve('Edited Regex ' + Math.round(Math.random() * 10000));
 
-var openDataElementSelector = function(callback) {
-  callback('dataElement' + Math.round(Math.random() * 10000));
-};
+const openDataElementSelector = () =>
+  Promise.resolve('dataElement' + Math.round(Math.random() * 10000));
 
-var openCssSelector = function(callback) {
-  var tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi',
+const openCssSelector = () => {
+  const tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi',
     'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col',
     'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt',
     'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4',
@@ -86,92 +80,76 @@ var openCssSelector = function(callback) {
     'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr',
     'track', 'u', 'ul', 'var', 'video', 'wbr'];
 
-  var selector = [' ', ', ', ' > ', ' + ', ' ~ '];
-  var result = [];
+  const selector = [' ', ', ', ' > ', ' + ', ' ~ '];
+  const result = [];
 
-  for (var i = 0, l = getRandomValue(1, 5); i < l; i++) {
+  for (let i = 0, l = getRandomValue(1, 5); i < l; i++) {
     result.push(tags[getRandomValue(0, tags.length - 1)]);
     result.push(selector[getRandomValue(0, selector.length - 1)]);
   }
 
   result.pop();
 
-  callback(result.join(''));
+  return Promise.resolve(result.join(''));
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-  var viewGroupSelector = document.getElementById('viewGroupSelector');
-  var viewSelector = document.getElementById('extensionViewSelector');
-  var validateButton = document.getElementById('validateButton');
-  var validateOutput = document.getElementById('validateOutput');
-  var initEditor =
-    CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
-  var initButton = document.getElementById('initButton');
-  var getSettingsEditor =
-    CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
-  var getSettingsButton = document.getElementById('getSettingsButton');
-  var viewIframeContainer = document.getElementById('iframeContainer');
+const getCategorizedItems = items => {
+  var groupedItems = {};
 
-  var lastSelectedView = localStorage.getItem('lastSelectedView');
-  var lastSelectedViewGroup = localStorage.getItem('lastSelectedViewGroup');
-
-  // Extension configuration is not an array by default because it's only one.
-  if (extensionDescriptor.configuration) {
-    extensionDescriptor.configuration = [extensionDescriptor.configuration];
+  if (items) {
+    items.forEach(item => {
+      var categoryName = item.categoryName || NOT_AVAILABLE;
+      if (!groupedItems[categoryName]) {
+        groupedItems[categoryName] = [];
+      }
+      groupedItems[categoryName].push(item);
+    });
   }
 
-  // Populate View Selector.
-  if (extensionDescriptor) {
-    viewGroupOptionDescriptors.forEach(function(optionDescriptor) {
-      var items = extensionDescriptor[optionDescriptor.value];
-      if (items && items.length) {
-        var option = document.createElement('option');
-        option.value = optionDescriptor.value;
-        option.text = optionDescriptor.label;
-        option.selected = optionDescriptor.value === lastSelectedViewGroup;
-        viewGroupSelector.appendChild(option);
+  Object.keys(groupedItems).forEach(categoryName => {
+    groupedItems[categoryName].sort((a, b) => {
+      if (a.displayName < b.displayName) {
+        return -1;
+      } else if (a.displayName > b.displayName) {
+        return 1;
+      } else {
+        return 0;
       }
     });
-  }
+  });
 
-  var getCategorizedItems = function(items) {
-    var groupedItems = {};
+  return groupedItems;
+};
 
-    if (items) {
-      items.forEach(function(item) {
-        var categoryName = item.categoryName || NOT_AVAILABLE;
-        if (!groupedItems[categoryName]) {
-          groupedItems[categoryName] = [];
-        }
-        groupedItems[categoryName].push(item);
-      });
-    }
+const editModeEntered = () => document.body.classList.add('editMode');
+const editModeExited = () => document.body.classList.remove('editMode');
 
-    Object.keys(groupedItems).forEach(function(categoryName) {
-      groupedItems[categoryName].sort(function(a, b) {
-        if (a.displayName < b.displayName) {
-          return -1;
-        } else if (a.displayName > b.displayName) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-    });
+const init = () => {
+  const viewGroupSelector = document.getElementById('viewGroupSelector');
+  const viewSelector = document.getElementById('extensionViewSelector');
+  const validateButton = document.getElementById('validateButton');
+  const validateOutput = document.getElementById('validateOutput');
+  const initEditor =
+    CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
+  const initButton = document.getElementById('initButton');
+  const getSettingsEditor =
+    CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
+  const getSettingsButton = document.getElementById('getSettingsButton');
+  const extensionViewContainer = document.getElementById('extensionViewContainer');
 
-    return groupedItems;
-  };
+  const lastSelectedView = localStorage.getItem('lastSelectedView');
+  const lastSelectedViewGroup = localStorage.getItem('lastSelectedViewGroup');
 
-  var populateViewSelector = function() {
+  const populateViewSelector = () => {
     clearSelectOptions(viewSelector);
-    var groupKey = viewGroupSelector.value;
+    const groupKey = viewGroupSelector.value;
     localStorage.setItem('lastSelectedViewGroup', groupKey);
 
     var categorizedItems = getCategorizedItems(extensionDescriptor[groupKey]);
-    Object.keys(categorizedItems).sort(function(a, b) {
-      var categoriesToBePlacedLast = [NOT_AVAILABLE, OTHER];
+    Object.keys(categorizedItems).sort((a, b) => {
+      const categoriesToBePlacedLast = [NOT_AVAILABLE, OTHER];
 
-      for (var i = 0; i < categoriesToBePlacedLast.length; i++) {
+      for (let i = 0; i < categoriesToBePlacedLast.length; i++) {
         if (a === categoriesToBePlacedLast[i] || b === categoriesToBePlacedLast[i]) {
           return a === categoriesToBePlacedLast[i] ? 1 : -1;
         }
@@ -184,8 +162,8 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         return 0;
       }
-    }).forEach(function(categoryName) {
-      var parentNode;
+    }).forEach(categoryName => {
+      let parentNode;
 
       // Don't create `optgroup` node if the items don't belong to any category.
       // These items should be appended directly to the viewSelector node.
@@ -198,9 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
         parentNode = viewSelector;
       }
 
-      var items = categorizedItems[categoryName];
-      items.forEach(function(item) {
-        var option = document.createElement('option');
+      const items = categorizedItems[categoryName];
+      items.forEach(item => {
+        const option = document.createElement('option');
         option.value = item.viewPath;
         option.text = item.displayName;
         option.descriptor = item;
@@ -218,120 +196,94 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  populateViewSelector();
-  viewGroupSelector.addEventListener('change', function() {
-    populateViewSelector();
-    loadSelectedViewIntoIframe();
-  });
-
-  var getViewURLFromSelector = function() {
+  const getViewURLFromSelector = () => {
     if (viewSelector.selectedIndex !== -1) {
-      var viewPath = viewSelector.options[viewSelector.selectedIndex].value;
+      const viewPath = viewSelector.options[viewSelector.selectedIndex].value;
       localStorage.setItem('lastSelectedView', viewPath);
       return 'extensionViews/' + viewPath;
     }
   };
 
-  var iframeExtensionBridge;
+  let extensionView;
 
-
-  var createIframe = function() {
-    iframeExtensionBridge = document.createElement('iframe');
-    viewIframeContainer.appendChild(iframeExtensionBridge);
-    extensionBridge(iframeExtensionBridge);
-    iframeExtensionBridge.bridge.api = objectAssign(iframeExtensionBridge.bridge.api, {
-      openCodeEditor: openCodeEditor,
-      openRegexTester: openRegexTester,
-      openDataElementSelector: openDataElementSelector,
-      openCssSelector: openCssSelector,
-      onInitialRenderComplete: function() {
-        viewIframeContainer.classList.remove(LOADING_CLASS_NAME);
-      }
-    });
-  };
-
-  var loadSelectedViewIntoIframe = function() {
-    if(!iframeExtensionBridge) {
-      viewIframeContainer.classList.add(LOADING_CLASS_NAME);
-      createIframe();
+  const loadSelectedViewIntoIframe = () => {
+    if (extensionView) {
+      extensionView.destroy();
     }
 
-    var selectedViewDescriptor = getSelectedViewDescriptor();
-    var initOptions = {
-      settings: null,
-      extensionConfigurations: [
-        {
-          id: 'EC123',
-          name: 'Example Configuration A',
-          enabled: true,
-          settings: {
-            foo: 'bar'
-          }
-        },
-        {
-          id: 'EC124',
-          name: 'Example Configuration B',
-          enabled: true,
-          settings: {
-            baz: 'qux'
-          }
-        }
-      ],
-      propertySettings: {
-        domains: [
-          'adobe.com',
-          'example.com'
-        ],
-        linkDelay: 100,
-        euCookieName: 'sat_track',
-        undefinedVarsReturnEmpty: false
-      },
-      tokens: {
-        imsAccess: 'X34DF56GHHBBFFGH'
-      },
-      company: {
-        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
-      },
-      schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
-    };
+    const viewURL = getViewURLFromSelector();
 
-    iframeExtensionBridge.bridge.configuration = objectAssign(
-      {},
-      iframeExtensionBridge.bridge.configuration,
-      initOptions
-    );
-
-    initEditor.setValue(JSON.stringify(initOptions, null, 2));
-
-    // LiveReload will reload the iframe content whenever we change the source of the views.
-    iframeExtensionBridge.contentWindow.onbeforeunload = function() {
-      iframeExtensionBridge.onload = null;
-      loadSelectedViewIntoIframe();
-    };
-
-    var viewURL = getViewURLFromSelector();
     if (viewURL) {
-      iframeExtensionBridge.bridge.configuration.src = viewURL;
+      const selectedViewDescriptor = getSelectedViewDescriptor();
+
+      const extensionInitOptions = {
+        settings: null,
+        extensionConfigurations: [
+          {
+            id: 'EC123',
+            name: 'Example Configuration A',
+            enabled: true,
+            settings: {
+              foo: 'bar'
+            }
+          },
+          {
+            id: 'EC124',
+            name: 'Example Configuration B',
+            enabled: true,
+            settings: {
+              baz: 'qux'
+            }
+          }
+        ],
+        propertySettings: {
+          domains: [
+            'adobe.com',
+            'example.com'
+          ],
+          linkDelay: 100,
+          euCookieName: 'sat_track',
+          undefinedVarsReturnEmpty: false
+        },
+        tokens: {
+          imsAccess: 'X34DF56GHHBBFFGH'
+        },
+        company: {
+          orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+        },
+        schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
+      };
+
+      initEditor.setValue(JSON.stringify(extensionInitOptions, null, 2));
+
+      loadIframe({
+        url: viewURL,
+        container: extensionViewContainer,
+        extensionInitOptions,
+        openCodeEditor,
+        openRegexTester,
+        openDataElementSelector,
+        openCssSelector,
+        editModeEntered,
+        editModeExited
+      }).then(value => extensionView = value);
     }
   };
 
-  var getSelectedViewDescriptor = function() {
+  const getSelectedViewDescriptor = () => {
     if (viewSelector.selectedIndex !== -1) {
       return viewSelector.options[viewSelector.selectedIndex].descriptor;
     }
   };
 
-  loadSelectedViewIntoIframe();
-  viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
-
-  validateButton.addEventListener('click', function() {
-    iframeExtensionBridge.bridge.api.validate(function(valid) {
+  const reportValidation = () => {
+    extensionView.validate().then(valid =>  {
       if (valid) {
-        var selectedViewDescriptor = getSelectedViewDescriptor();
+        const selectedViewDescriptor = getSelectedViewDescriptor();
         if (selectedViewDescriptor && selectedViewDescriptor.schema) {
-          iframeExtensionBridge.bridge.api.getSettings(function(settings) {
-            var ajv = Ajv();
-            var matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
+          extensionView.getSettings().then(settings => {
+            const ajv = Ajv();
+            const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
 
             if (matchesSchema) {
               validateOutput.innerHTML = 'Valid';
@@ -347,19 +299,50 @@ document.addEventListener('DOMContentLoaded', function() {
         validateOutput.innerHTML = 'Invalid';
       }
     });
-  });
+  };
 
-  getSettingsButton.addEventListener('click', function() {
-    iframeExtensionBridge.bridge.api.getSettings(function(settings) {
+  const reportSettings = () => {
+    extensionView.getSettings().then(settings => {
       getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
     });
+  };
+
+  const init = () => {
+    extensionView.init(JSON.parse(initEditor.getValue()));
+  };
+
+  // Extension configuration is not an array by default because it's only one.
+  if (extensionDescriptor.configuration) {
+    extensionDescriptor.configuration = [extensionDescriptor.configuration];
+  }
+
+  // Populate View Selector.
+  if (extensionDescriptor) {
+    viewGroupOptionDescriptors.forEach(optionDescriptor => {
+      var items = extensionDescriptor[optionDescriptor.value];
+      if (items && items.length) {
+        var option = document.createElement('option');
+        option.value = optionDescriptor.value;
+        option.text = optionDescriptor.label;
+        option.selected = optionDescriptor.value === lastSelectedViewGroup;
+        viewGroupSelector.appendChild(option);
+      }
+    });
+  }
+
+  populateViewSelector();
+
+  viewGroupSelector.addEventListener('change', () => {
+    populateViewSelector();
+    loadSelectedViewIntoIframe();
   });
 
-  initButton.addEventListener('click', function() {
-    iframeExtensionBridge.bridge.configuration = objectAssign(
-      {},
-      iframeExtensionBridge.bridge.configuration,
-      JSON.parse(initEditor.getValue())
-    );
-  });
-});
+  validateButton.addEventListener('click', reportValidation);
+  getSettingsButton.addEventListener('click', reportSettings);
+  initButton.addEventListener('click', init);
+  viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
+
+  loadSelectedViewIntoIframe();
+};
+
+document.addEventListener('DOMContentLoaded', init);
