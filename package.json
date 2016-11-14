@@ -18,7 +18,6 @@
     "@reactor/extension-support-validator": "^1.0.0",
     "@reactor/get-required-paths": "^1.0.0",
     "@reactor/jschannel": "^1.0.0",
-    "@reactor/turbine-schemas": "*",
     "ajv": "^4.7.7",
     "chalk": "^1.1.3",
     "express": "^4.14.0",
