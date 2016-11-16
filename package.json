@@ -1,6 +1,6 @@
 {
   "name": "@reactor/extension-support-sandbox",
-  "version": "7.8.7",
+  "version": "7.8.8",
   "description": "Tasks for creating a sandbox in which you can manually test Turbine extensions.",
   "author": {
     "name": "DTM",
