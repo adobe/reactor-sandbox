@@ -25,7 +25,7 @@ var CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
 
 function wrapInFunction(content, argNames) {
   var argsStr = argNames ? argNames.join(', ') : '';
-  return 'function(' + argsStr + ') {\n' + content + '}\n';
+  return 'function(' + argsStr + ') {\n' + content + '\n}\n';
 }
 
 var functionTokenRegistry = {
