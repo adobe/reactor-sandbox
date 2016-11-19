@@ -17,7 +17,6 @@
     "@reactor/extension-support-bridge": "^6.0.0-alpha",
     "@reactor/extension-support-validator": "^1.0.0",
     "@reactor/get-required-paths": "^1.0.0",
-    "@reactor/turbine-schemas": "^1.0.0",
     "ajv": "^4.7.7",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.7",

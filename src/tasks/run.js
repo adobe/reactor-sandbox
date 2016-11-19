@@ -44,6 +44,10 @@ module.exports = function() {
     res.send(getExtensionDescriptorScript());
   });
 
+  app.get('/extensionbridge/extensionbridge-child.js', function(req, res) {
+    res.sendFile(files.EXTENSION_BRIDGE_CHILD_PATH);
+  });
+
   // Server hosted lib files from inside extensions.
   app.get('/hostedLibFiles/:extensionName/:extensionVersion/:file', function (req, res) {
     var params = req.params;
