@@ -118,6 +118,38 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
   });
 };
 
+/**
+ * Adds a Sandbox extension to the container with some simple events that sandbox users can use in
+ * their rules.
+ */
+var augmentSandboxEvents = function(extensionsOutput) {
+  if (!extensionsOutput.sandbox) { // Check to see if the extension under test is named sandbox.
+    extensionsOutput.sandbox = {
+      displayName: 'Extension Sandbox',
+      modules: {
+        'sandbox/click.js': {
+          displayName: 'Click',
+          script: function(module) {
+            module.exports = function(settings, trigger) {
+              document.addEventListener('click', function() {
+                trigger();
+              });
+            };
+          }
+        },
+        'sandbox/pageTop.js': {
+          displayName: 'Page Top',
+          script: function(module) {
+            module.exports = function(settings, trigger) {
+              trigger();
+            };
+          }
+        }
+      }
+    }
+  }
+};
+
 module.exports = function() {
   // When running this task from a turbine extension project we want to include the
   // extension descriptor from that extension as well as any extensions we find under its
@@ -167,6 +199,8 @@ module.exports = function() {
 
     augmentModules(extensionOutput, extensionDescriptor, extensionPath);
   });
+
+  augmentSandboxEvents(extensionsOutput);
 
   // Stringify the container so we can wrap it with some additional code (see down below).
   container = JSON.stringify(container, function(key, value) {
