@@ -20,7 +20,8 @@ var files = {
   VIEW_SANDBOX_HTML_FILENAME: 'viewSandbox.html',
   LIB_SANDBOX_HTML_FILENAME: 'libSandbox.html',
   DIST_PATH: path.resolve('sandbox'),
-  EXTENSION_VIEWS_DIRNAME: 'extensionViews'
+  EXTENSION_VIEWS_DIRNAME: 'extensionViews',
+  EXTENSION_BRIDGE_CHILD_PATH: path.resolve('node_modules/@reactor/extension-support-bridge/dist/extensionbridge-child.js')
 };
 
 module.exports = files;
