@@ -16,8 +16,7 @@ module.exports = {
         'loader': 'json'
       },
       {
-        test: /.js$/,
-        exclude: /node_modules/,
+        test: /viewSandbox\.js$/,
         loader: 'babel'
       }
     ]
