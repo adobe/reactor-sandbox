@@ -14,6 +14,7 @@ var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
 var getContainer = require('./helpers/getContainer');
 var files = require('./constants/files');
+var replace = require('replace-in-file');
 
 module.exports = function() {
   var extensionDescriptor = getExtensionDescriptor();
@@ -48,6 +49,23 @@ module.exports = function() {
   }
 
   fs.writeFileSync(path.resolve(files.DIST_PATH, files.CONTAINER_FILENAME), getContainer());
+
+  fs.copySync(files.EXTENSION_BRIDGE_PATH, files.DIST_PATH);
+
+  replace.sync({
+    files: path.join(path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME), '*\.html'),
+    replace: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?>', 'igm'),
+    with: '<script src="../' + files.EXTENSION_BRIDGE + '"></script>' +
+          '<script src="../' + files.EXTENSION_BRIDGE_CHILD + '"></script>',
+    allowEmptyPaths: false
+  });
+
+  replace.sync({
+    files: path.resolve(path.join(files.DIST_PATH, files.EXTENSION_BRIDGE)),
+    replace: new RegExp('/extensionbridge/' + files.EXTENSION_BRIDGE_CHILD),
+    with: 'about:blank',
+    allowEmptyPaths: false
+  });
 };
 
 
