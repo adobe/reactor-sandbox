@@ -1,9 +1,11 @@
 'use strict';
 
 var path = require('path');
-
 var ENGINE_FILENAME = 'engine.js';
 var CLIENT_SRC_PATH = path.resolve(__dirname, '../../client');
+var EXTENSION_BRIDGE = 'extensionbridge.min.js';
+var EXTENSION_BRIDGE_CHILD = 'extensionbridge-child.js';
+var EXTENSION_BRIDGE_PATH = path.resolve('node_modules/@reactor/extension-support-bridge/dist/');
 
 var files = {
   EXTENSION_DESCRIPTOR_FILENAME: 'extension.json',
@@ -21,7 +23,10 @@ var files = {
   LIB_SANDBOX_HTML_FILENAME: 'libSandbox.html',
   DIST_PATH: path.resolve('sandbox'),
   EXTENSION_VIEWS_DIRNAME: 'extensionViews',
-  EXTENSION_BRIDGE_CHILD_PATH: path.resolve('node_modules/@reactor/extension-support-bridge/dist/extensionbridge-child.js')
+  EXTENSION_BRIDGE: EXTENSION_BRIDGE,
+  EXTENSION_BRIDGE_CHILD: EXTENSION_BRIDGE_CHILD,
+  EXTENSION_BRIDGE_PATH: EXTENSION_BRIDGE_PATH,
+  EXTENSION_BRIDGE_CHILD_PATH: EXTENSION_BRIDGE_PATH + EXTENSION_BRIDGE_CHILD
 };
 
 module.exports = files;
