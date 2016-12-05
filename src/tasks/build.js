@@ -50,6 +50,7 @@ module.exports = function() {
 
   fs.writeFileSync(path.resolve(files.DIST_PATH, files.CONTAINER_FILENAME), getContainer());
 
+  // We need to replace the extension bridge from akamai with one that is bundled inside the build. 
   fs.copySync(files.EXTENSION_BRIDGE_PATH, files.DIST_PATH);
 
   replace.sync({
