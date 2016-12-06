@@ -218,24 +218,9 @@ const init = () => {
 
       const extensionInitOptions = {
         settings: null,
-        extensionConfigurations: [
-          {
-            id: 'EC123',
-            name: 'Example Configuration A',
-            enabled: true,
-            settings: {
-              foo: 'bar'
-            }
-          },
-          {
-            id: 'EC124',
-            name: 'Example Configuration B',
-            enabled: true,
-            settings: {
-              baz: 'qux'
-            }
-          }
-        ],
+        extensionConfiguration: {
+          foo: 'bar'
+        },
         propertySettings: {
           domains: [
             'adobe.com',
