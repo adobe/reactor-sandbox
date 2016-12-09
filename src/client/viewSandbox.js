@@ -179,10 +179,10 @@ const init = () => {
       const items = categorizedItems[categoryName];
       items.forEach(item => {
         const option = document.createElement('option');
-        option.value = item.viewPath;
+        option.value = item.viewPath ? 'extensionViews/' + item.viewPath : 'noConfigIframe.html';
         option.text = item.displayName;
         option.descriptor = item;
-        option.selected = item.viewPath === lastSelectedView;
+        option.selected = item.name === lastSelectedView;
         parentNode.appendChild(option);
       });
     });
@@ -198,9 +198,9 @@ const init = () => {
 
   const getViewURLFromSelector = () => {
     if (viewSelector.selectedIndex !== -1) {
-      const viewPath = viewSelector.options[viewSelector.selectedIndex].value;
-      localStorage.setItem('lastSelectedView', viewPath);
-      return 'extensionViews/' + viewPath;
+      const option = viewSelector.options[viewSelector.selectedIndex];
+      localStorage.setItem('lastSelectedView', option.descriptor.name);
+      return option.value;
     }
   };
 
