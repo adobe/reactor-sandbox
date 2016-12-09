@@ -8,18 +8,18 @@
   right: 0;
 }
 
-.CodeMirror {
+.viewSandbox .CodeMirror {
   height: 100%;
   width: 100%;
   position: absolute;
 }
 
-iframe {
+.viewSandbox iframe {
   width: 100%;
   border: 0;
 }
 
-#extensionViewContainer {
+.viewSandbox #extensionViewContainer {
   position: relative;
   z-index: 10; /* keep it above the edit mode backdrop */
   margin-top: 10px;
@@ -27,28 +27,28 @@ iframe {
   background: #fafafa;
 }
 
-.error {
+.viewSandbox .error {
   color: red;
 }
 
-#validateOutput {
+.viewSandbox #validateOutput {
   font-size: 24px;
 }
 
-.container {
+.viewSandbox .container {
   display: flex;
   flex-direction: column;
   min-height: 100%;
   padding: 12px 12px 0 12px;
 }
 
-.inputs {
+.viewSandbox .inputs {
   flex-grow: 1;
   display: flex;
   z-index: 0;
 }
 
-.actionPanel {
+.viewSandbox .actionPanel {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -56,21 +56,21 @@ iframe {
   min-height: 200px;
 }
 
-.actionPanel > div {
+.viewSandbox .actionPanel > div {
   position: relative;
 }
 
-#validatePanel {
+.viewSandbox #validatePanel {
   padding-right: 0;
   flex-grow: 0;
 }
 
-#initPanel {
+.viewSandbox #initPanel {
   padding-left: 0;
   max-height: 100%;
 }
 
-#initEditorContainer, #getSettingsEditorContainer {
+.viewSandbox #initEditorContainer, .viewSandbox #getSettingsEditorContainer {
   flex-grow: 1;
   margin: 12px 0;
   max-height: 100%;
@@ -79,7 +79,7 @@ iframe {
   min-height: 350px;
 }
 
-#editModeBackdrop {
+.viewSandbox #editModeBackdrop {
   display: none;
   position: fixed;
   left: 0;
@@ -89,6 +89,6 @@ iframe {
   background-color: rgba(0, 0, 0, .4);
 }
 
-body.editMode #editModeBackdrop {
+body.editMode.viewSandbox #editModeBackdrop {
   display: block;
 }
