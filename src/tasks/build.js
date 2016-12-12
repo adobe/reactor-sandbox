@@ -54,13 +54,18 @@ module.exports = function() {
   fs.copySync(files.EXTENSION_BRIDGE_PATH, files.DIST_PATH);
 
   replace.sync({
-    files: [
-      path.join(path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME), '*\.html'),
-      path.join(path.resolve(files.DIST_PATH, 'noConfigIframe\.html')),
-    ],
+    files: path.join(path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME), '*\.html'),
     replace: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?></script>', 'igm'),
     with: '<script src="../' + files.EXTENSION_BRIDGE + '"></script>' +
           '<script src="../' + files.EXTENSION_BRIDGE_CHILD + '"></script>',
+    allowEmptyPaths: false
+  });
+
+  replace.sync({
+    files: path.join(path.resolve(files.DIST_PATH, 'noConfigIframe\.html')),
+    replace: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?></script>', 'igm'),
+    with: '<script src="./' + files.EXTENSION_BRIDGE + '"></script>' +
+    '<script src="./' + files.EXTENSION_BRIDGE_CHILD + '"></script>',
     allowEmptyPaths: false
   });
 
