@@ -50,12 +50,15 @@ module.exports = function() {
 
   fs.writeFileSync(path.resolve(files.DIST_PATH, files.CONTAINER_FILENAME), getContainer());
 
-  // We need to replace the extension bridge from akamai with one that is bundled inside the build. 
+  // We need to replace the extension bridge from akamai with one that is bundled inside the build.
   fs.copySync(files.EXTENSION_BRIDGE_PATH, files.DIST_PATH);
 
   replace.sync({
-    files: path.join(path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME), '*\.html'),
-    replace: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?>', 'igm'),
+    files: [
+      path.join(path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME), '*\.html'),
+      path.join(path.resolve(files.DIST_PATH, 'noConfigIframe\.html')),
+    ],
+    replace: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?></script>', 'igm'),
     with: '<script src="../' + files.EXTENSION_BRIDGE + '"></script>' +
           '<script src="../' + files.EXTENSION_BRIDGE_CHILD + '"></script>',
     allowEmptyPaths: false
@@ -68,6 +71,3 @@ module.exports = function() {
     allowEmptyPaths: false
   });
 };
-
-
-
