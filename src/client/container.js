@@ -42,18 +42,12 @@ module.exports = {
     // }
   },
   extensions: {
-    // Set up extension configurations you would like to test. The key is the name of your
+    // Set up an extension configuration you would like to test. The key is the name of your
     // extension (as defined in your extension.json).
 
     // 'example-extension': {
     //   displayName: 'Example Extension',
-    //   configurations: [
-    //     {
-    //       id: 'ECa',
-    //       name: 'Extension Configuration Name',
-    //       settings: {}
-    //     }
-    //   ]
+    //   configuration: {}
     // }
   },
   propertySettings: {

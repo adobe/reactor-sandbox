@@ -43,9 +43,6 @@ var functionTokenRegistry = {
 };
 
 var augmentModule = function(modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) {
-  // The file is currently read here to scan for relative paths being required. It's then read
-  // again later after the container's object has been converted to JSON and module tokens
-  // are replaced with module contents. We could cache the contents in memory later if necessary.
   var source = fs.readFileSync(modulePath, {encoding: 'utf8'});
   var requiredRelativePaths = getRequiredPaths(source);
 
@@ -185,8 +182,8 @@ module.exports = function() {
     // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because
     // Extension A may be pulled in from node_modules AND the extension developer using the
     // sandbox may have already coded in some stuff for Extension A within their container.js
-    // template. This is a common use case when an extension developer wants to test certain
-    // extension configurations.
+    // template. This is a common use case when an extension developer wants to test a certain
+    // extension configuration.
     var extensionOutput = extensionsOutput[extensionDescriptor.name];
 
     if (!extensionOutput) {
