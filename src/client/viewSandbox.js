@@ -121,6 +121,10 @@ const getCategorizedItems = items => {
   return groupedItems;
 };
 
+const reportIframeCommsError = () => {
+  alert('An error has occurred. Please see the browser console.');
+};
+
 const editModeEntered = () => document.body.classList.add('editMode');
 const editModeExited = () => document.body.classList.remove('editMode');
 
@@ -266,7 +270,10 @@ const init = () => {
         openCssSelector,
         editModeEntered,
         editModeExited
-      }).then(value => extensionView = value);
+      })
+      .promise
+      .then(value => extensionView = value)
+      .catch(reportIframeCommsError);
     }
   };
 
@@ -277,38 +284,48 @@ const init = () => {
   };
 
   const reportValidation = () => {
-    extensionView.validate().then(valid =>  {
-      if (valid) {
-        const selectedViewDescriptor = getSelectedViewDescriptor();
-        if (selectedViewDescriptor && selectedViewDescriptor.schema) {
-          extensionView.getSettings().then(settings => {
-            const ajv = Ajv();
-            const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
+    extensionView
+      .validate()
+      .then(valid =>  {
+        if (valid) {
+          const selectedViewDescriptor = getSelectedViewDescriptor();
+          if (selectedViewDescriptor && selectedViewDescriptor.schema) {
+            return extensionView
+              .getSettings()
+              .then(settings => {
+                const ajv = Ajv();
+                const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
 
-            if (matchesSchema) {
-              validateOutput.innerHTML = 'Valid';
-            } else {
-              validateOutput.innerHTML =
-                '<span class="error">Settings object does not match schema</span>';
-            }
-          });
+                if (matchesSchema) {
+                  validateOutput.innerHTML = 'Valid';
+                } else {
+                  validateOutput.innerHTML =
+                    '<span class="error">Settings object does not match schema</span>';
+                }
+              });
+          } else {
+            validateOutput.innerHTML = '<span class="error">Schema not defined</span>';
+          }
         } else {
-          validateOutput.innerHTML = '<span class="error">Schema not defined</span>';
+          validateOutput.innerHTML = 'Invalid';
         }
-      } else {
-        validateOutput.innerHTML = 'Invalid';
-      }
-    });
+      })
+      .catch(reportIframeCommsError);
   };
 
   const reportSettings = () => {
-    extensionView.getSettings().then(settings => {
-      getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
-    });
+    extensionView
+      .getSettings()
+      .then(settings => {
+        getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
+      })
+      .catch(reportIframeCommsError);
   };
 
   const init = () => {
-    extensionView.init(JSON.parse(initEditor.getValue()));
+    extensionView
+      .init(JSON.parse(initEditor.getValue()))
+      .catch(reportIframeCommsError);
   };
 
   // Extension configuration is not an array by default because it's only one.
