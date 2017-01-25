@@ -208,11 +208,12 @@ const init = () => {
     }
   };
 
+  let bridge;
   let extensionView;
 
   const loadSelectedViewIntoIframe = () => {
-    if (extensionView) {
-      extensionView.destroy();
+    if (bridge) {
+      bridge.destroy();
     }
 
     const viewURL = getViewURLFromSelector();
@@ -245,7 +246,7 @@ const init = () => {
 
       initEditor.setValue(JSON.stringify(extensionInitOptions, null, 2));
 
-      loadIframe({
+      bridge = loadIframe({
         url: viewURL,
         container: extensionViewContainer,
         extensionInitOptions,
@@ -255,10 +256,9 @@ const init = () => {
         openCssSelector,
         editModeEntered,
         editModeExited
-      })
-      .promise
-      .then(value => extensionView = value)
-      .catch(reportIframeCommsError);
+      });
+
+      bridge.promise.then(value => extensionView = value).catch(reportIframeCommsError);
     }
   };
 
