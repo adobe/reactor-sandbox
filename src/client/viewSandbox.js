@@ -222,7 +222,7 @@ const init = () => {
 
       const extensionInitOptions = {
         settings: null,
-        extensionConfiguration: {
+        extensionSettings: {
           foo: 'bar'
         },
         propertySettings: {

@@ -47,7 +47,7 @@ module.exports = {
 
     // 'example-extension': {
     //   displayName: 'Example Extension',
-    //   configuration: {}
+    //   settings: {}
     // }
   },
   propertySettings: {
