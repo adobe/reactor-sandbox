@@ -16,7 +16,6 @@
   "dependencies": {
     "@reactor/extension-support-bridge": "^7.0.0",
     "@reactor/extension-support-validator": "^1.0.0",
-    "@reactor/get-required-paths": "^1.0.0",
     "ajv": "^4.7.7",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.7",
@@ -27,6 +26,7 @@
     "fs-extra": "^1.0.0",
     "glob": "^7.0.3",
     "json-loader": "^0.5.4",
+    "match-requires": "^1.0.2",
     "mkdirp": "^0.5.1",
     "native-promise-only-ponyfill": "^1.0.1",
     "replace-in-file": "^2.0.2",

@@ -3,7 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 var files = require('../constants/files');
-var getRequiredPaths = require('@reactor/get-required-paths');
+var matchRequires = require('match-requires');
 var extensionDescriptorPaths = require('./extensionDescriptorPaths');
 
 var FEATURE_TYPES = [
@@ -44,12 +44,17 @@ var functionTokenRegistry = {
 
 var augmentModule = function(modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) {
   var source = fs.readFileSync(modulePath, {encoding: 'utf8'});
-  var requiredRelativePaths = getRequiredPaths(source);
-
-  requiredRelativePaths.forEach(function(requiredRelativePath) {
-    var requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
-    augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
-  });
+  matchRequires(source)
+    // matchRequires returns objects with some cruft. We just care about the module paths.
+    .map(result => result.module)
+    // Only care about relative paths. We don't care about require statements for core modules.
+    .filter(module => module.indexOf('.') === 0)
+    // Allow extension devs to require JS files without the js extension
+    .map(module => path.extname(module) === '.js' ? module : module + '.js')
+    .forEach(function(requiredRelativePath) {
+      var requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
+      augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
+    });
 
   // The reference path is a unique path that starts with the extension name, then a slash,
   // then the path to the file within the extension's directory.
