@@ -1,7 +1,7 @@
 'use strict';
 
 import Promise from 'native-promise-only-ponyfill';
-import { loadIframe, setPromise, setDebug } from '@reactor/extension-support-bridge';
+import { loadIframe, setPromise, setDebug } from '@adobe/composer-bridge';
 import Ajv from 'ajv';
 
 setPromise(Promise);
