@@ -1,6 +1,6 @@
 {
   "name": "@adobe/composer-sandbox",
-  "version": "7.13.3",
+  "version": "7.13.4",
   "description": "Tasks for creating a sandbox for manually testing Composer extensions.",
   "author": {
     "name": "DTM",
