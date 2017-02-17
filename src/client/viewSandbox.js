@@ -19,7 +19,7 @@
 'use strict';
 
 import Promise from 'native-promise-only-ponyfill';
-import { loadIframe, setPromise, setDebug } from '@adobe/composer-bridge';
+import { loadIframe, setPromise, setDebug } from '@adobe/reactor-bridge';
 import Ajv from 'ajv';
 
 setPromise(Promise);

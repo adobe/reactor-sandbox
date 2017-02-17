@@ -1,7 +1,7 @@
 {
-  "name": "@adobe/composer-sandbox",
+  "name": "@adobe/reactor-sandbox",
   "version": "7.13.4",
-  "description": "Tasks for creating a sandbox for manually testing Composer extensions.",
+  "description": "Tasks for creating a sandbox for manually testing extensions.",
   "author": {
     "name": "DTM",
     "email": "DTM-Engineering@adobe.com"
@@ -11,8 +11,8 @@
     "url": "git@git.corp.adobe.com:reactor/extension-support-sandbox.git"
   },
   "dependencies": {
-    "@adobe/composer-bridge": "^7.0.0",
-    "@adobe/composer-validator": "^1.0.0",
+    "@adobe/reactor-bridge": "^7.0.0",
+    "@adobe/reactor-validator": "^1.0.0",
     "ajv": "^4.7.7",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.7",
@@ -31,9 +31,9 @@
     "webpack-dev-middleware": "^1.6.1"
   },
   "peerDependencies": {
-    "@adobe/composer-turbine": "*"
+    "@adobe/reactor-turbine": "*"
   },
   "bin": {
-    "composer-sandbox": "./src/tasks/index.js"
+    "reactor-sandbox": "./src/tasks/index.js"
   }
 }
