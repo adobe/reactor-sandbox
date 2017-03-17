@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "7.13.6",
+  "version": "7.13.7",
   "description": "Tasks for creating a sandbox for manually testing extensions.",
   "author": {
     "name": "Adobe Systems",
