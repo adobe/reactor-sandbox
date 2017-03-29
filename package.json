@@ -12,7 +12,7 @@
     "url": "git@git.corp.adobe.com:reactor/extension-support-sandbox.git"
   },
   "dependencies": {
-    "@adobe/reactor-bridge": "^7.0.0",
+    "@adobe/reactor-bridge": "^8.0.0",
     "@adobe/reactor-validator": "^1.0.0",
     "ajv": "^4.7.7",
     "babel-core": "^6.18.2",
@@ -28,6 +28,7 @@
     "mkdirp": "^0.5.1",
     "native-promise-only-ponyfill": "^1.0.1",
     "replace-in-file": "^2.0.2",
+    "split.js": "^1.2.0",
     "webpack": "^1.13.1",
     "webpack-dev-middleware": "^1.6.1"
   },

@@ -21,6 +21,7 @@
 import Promise from 'native-promise-only-ponyfill';
 import { loadIframe, setPromise, setDebug } from '@adobe/reactor-bridge';
 import Ajv from 'ajv';
+import Split from 'split.js';
 
 setPromise(Promise);
 // setDebug(true);
@@ -143,9 +144,6 @@ const reportIframeCommsError = () => {
   alert('An error has occurred. Please see the browser console.');
 };
 
-const editModeEntered = () => document.body.classList.add('editMode');
-const editModeExited = () => document.body.classList.remove('editMode');
-
 const init = () => {
   const viewGroupSelector = document.getElementById('viewGroupSelector');
   const viewSelector = document.getElementById('extensionViewSelector');
@@ -157,7 +155,7 @@ const init = () => {
   const getSettingsEditor =
     CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
   const getSettingsButton = document.getElementById('getSettingsButton');
-  const extensionViewContainer = document.getElementById('extensionViewContainer');
+  const extensionViewPane = document.getElementById('extensionViewPane');
 
   const lastSelectedView = localStorage.getItem('lastSelectedView');
   const lastSelectedViewGroup = localStorage.getItem('lastSelectedViewGroup');
@@ -266,14 +264,12 @@ const init = () => {
 
       bridge = loadIframe({
         url: viewURL,
-        container: extensionViewContainer,
+        container: extensionViewPane,
         extensionInitOptions,
         openCodeEditor,
         openRegexTester,
         openDataElementSelector,
-        openCssSelector,
-        editModeEntered,
-        editModeExited
+        openCssSelector
       });
 
       bridge.promise.then(value => extensionView = value).catch(reportIframeCommsError);
@@ -362,7 +358,23 @@ const init = () => {
   initButton.addEventListener('click', init);
   viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
 
+  Split(['#extensionViewPane', '#controlPane'], {
+    minSize: 0,
+    sizes: [
+      65, 35
+    ]
+  });
+
   loadSelectedViewIntoIframe();
+
+  // There are some timing issues between the CoralUI panelstack and CodeMirror rendering.
+  // Without this, sometimes the CodeMirror editors don't render correctly.
+  document.querySelector('coral-panelstack').addEventListener('coral-panelstack:change', () => {
+    setTimeout(() => {
+      initEditor.refresh();
+      getSettingsEditor.refresh();
+    }, 50)
+  });
 };
 
 document.addEventListener('DOMContentLoaded', init);

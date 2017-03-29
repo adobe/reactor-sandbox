@@ -9,51 +9,66 @@
       Coral.options = { typeKitId: 'buj6cmr'};
     </script>
 
-    <link rel="stylesheet" href="//assets.adobedtm.com/activation/reactor/coralui/3.16.0/css/coral.css">
-    <script src="//assets.adobedtm.com/activation/reactor/coralui/3.16.0/js/libs/jquery.js"></script>
-    <script src="//assets.adobedtm.com/activation/reactor/coralui/3.16.0/js/coral.js"></script>
+    <link rel="stylesheet" href="https://assets.adobedtm.com/activation/reactor/coralui/3.16.0/css/coral.css">
+    <script src="https://assets.adobedtm.com/activation/reactor/coralui/3.16.0/js/libs/jquery.js"></script>
+    <script src="https://assets.adobedtm.com/activation/reactor/coralui/3.16.0/js/coral.js"></script>
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/codemirror.css" rel="stylesheet" type="text/css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/codemirror.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.css" rel="stylesheet" type="text/css">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/codemirror.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/mode/javascript/javascript.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/json-lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/json-lint.js"></script>
 
     <script src="extensionDescriptor.js"></script>
     <script src="viewSandbox.js"></script>
     <link href="sandbox.css" rel="stylesheet" type="text/css">
+    <link href="viewSandbox.css" rel="stylesheet" type="text/css">
  </head>
-  <body class="viewSandbox coral--light">
-    <div class="container">
-      <div class="views">
-        <a class="nav" is="coral-anchorbutton" variant="quiet" href="libSandbox.html">Go to library sandbox</a>
+  <body id="viewSandbox" class="coral--light">
+    <div id="content">
+      <a class="nav" is="coral-anchorbutton" variant="quiet" href="libSandbox.html">Go to library sandbox</a>
 
-        <h1 class="coral-Heading coral-Heading--1">Reactor Extension View Sandbox</h1>
+      <h1 class="coral-Heading coral-Heading--1">Reactor Extension View Sandbox</h1>
 
-        <div>
-          Select View:
-          <select id="viewGroupSelector"></select>
-          <select id="extensionViewSelector"></select>
-        </div>
-
-        <div id="extensionViewContainer"></div>
+      <div>
+        Select View:
+        <select id="viewGroupSelector"></select>
+        <select id="extensionViewSelector"></select>
       </div>
-      <div class="inputs">
-        <div class="actionPanel" id="initPanel">
-          <div><button is="coral-button" id="initButton">Init</button></div>
-          <div id="initEditorContainer"></div>
-        </div>
-        <div class="actionPanel" id="settingsPannel">
-          <div><button is="coral-button" id="getSettingsButton">Get Settings</button></div>
-          <div id="getSettingsEditorContainer"></div>
-        </div>
 
-        <div class="actionPanel" id="validatePanel">
-          <button is="coral-button" id="validateButton">Validate</button>
-          <p><span id="validateOutput"></span></p>
+      <div id="panes">
+        <div id="extensionViewPane"></div>
+        <div id="controlPane">
+          <coral-tabview>
+            <coral-tablist>
+              <coral-tab>Init</coral-tab>
+              <coral-tab>Get Settings</coral-tab>
+              <coral-tab>Validate</coral-tab>
+            </coral-tablist>
+            <coral-panelstack>
+              <coral-panel>
+                <div id="initEditorContainer" class="editorContainer"></div>
+                <div class="panelButtonHolder">
+                  <button is="coral-button" id="initButton" class="panelButton">Init</button>
+                </div>
+              </coral-panel>
+              <coral-panel>
+                <div class="panelButtonHolder">
+                  <button is="coral-button" id="getSettingsButton" class="panelButton">Get Settings</button>
+                </div>
+                <div id="getSettingsEditorContainer" class="editorContainer"></div>
+              </coral-panel>
+              <coral-panel>
+                <div class="panelButtonHolder">
+                  <button is="coral-button" id="validateButton" class="panelButton">Validate</button>
+                </div>
+                <div id="validateOutput"></div>
+              </coral-panel>
+            </coral-panelstack>
+          </coral-tabview>
         </div>
       </div>
     </div>
