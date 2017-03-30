@@ -20,10 +20,26 @@ iframe {
   padding: 12px 12px 0 12px;
 }
 
+/*
+  In Safari, an element with 100% height won't be 100% height of the flex box item that contains it.
+  This is due to https://bugs.webkit.org/show_bug.cgi?id=137730.
+  Unfortunately, this means that rather than using a flex box item these cases, we have
+  to use an absolutely positioned element. With this done, children that are 100% height will
+  actually be 100% height.
+*/
+#panesWrapper {
+  position: relative;
+  height: 100%;
+}
+
 #panes {
-  flex: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   overflow: hidden;
   margin-top: 12px;
+  position: absolute;
 }
 
 #extensionViewPane {
@@ -37,6 +53,7 @@ iframe {
   float: left;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-left: 12px;
 }
 
@@ -52,11 +69,16 @@ iframe {
 }
 
 .coral-PanelStack{
-  flex: 1;
+  position: relative;
+  height: 100%
 }
 
 .coral-Panel {
-  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 coral-panel-content {
