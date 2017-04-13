@@ -1,7 +1,7 @@
 {
   "name": "@adobe/reactor-sandbox",
   "version": "7.14.0",
-  "description": "Tasks for creating a sandbox for manually testing extensions.",
+  "description": "Tasks for creating a sandbox for manually testing Launch extensions.",
   "author": {
     "name": "Adobe Systems",
     "url": "http://adobe.com",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@git.corp.adobe.com:reactor/extension-support-sandbox.git"
+    "url": "git@github.com:Adobe-Marketing-Cloud/reactor-sandbox.git"
   },
   "dependencies": {
     "@adobe/reactor-bridge": "^8.0.0",

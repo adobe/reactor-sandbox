@@ -1,5 +1,5 @@
 # @adobe/reactor-sandbox
-This project provides a sandbox in which you can manually test your extension. You can test both (1) your views that will eventually appear in the DTM application and (2) your library logic that will eventually run on the user's website.
+This project provides a sandbox in which you can manually test your Launch extension. You can test both (1) your views that will eventually appear in the Launch application and (2) your library logic that will eventually run on the user's website.
 
 ## Installing the Sandbox
 
@@ -46,7 +46,7 @@ Once this is in place, you may then run the sandbox by executing the command `np
 
 To configure the portion of the sandbox that allows you to test your library logic, you'll want to run `node_modules/.bin/reactor-sandbox init` from the command line within your project's directory. This will generate a directory within your project named `.sandbox` that contains two files you may edit to configure the sandbox:
 
-  * `container.js` When DTM publishes a library, it consists of two parts: (1) a data structure that stores information about saved rules, data elements, and extension configuration and (2) an engine to operate on such a data structure. `container.js` is the data structure (not the engine) that you may modify to simulate saved rules, data elements, and extension configuration. This template will be used to produce a complete `container.js` (JavaScript from your extension will be added) which will be used in tandem with the Turbine engine inside the sandbox. If you need help understanding how to modify `container.js` for your needs, please let the DTM team know and we can help you out.
+  * `container.js` When Launch publishes a library, it consists of two parts: (1) a data structure that stores information about saved rules, data elements, and extension configuration and (2) an engine to operate on such a data structure. `container.js` is the data structure (not the engine) that you may modify to simulate saved rules, data elements, and extension configuration. This template will be used to produce a complete `container.js` (JavaScript from your extension will be added) which will be used in tandem with the Turbine engine inside the sandbox. If you need help understanding how to modify `container.js` for your needs, please let the Launch team know and we can help you out.
   * `libSandbox.html` includes some simple HTML along with script tags to load a complete `container.js` and the Turbine engine. `libSandbox.html` can be modified to manually test whatever you would like. For example, if you're testing that your awesome new "focus" event feature works, you can add a text input to the web page to ensure your dummy rule fires when a form element receives focus.
 
 You are welcome to commit `.sandbox` to your version control repository.
