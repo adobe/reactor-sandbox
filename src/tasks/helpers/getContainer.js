@@ -110,10 +110,12 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
             extensionDescriptor.libBasePath || '',
             featureDescriptor.libPath);
 
-          var moduleMeta = {};
+          var moduleMeta = {
+            name: featureDescriptor.name
+          };
 
           if (featureType === 'sharedModules') {
-            moduleMeta.sharedName = featureDescriptor.name;
+            moduleMeta.shared = true;
           }
 
           if (featureDescriptor.displayName) {
