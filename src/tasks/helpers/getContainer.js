@@ -149,8 +149,10 @@ var augmentSandboxEvents = function(extensionsOutput) {
           name: 'click',
           script: function(module) {
             module.exports = function(settings, trigger) {
-              document.addEventListener('click', function() {
-                trigger();
+              document.addEventListener('click', function(event) {
+                trigger({
+                  nativeEvent: event
+                });
               });
             };
           }
