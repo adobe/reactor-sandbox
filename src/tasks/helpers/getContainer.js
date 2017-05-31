@@ -143,8 +143,10 @@ var augmentSandboxEvents = function(extensionsOutput) {
     extensionsOutput.sandbox = {
       displayName: 'Extension Sandbox',
       modules: {
+        // These modules are provided to users for their convenience.
         'sandbox/click.js': {
           displayName: 'Click',
+          name: 'click',
           script: function(module) {
             module.exports = function(settings, trigger) {
               document.addEventListener('click', function() {
@@ -155,6 +157,7 @@ var augmentSandboxEvents = function(extensionsOutput) {
         },
         'sandbox/pageTop.js': {
           displayName: 'Page Top',
+          name: 'page-top',
           script: function(module) {
             module.exports = function(settings, trigger) {
               trigger();
