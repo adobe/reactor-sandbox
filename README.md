@@ -4,6 +4,8 @@
 
 This project provides a sandbox in which you can manually test your Launch extension. You can test both (1) your views that will eventually appear in the Launch application and (2) your library logic that will eventually run on the user's website.
 
+For more information regarding Launch, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
+
 ## Installing the Sandbox
 
 To use this project you will need to have [Node.js](https://nodejs.org/en/) installed on your computer. After you [download and install Node.js](https://nodejs.org/en/download/) you will also have access to the [npm](https://www.npmjs.com/) package manager for JavaScript. Your npm version will need to be at least 3.0.0. You can check the installed version by running the following command from a command line:
