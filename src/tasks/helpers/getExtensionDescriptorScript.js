@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-'use strict';
 
-var getExtensionDescriptor = require('./getExtensionDescriptor');
 
-module.exports = function() {
+const getExtensionDescriptor = require('./getExtensionDescriptor');
+
+module.exports = () => {
   return 'window.extensionDescriptor = ' +  JSON.stringify(getExtensionDescriptor()) + ';';
 };

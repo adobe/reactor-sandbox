@@ -37,5 +37,8 @@
   },
   "bin": {
     "reactor-sandbox": "./src/tasks/index.js"
+  },
+  "devDependencies": {
+    "eslint": "^4.0.0"
   }
 }

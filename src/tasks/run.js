@@ -10,30 +10,30 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-'use strict';
+
 
 /**
  * Runs a webserver that provides the sandbox environment. Refreshing will load the latest content.
  */
 
-var path = require('path');
-var fs = require('fs');
-var express = require('express');
-var webpack = require('webpack');
-var webpackMiddleware = require('webpack-dev-middleware');
-var chalk = require('chalk');
-var validateExtensionDescriptor = require('@adobe/reactor-validator');
-var getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
-var getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
-var extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
-var getContainer = require('./helpers/getContainer');
-var files = require('./constants/files');
+const path = require('path');
+const fs = require('fs');
+const express = require('express');
+const webpack = require('webpack');
+const webpackMiddleware = require('webpack-dev-middleware');
+const chalk = require('chalk');
+const validateExtensionDescriptor = require('@adobe/reactor-validator');
+const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
+const getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
+const extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
+const getContainer = require('./helpers/getContainer');
+const files = require('./constants/files');
 
-var PORT = 3000;
+const PORT = 3000;
 
 module.exports = function() {
-  var validationError;
-  var app = express();
+  let validationError;
+  const app = express();
 
   app.get('/' + files.CONTAINER_FILENAME, function(req, res) {
     // Always pull the latest extension descriptor. The extension developer may have changed it
@@ -61,16 +61,16 @@ module.exports = function() {
   });
 
   // Server hosted lib files from inside extensions.
-  app.get('/hostedLibFiles/:extensionName/:extensionVersion/:file', function (req, res) {
-    var params = req.params;
-    var extensionName = params.extensionName;
-    var extensionVersion = params.extensionVersion;
-    var file = params.file;
+  app.get('/hostedLibFiles/:extensionName/:extensionVersion/:file', (req, res) => {
+    const params = req.params;
+    const extensionName = params.extensionName;
+    const extensionVersion = params.extensionVersion;
+    const file = params.file;
 
     // Get the descriptor that matches the extension name and the version from the request.
-    var extensionDescriptorPath =
+    const extensionDescriptorPath =
       extensionDescriptorPaths.filter(function(extensionDescriptorPath) {
-        var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+        const extensionDescriptor = require(path.resolve(extensionDescriptorPath));
         return extensionDescriptor.name === extensionName
           && extensionDescriptor.version === extensionVersion;
       })[0];
@@ -80,9 +80,9 @@ module.exports = function() {
       return;
     }
 
-    var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+    const extensionDescriptor = require(path.resolve(extensionDescriptorPath));
     // If no hosted files are defined in the descriptor, do nothing.
-    var hostedFilePath = (extensionDescriptor['hostedLibFiles'] || [])
+    const hostedFilePath = (extensionDescriptor['hostedLibFiles'] || [])
       .filter(function(hostedFilePath) {
         return hostedFilePath.endsWith(file);
       })[0];
@@ -92,11 +92,11 @@ module.exports = function() {
       return;
     }
 
-    var extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
+    const extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
     res.sendFile(path.join(extensionPath, hostedFilePath));
   });
 
-  var extensionDescriptor = getExtensionDescriptor();
+  const extensionDescriptor = getExtensionDescriptor();
   validationError = validateExtensionDescriptor(extensionDescriptor);
 
   // If there is a validation error, we're going to let express still run. This gives the
@@ -107,15 +107,15 @@ module.exports = function() {
   }
 
   // Produces viewSandbox.js
-  var webpackConfig = require('./webpack.viewSandbox.config');
+  const webpackConfig = require('./webpack.viewSandbox.config');
 
-  var webpackMiddlewareOptions = {
+  const webpackMiddlewareOptions = {
     stats: 'errors-only'
   };
 
   app.use(webpackMiddleware(webpack(webpackConfig), webpackMiddlewareOptions));
 
-  var extensionViewsPath = path.resolve(extensionDescriptor.viewBasePath);
+  const extensionViewsPath = path.resolve(extensionDescriptor.viewBasePath);
   app.use('/' + files.EXTENSION_VIEWS_DIRNAME, express.static(extensionViewsPath));
 
   // Give priority to consumer-provided files first and if they aren't provided we'll fall

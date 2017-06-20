@@ -4,11 +4,18 @@
     "jasmine": true,
     "node": true
   },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
+    }
+  },
   "rules": {
     "camelcase": [2, {"properties": "always"}],
     "indent": [2, 2, {"SwitchCase": 1}], // 2 spaces indentation
     "semi": [2, "always"],
-    "space-after-keywords": [2, "always"],
+    "keyword-spacing": ["error"],
     "space-before-function-paren": [2, "never"],
     "space-before-blocks": [2, "always"],
     "space-infix-ops": [2, {"int32Hint": false}],

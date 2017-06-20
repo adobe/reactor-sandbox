@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var files = require('../constants/files');
-var matchRequires = require('match-requires');
-var extensionDescriptorPaths = require('./extensionDescriptorPaths');
 
-var FEATURE_TYPES = [
+const fs = require('fs');
+const path = require('path');
+const files = require('../constants/files');
+const matchRequires = require('match-requires');
+const extensionDescriptorPaths = require('./extensionDescriptorPaths');
+
+const FEATURE_TYPES = [
   'events',
   'conditions',
   'actions',
@@ -27,26 +27,26 @@ var FEATURE_TYPES = [
   'main'
 ];
 
-var DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
+const DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
   files.CLIENT_SRC_PATH,
   files.CONTAINER_FILENAME
 );
 
-var CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
+const CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
   files.CONSUMER_CLIENT_SRC_PATH,
   files.CONTAINER_FILENAME);
 
-function wrapInFunction(content, argNames) {
-  var argsStr = argNames ? argNames.join(', ') : '';
+const wrapInFunction = (content, argNames) => {
+  const argsStr = argNames ? argNames.join(', ') : '';
   return 'function(' + argsStr + ') {\n' + content + '\n}\n';
-}
+};
 
-var functionTokenRegistry = {
+const functionTokenRegistry = {
   _tokenIdCounter: 0,
   _functionStrByToken: {},
   FUNCTION_TOKEN_REGEX: /"\{\{sandbox:function:(.+?)\}\}"/g,
   getToken: function(functionStr) {
-    var tokenId = ++this._tokenIdCounter;
+    const tokenId = ++this._tokenIdCounter;
     this._functionStrByToken[tokenId] = functionStr;
     return '{{sandbox:function:' + tokenId + '}}';
   },
@@ -55,8 +55,8 @@ var functionTokenRegistry = {
   }
 };
 
-var augmentModule = function(modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) {
-  var source = fs.readFileSync(modulePath, {encoding: 'utf8'});
+const augmentModule = (modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) => {
+  const source = fs.readFileSync(modulePath, {encoding: 'utf8'});
   matchRequires(source)
     // matchRequires returns objects with some cruft. We just care about the module paths.
     .map(result => result.module)
@@ -65,19 +65,19 @@ var augmentModule = function(modulesOutput, extensionName, extensionPath, module
     // Allow extension devs to require JS files without the js extension
     .map(module => path.extname(module) === '.js' ? module : module + '.js')
     .forEach(function(requiredRelativePath) {
-      var requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
+      const requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
       augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
     });
 
   // The reference path is a unique path that starts with the extension name, then a slash,
   // then the path to the file within the extension's directory.
-  var referencePath = path.join(extensionName, path.relative(extensionPath, modulePath));
+  const referencePath = path.join(extensionName, path.relative(extensionPath, modulePath));
 
   // It's possible this module has already been added to the output. If it has, we just need to
   // merge any new meta information that hasn't already been stored for the module. This supports
   // certain cases where a module could be an action delegate AND required via relative path
   // by an event delegate AND be a shared module.
-  var moduleOutput = modulesOutput[referencePath];
+  let moduleOutput = modulesOutput[referencePath];
 
   if (!moduleOutput) {
     moduleOutput = modulesOutput[referencePath] = {
@@ -85,7 +85,8 @@ var augmentModule = function(modulesOutput, extensionName, extensionPath, module
       // to JSON that the token should be replaced with an actual, executable function
       // which wraps the delegate code. We can't just set the value to a function right
       // now because it wouldn't be properly serialized.
-      script: functionTokenRegistry.getToken(wrapInFunction(source, ['module', 'exports', 'require']))
+      script:
+        functionTokenRegistry.getToken(wrapInFunction(source, ['module', 'exports', 'require']))
     };
   }
 
@@ -97,7 +98,7 @@ var augmentModule = function(modulesOutput, extensionName, extensionPath, module
   });
 };
 
-var augmentModules = function(extensionOutput, extensionDescriptor, extensionPath) {
+const augmentModules = function(extensionOutput, extensionDescriptor, extensionPath) {
   extensionOutput.modules = extensionOutput.modules || {};
 
   FEATURE_TYPES.forEach(function(featureType) {
@@ -112,12 +113,12 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
 
       if (featureDescriptors) {
         featureDescriptors.forEach(function(featureDescriptor) {
-          var modulePath = path.join(
+          const modulePath = path.join(
             extensionPath,
             extensionDescriptor.libBasePath || '',
             featureDescriptor.libPath);
 
-          var moduleMeta = {};
+          const moduleMeta = {};
 
           if (featureDescriptor.name) {
             moduleMeta.name = featureDescriptor.name;
@@ -147,7 +148,7 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
  * Adds a Sandbox extension to the container with some simple events that sandbox users can use in
  * their rules.
  */
-var augmentSandboxEvents = function(extensionsOutput) {
+const augmentSandboxEvents = function(extensionsOutput) {
   if (!extensionsOutput.sandbox) { // Check to see if the extension under test is named sandbox.
     extensionsOutput.sandbox = {
       displayName: 'Extension Sandbox',
@@ -176,7 +177,7 @@ var augmentSandboxEvents = function(extensionsOutput) {
           }
         }
       }
-    }
+    };
   }
 };
 
@@ -186,7 +187,7 @@ module.exports = function() {
   // node_modules.
   // When running this task from within this builder project we care about any extensions we find
   // under this project's node_modules or under a folder starting with @(as for npm scopes).
-  var container;
+  let container;
 
   // Try to use the consumer-defined container first and fallback to the default if they haven't
   // provided one.
@@ -202,22 +203,22 @@ module.exports = function() {
     }
   }
 
-  var extensionsOutput = container.extensions;
+  let extensionsOutput = container.extensions;
 
   if (!extensionsOutput) {
     extensionsOutput = container.extensions = {};
   }
 
   extensionDescriptorPaths.forEach(function(extensionDescriptorPath) {
-    var extensionDescriptor = require(path.resolve(extensionDescriptorPath));
-    var extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
+    const extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+    const extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
 
     // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because
     // Extension A may be pulled in from node_modules AND the extension developer using the
     // sandbox may have already coded in some stuff for Extension A within their container.js
     // template. This is a common use case when an extension developer wants to test a certain
     // extension configuration.
-    var extensionOutput = extensionsOutput[extensionDescriptor.name];
+    let extensionOutput = extensionsOutput[extensionDescriptor.name];
 
     if (!extensionOutput) {
       extensionOutput = extensionsOutput[extensionDescriptor.name] = {};
@@ -245,7 +246,7 @@ module.exports = function() {
   }, 2);
 
   // Replace all function tokens in the JSON with executable functions.
-  container = container.replace(functionTokenRegistry.FUNCTION_TOKEN_REGEX, function(token, tokenId) {
+  container = container.replace(functionTokenRegistry.FUNCTION_TOKEN_REGEX, (token, tokenId) => {
     return functionTokenRegistry.getFunctionStr(tokenId);
   });
 

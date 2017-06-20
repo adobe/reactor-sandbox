@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-'use strict';
+
 
 var path = require('path');
 var ENGINE_FILENAME = 'engine.js';
