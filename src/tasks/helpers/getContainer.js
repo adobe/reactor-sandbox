@@ -23,7 +23,8 @@ var FEATURE_TYPES = [
   'conditions',
   'actions',
   'dataElements',
-  'sharedModules'
+  'sharedModules',
+  'main'
 ];
 
 var DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
@@ -101,7 +102,13 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
 
   FEATURE_TYPES.forEach(function(featureType) {
     if (extensionDescriptor.hasOwnProperty(featureType)) {
-      var featureDescriptors = extensionDescriptor[featureType];
+      let featureDescriptors = extensionDescriptor[featureType];
+
+      if (typeof featureDescriptors === 'string') {
+        featureDescriptors = [{
+          libPath: featureDescriptors
+        }];
+      }
 
       if (featureDescriptors) {
         featureDescriptors.forEach(function(featureDescriptor) {
@@ -110,9 +117,11 @@ var augmentModules = function(extensionOutput, extensionDescriptor, extensionPat
             extensionDescriptor.libBasePath || '',
             featureDescriptor.libPath);
 
-          var moduleMeta = {
-            name: featureDescriptor.name
-          };
+          var moduleMeta = {};
+
+          if (featureDescriptor.name) {
+            moduleMeta.name = featureDescriptor.name;
+          }
 
           if (featureType === 'sharedModules') {
             moduleMeta.shared = true;
