@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-var glob = require('glob');
-var files = require('../constants/files');
+
+
+const glob = require('glob');
+const files = require('../constants/files');
 
 module.exports =
   glob.sync('{node_modules/*/,node_modules/@*/*/,}' + files.EXTENSION_DESCRIPTOR_FILENAME);

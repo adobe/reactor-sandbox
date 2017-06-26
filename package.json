@@ -11,17 +11,20 @@
     "type": "git",
     "url": "git@github.com:Adobe-Marketing-Cloud/reactor-sandbox.git"
   },
+  "scripts": {
+    "lint": "eslint 'src/**/*.js'"
+  },
   "dependencies": {
     "@adobe/reactor-bridge": "^8.0.0",
     "@adobe/reactor-validator": "^1.0.0",
-    "ajv": "^4.7.7",
+    "ajv": "^5.2.0",
     "babel-core": "^6.18.2",
-    "babel-loader": "^6.2.7",
+    "babel-loader": "^7.1.0",
     "babel-plugin-transform-object-rest-spread": "^6.16.0",
     "babel-preset-es2015": "^6.18.0",
     "chalk": "^1.1.3",
     "express": "^4.14.0",
-    "fs-extra": "^1.0.0",
+    "fs-extra": "^3.0.1",
     "glob": "^7.0.3",
     "json-loader": "^0.5.4",
     "match-requires": "^1.0.2",
@@ -29,7 +32,7 @@
     "native-promise-only-ponyfill": "^1.0.1",
     "replace-in-file": "^2.0.2",
     "split.js": "^1.2.0",
-    "webpack": "^1.13.1",
+    "webpack": "^3.0.0",
     "webpack-dev-middleware": "^1.6.1"
   },
   "peerDependencies": {
@@ -37,5 +40,8 @@
   },
   "bin": {
     "reactor-sandbox": "./src/tasks/index.js"
+  },
+  "devDependencies": {
+    "eslint": "^4.0.0"
   }
 }

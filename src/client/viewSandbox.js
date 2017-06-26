@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-'use strict';
-
 import Promise from 'native-promise-only-ponyfill';
 import { loadIframe, setPromise, setDebug } from '@adobe/reactor-bridge';
 import Ajv from 'ajv';
@@ -367,7 +365,7 @@ const init = () => {
     setTimeout(() => {
       initEditor.refresh();
       getSettingsEditor.refresh();
-    }, 50)
+    }, 50);
   });
 };
 

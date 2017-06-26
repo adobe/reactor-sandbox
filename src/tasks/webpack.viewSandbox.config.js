@@ -1,5 +1,7 @@
-var files = require('./constants/files');
-var IgnorePlugin = require('webpack').IgnorePlugin;
+
+
+const files = require('./constants/files');
+const IgnorePlugin = require('webpack').IgnorePlugin;
 
 module.exports = {
   entry: {
@@ -31,7 +33,8 @@ module.exports = {
     filename: 'viewSandbox.js'
   },
   plugins: [
-    // Fixing ajv async plugin warnings. More details here: https://github.com/epoberezkin/ajv/issues/117
+    // Fixing ajv async plugin warnings.
+    // More details here: https://github.com/epoberezkin/ajv/issues/117
     new IgnorePlugin(/regenerator|nodent|js\-beautify/, /ajv/)
   ]
 };

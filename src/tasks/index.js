@@ -12,7 +12,7 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-'use strict';
+
 
 var task = process.argv.slice(2)[0];
 

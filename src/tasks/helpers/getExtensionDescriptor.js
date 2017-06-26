@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-'use strict';
 
-var path = require('path');
-var files = require('../constants/files');
 
-module.exports = function() {
+const path = require('path');
+const files = require('../constants/files');
+
+module.exports = () => {
   try {
-    var descriptorPath = path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME);
+    const descriptorPath = path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME);
     // When the extension descriptor changes while node is running, we want the updated version.
     delete require.cache[descriptorPath];
     return require(descriptorPath);
