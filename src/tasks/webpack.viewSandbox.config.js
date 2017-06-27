@@ -19,7 +19,7 @@ module.exports = {
       },
       {
         test: /viewSandbox\.js$/,
-        loader: 'babel'
+        loader: 'babel-loader'
       }
     ]
   },
@@ -36,5 +36,8 @@ module.exports = {
     // Fixing ajv async plugin warnings.
     // More details here: https://github.com/epoberezkin/ajv/issues/117
     new IgnorePlugin(/regenerator|nodent|js\-beautify/, /ajv/)
-  ]
+  ],
+  resolveLoader: {
+    moduleExtensions: ["-loader"]
+  }
 };

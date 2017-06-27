@@ -132,8 +132,9 @@ const getCategorizedItems = items => {
   return groupedItems;
 };
 
-const reportIframeCommsError = () => {
+const reportIframeCommsError = (error) => {
   alert('An error has occurred. Please see the browser console.');
+  throw error;
 };
 
 const init = () => {
@@ -285,6 +286,8 @@ const init = () => {
               .getSettings()
               .then(settings => {
                 const ajv = Ajv();
+                ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
+
                 const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
 
                 if (matchesSchema) {
