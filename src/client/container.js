@@ -56,7 +56,7 @@ module.exports = {
       'example.com'
     ],
     linkDelay: 100,
-    euCookieName: 'sat_track',
+    trackingCookieName: 'sat_track',
     undefinedVarsReturnEmpty: false
   },
   buildInfo: {
