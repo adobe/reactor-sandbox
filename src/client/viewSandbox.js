@@ -14,6 +14,7 @@ import Promise from 'native-promise-only-ponyfill';
 import { loadIframe, setPromise, setDebug } from '@adobe/reactor-bridge';
 import Ajv from 'ajv';
 import Split from 'split.js';
+import deepEqual from 'deep-equal';
 
 setPromise(Promise);
 // setDebug(true);
@@ -145,6 +146,7 @@ const init = () => {
   const initEditor =
     CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
   const initButton = document.getElementById('initButton');
+  const resetInitButton = document.getElementById('resetInitButton');
   const getSettingsEditor =
     CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
   const getSettingsButton = document.getElementById('getSettingsButton');
@@ -220,6 +222,36 @@ const init = () => {
   let bridge;
   let extensionView;
 
+  const populateInitEditor = (initInfo) => {
+    initEditor.setValue(JSON.stringify(initInfo, null, 2));
+  };
+
+  const getDefaultInitInfo = () => {
+    const selectedViewDescriptor = getSelectedViewDescriptor();
+    return {
+      settings: null,
+      extensionSettings: {
+        foo: 'bar'
+      },
+      propertySettings: {
+        domains: [
+          'adobe.com',
+          'example.com'
+        ],
+        linkDelay: 100,
+        trackingCookieName: 'sat_track',
+        undefinedVarsReturnEmpty: false
+      },
+      tokens: {
+        imsAccess: 'X34DF56GHHBBFFGH'
+      },
+      company: {
+        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      },
+      schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
+    };
+  };
+
   const loadSelectedViewIntoIframe = () => {
     if (bridge) {
       bridge.destroy();
@@ -228,32 +260,20 @@ const init = () => {
     const viewURL = getViewURLFromSelector();
 
     if (viewURL) {
-      const selectedViewDescriptor = getSelectedViewDescriptor();
+      const defaultInitInfo = getDefaultInitInfo();
+      const cachedInitInfo = getCachedInitInfo(viewURL);
 
-      const extensionInitOptions = {
-        settings: null,
-        extensionSettings: {
-          foo: 'bar'
-        },
-        propertySettings: {
-          domains: [
-            'adobe.com',
-            'example.com'
-          ],
-          linkDelay: 100,
-          trackingCookieName: 'sat_track',
-          undefinedVarsReturnEmpty: false
-        },
-        tokens: {
-          imsAccess: 'X34DF56GHHBBFFGH'
-        },
-        company: {
-          orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
-        },
-        schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
-      };
+      let extensionInitOptions;
 
-      initEditor.setValue(JSON.stringify(extensionInitOptions, null, 2));
+      if (cachedInitInfo && !deepEqual(cachedInitInfo, defaultInitInfo)) {
+        extensionInitOptions = cachedInitInfo;
+        resetInitButton.disabled = false;
+      } else {
+        extensionInitOptions = defaultInitInfo;
+        resetInitButton.disabled = true;
+      }
+
+      populateInitEditor(extensionInitOptions);
 
       bridge = loadIframe({
         url: viewURL,
@@ -317,9 +337,41 @@ const init = () => {
   };
 
   const init = () => {
+    const initInfo = JSON.parse(initEditor.getValue());
+    const defaultInfo = getDefaultInitInfo();
+
+    if (!deepEqual(initInfo,  defaultInfo)) {
+      setCachedInitInfo(initInfo);
+      resetInitButton.disabled = false;
+    }
+
     extensionView
-      .init(JSON.parse(initEditor.getValue()))
+      .init(initInfo)
       .catch(reportIframeCommsError);
+  };
+
+  const resetInit = () => {
+    const defaultInfo = getDefaultInitInfo();
+
+    setCachedInitInfo(null);
+    populateInitEditor(defaultInfo);
+    resetInitButton.disabled = true;
+
+    extensionView
+      .init(defaultInfo)
+      .catch(reportIframeCommsError);
+  };
+
+  const getCachedInitInfo = (viewURL) => {
+    const infoCache = JSON.parse(localStorage.getItem('initInfo') || '{}');
+    return infoCache[viewURL];
+  };
+
+  const setCachedInitInfo = (initInfo) => {
+    const infoCache = JSON.parse(localStorage.getItem('initInfo') || '{}');
+    const viewURL = getViewURLFromSelector();
+    infoCache[viewURL] = initInfo;
+    localStorage.setItem('initInfo', JSON.stringify(infoCache));
   };
 
   // Extension configuration is not an array by default because it's only one.
@@ -351,6 +403,7 @@ const init = () => {
   validateButton.addEventListener('click', reportValidation);
   getSettingsButton.addEventListener('click', reportSettings);
   initButton.addEventListener('click', init);
+  resetInitButton.addEventListener('click', resetInit);
   viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
 
   Split(['#extensionViewPane', '#controlPane'], {

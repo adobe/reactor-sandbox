@@ -111,10 +111,21 @@ coral-panel-content {
 
 .panelButtonHolder {
   padding: 12px;
+  display: flex;
+  flex-direction: row;
 }
 
 .panelButton {
   width: 100%;
+  margin-left: 8px;
+}
+
+.panelButton:first-child {
+  margin-left: 0;
+}
+
+.resetInitButton {
+  width: 140px;
 }
 
 .gutter {
