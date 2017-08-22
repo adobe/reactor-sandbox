@@ -175,6 +175,20 @@ const augmentSandboxEvents = function(extensionsOutput) {
               trigger();
             };
           }
+        },
+        'sandbox/localStorage.js': {
+          script: function(module) {
+            module.exports = function(settings) {
+              // When local storage is disabled on Safari, the mere act of referencing
+              // window.localStorage throws an error. For this reason, referencing
+              // window.localStorage without being inside a try-catch should be avoided.
+              try {
+                return window.localStorage.getItem(settings.name);
+              } catch (e) {
+                return null;
+              }
+            };
+          }
         }
       }
     };

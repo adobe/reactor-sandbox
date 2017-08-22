@@ -2,8 +2,10 @@
 
 module.exports = {
   rules: [
-    // Set up rules that you would like to test. modulePath is the name of your
-    // extension (as defined in your extension.json) plus the path to the library module file.
+    // Set up rules that you would like to test. For each event/condition/action:
+    //  - modulePath is the name of your extension (as defined in your extension.json) plus the
+    //    path to the library module file.
+    //  - settings is an object containing user input saved from your extension view.
 
     // {
     //   name: 'Example Rule',
@@ -33,17 +35,26 @@ module.exports = {
     // }
   ],
   dataElements: {
-    // Set up data elements that you would like to test. modulePath is the name of your
-    // extension (as defined in your extension.json) plus the path to the library module file.
+    // Set up data elements that you would like to test. The top-level object keys are the data
+    // element names. For each data element:
+    //  - modulePath is the name of your extension (as defined in your extension.json) plus the
+    //    path to the library module file.
+    //  - settings is an object containing user input saved from your extension view.
 
-    // myDataElement: {
-    //   modulePath: 'example-extension/src/lib/dataElements/javascriptVariable.js',
-    //   settings: {}
+    // productId: {
+    //   // This is a simple data element type provided by the sandbox which retrieves a value
+    //   // from local storage. This data element type is provided as a convenience in case
+    //   // your extension does not have any data element types of its own.
+    //   modulePath: 'sandbox/localStorage.js',
+    //   settings: {
+    //     // The local storage item name.
+    //     name: 'productId'
+    //   }
     // }
   },
   extensions: {
-    // Set up an extension configuration you would like to test. The key is the name of your
-    // extension (as defined in your extension.json).
+    // Set up an extension configuration you would like to test. The top-level object key is the
+    // name of your extension (as defined in your extension.json).
 
     // 'example-extension': {
     //   displayName: 'Example Extension',
