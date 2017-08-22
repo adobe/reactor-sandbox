@@ -18,6 +18,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 const express = require('express');
 const webpack = require('webpack');
 const webpackMiddleware = require('webpack-dev-middleware');
@@ -30,10 +31,16 @@ const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 
 const PORT = 3000;
+const SSL_PORT = 4000;
 
 module.exports = function() {
   let validationError;
   const app = express();
+
+  https.createServer({
+    key: fs.readFileSync(__dirname + '/../../cert/key.pem'),
+    cert: fs.readFileSync(__dirname + '/../../cert/cert.pem')
+  }, app).listen(SSL_PORT);
 
   app.get('/' + files.CONTAINER_FILENAME, function(req, res) {
     // Always pull the latest extension descriptor. The extension developer may have changed it
@@ -131,7 +138,7 @@ module.exports = function() {
     if (error) {
       throw error;
     } else {
-      console.log('\nExtension sandbox running at http://localhost:' + PORT);
+      console.log('\nExtension sandbox running at http://localhost:' + PORT + ' and at https://localhost:' + SSL_PORT);
     }
   });
 };
