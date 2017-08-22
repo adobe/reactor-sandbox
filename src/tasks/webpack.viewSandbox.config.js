@@ -38,6 +38,6 @@ module.exports = {
     new IgnorePlugin(/regenerator|nodent|js\-beautify/, /ajv/)
   ],
   resolveLoader: {
-    moduleExtensions: ["-loader"]
+    moduleExtensions: ['-loader']
   }
 };

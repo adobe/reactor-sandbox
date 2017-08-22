@@ -187,7 +187,7 @@ const augmentSandboxEvents = function(extensionsOutput) {
               } catch (e) {
                 return null;
               }
-            }
+            };
           }
         }
       }
