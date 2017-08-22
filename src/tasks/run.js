@@ -138,7 +138,9 @@ module.exports = function() {
     if (error) {
       throw error;
     } else {
-      console.log('\nExtension sandbox running at http://localhost:' + PORT + ' and at https://localhost:' + SSL_PORT);
+      console.log(
+        '\nExtension sandbox running at http://localhost:' + PORT +
+        ' and at https://localhost:' + SSL_PORT);
     }
   });
 };
