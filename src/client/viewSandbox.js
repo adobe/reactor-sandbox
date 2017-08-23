@@ -226,6 +226,14 @@ const init = () => {
     initEditor.setValue(JSON.stringify(initInfo, null, 2));
   };
 
+  const resetGetSettingsEditor = () => {
+    getSettingsEditor.setValue('{}');
+  };
+
+  const resetValidationOutput = () => {
+    validateOutput.innerHTML = '';
+  };
+
   const getDefaultInitInfo = () => {
     const selectedViewDescriptor = getSelectedViewDescriptor();
     return {
@@ -261,7 +269,7 @@ const init = () => {
 
     if (viewURL) {
       const defaultInitInfo = getDefaultInitInfo();
-      const cachedInitInfo = getCachedInitInfo(viewURL);
+      const cachedInitInfo = getCachedInitInfo();
 
       let extensionInitOptions;
 
@@ -274,6 +282,8 @@ const init = () => {
       }
 
       populateInitEditor(extensionInitOptions);
+      resetGetSettingsEditor();
+      resetValidationOutput();
 
       bridge = loadIframe({
         url: viewURL,
@@ -362,8 +372,9 @@ const init = () => {
       .catch(reportIframeCommsError);
   };
 
-  const getCachedInitInfo = (viewURL) => {
+  const getCachedInitInfo = () => {
     const infoCache = JSON.parse(localStorage.getItem('initInfo') || '{}');
+    const viewURL = getViewURLFromSelector();
     return infoCache[viewURL];
   };
 
