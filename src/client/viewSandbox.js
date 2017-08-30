@@ -150,6 +150,7 @@ const init = () => {
   const getSettingsEditor =
     CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
   const getSettingsButton = document.getElementById('getSettingsButton');
+  const copySettingsToInitButton = document.getElementById('copySettingsToInitButton');
   const extensionViewPane = document.getElementById('extensionViewPane');
 
   const lastSelectedView = localStorage.getItem('lastSelectedView');
@@ -346,6 +347,26 @@ const init = () => {
       .catch(reportIframeCommsError);
   };
 
+  const copySettingsToInit = () => {
+    // We could just use whatever is in the getSettings output area, but we felt that calling for
+    // the settings for the view would be more expected by the user.
+    extensionView
+      .getSettings()
+      .then(settings => {
+        let initContent;
+
+        try {
+          initContent = JSON.parse(initEditor.getValue());
+        } catch (e) {
+          alert('Unable to copy settings to init panel. Init panel contents is not valid JSON.')
+        }
+
+        initContent.settings = settings;
+        populateInitEditor(initContent);
+      })
+      .catch(reportIframeCommsError);
+  };
+
   const init = () => {
     const initInfo = JSON.parse(initEditor.getValue());
     const defaultInfo = getDefaultInitInfo();
@@ -413,6 +434,7 @@ const init = () => {
 
   validateButton.addEventListener('click', reportValidation);
   getSettingsButton.addEventListener('click', reportSettings);
+  copySettingsToInitButton.addEventListener('click', copySettingsToInit);
   initButton.addEventListener('click', init);
   resetInitButton.addEventListener('click', resetInit);
   viewSelector.addEventListener('change', loadSelectedViewIntoIframe);
