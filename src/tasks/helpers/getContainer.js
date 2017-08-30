@@ -1,4 +1,4 @@
-/***************************************************************************************
+﻿/***************************************************************************************
  * (c) 2017 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
@@ -65,13 +65,14 @@ const augmentModule = (modulesOutput, extensionName, extensionPath, modulePath, 
     // Allow extension devs to require JS files without the js extension
     .map(module => path.extname(module) === '.js' ? module : module + '.js')
     .forEach(function(requiredRelativePath) {
-      const requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
+      const requiredPath = path.posix.resolve(path.dirname(modulePath), requiredRelativePath);
       augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
     });
 
   // The reference path is a unique path that starts with the extension name, then a slash,
   // then the path to the file within the extension's directory.
-  const referencePath = path.join(extensionName, path.relative(extensionPath, modulePath));
+  const referencePath =
+    path.posix.join(extensionName, path.posix.relative(extensionPath, modulePath));
 
   // It's possible this module has already been added to the output. If it has, we just need to
   // merge any new meta information that hasn't already been stored for the module. This supports
@@ -113,7 +114,7 @@ const augmentModules = function(extensionOutput, extensionDescriptor, extensionP
 
       if (featureDescriptors) {
         featureDescriptors.forEach(function(featureDescriptor) {
-          const modulePath = path.join(
+          const modulePath = path.posix.join(
             extensionPath,
             extensionDescriptor.libBasePath || '',
             featureDescriptor.libPath);
