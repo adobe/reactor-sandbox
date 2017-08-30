@@ -358,7 +358,7 @@ const init = () => {
         try {
           initContent = JSON.parse(initEditor.getValue());
         } catch (e) {
-          alert('Unable to copy settings to init panel. Init panel contents is not valid JSON.')
+          alert('Unable to copy settings to init panel. Init panel contents is not valid JSON.');
         }
 
         initContent.settings = settings;
