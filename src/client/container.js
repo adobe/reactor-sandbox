@@ -61,14 +61,17 @@ module.exports = {
     //   settings: {}
     // }
   },
-  propertySettings: {
-    domains: [
-      'adobe.com',
-      'example.com'
-    ],
-    linkDelay: 100,
-    trackingCookieName: 'sat_track',
-    undefinedVarsReturnEmpty: false
+  property: {
+    name: 'Sandbox property',
+    settings: {
+      domains: [
+        'adobe.com',
+        'example.com'
+      ],
+      linkDelay: 100,
+      trackingCookieName: 'sat_track',
+      undefinedVarsReturnEmpty: false
+    }
   },
   buildInfo: {
     turbineVersion: '14.0.0',
