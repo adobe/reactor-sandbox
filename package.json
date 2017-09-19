@@ -37,7 +37,7 @@
     "webpack-dev-middleware": "^1.6.1"
   },
   "peerDependencies": {
-    "@adobe/reactor-turbine": ">=18.2.0"
+    "@adobe/reactor-turbine": ">=22.0.0"
   },
   "bin": {
     "reactor-sandbox": "./src/tasks/index.js"
