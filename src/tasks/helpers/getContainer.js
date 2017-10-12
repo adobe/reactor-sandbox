@@ -86,8 +86,9 @@ const augmentModule = (modulesOutput, extensionName, extensionPath, modulePath, 
       // to JSON that the token should be replaced with an actual, executable function
       // which wraps the delegate code. We can't just set the value to a function right
       // now because it wouldn't be properly serialized.
-      script:
-        functionTokenRegistry.getToken(wrapInFunction(source, ['module', 'exports', 'require']))
+      script: functionTokenRegistry.getToken(wrapInFunction(source, [
+        'module', 'exports', 'require', 'turbine'
+      ]))
     };
   }
 
