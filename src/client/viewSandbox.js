@@ -76,10 +76,10 @@ const openCodeEditor = () =>
 const openRegexTester = () =>
   Promise.resolve('Edited Regex ' + Math.round(Math.random() * 10000));
 
-const openDataElementSelector = ({ tokenize }) => {
+const openDataElementSelector = (options = {}) => {
   let value = 'dataElement' + Math.round(Math.random() * 10000);
   // Tokenize by default. The tokenize option must be set explicitly to false to disable it.
-  if (tokenize !== false) {
+  if (options.tokenize !== false) {
     value = `%${ value }%`;
   }
   return value;
