@@ -70,14 +70,22 @@ const getRandomValue = (min, max) => Math.floor(Math.random() * (max - min + 1) 
 
 const clearSelectOptions = comboBox => comboBox.innerHTML = '';
 
-const openCodeEditor = code =>
+const openCodeEditor = () =>
   Promise.resolve('Edited Code ' + Math.round(Math.random() * 10000));
 
-const openRegexTester = regex =>
+const openRegexTester = () =>
   Promise.resolve('Edited Regex ' + Math.round(Math.random() * 10000));
 
-const openDataElementSelector = () =>
-  Promise.resolve('dataElement' + Math.round(Math.random() * 10000));
+const openDataElementSelector = ({ tokenize }) => {
+  let value = 'dataElement' + Math.round(Math.random() * 10000);
+  // Tokenize by default. The tokenize option must be set explicitly to false to disable it.
+  if (tokenize !== false) {
+    value = `%${ value }%`;
+  }
+  return value;
+};
+
+const markAsDirty = () => {};
 
 const openCssSelector = () => {
   const tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi',
@@ -293,7 +301,8 @@ const init = () => {
         openCodeEditor,
         openRegexTester,
         openDataElementSelector,
-        openCssSelector
+        openCssSelector,
+        markAsDirty
       });
 
       bridge.promise.then(value => extensionView = value).catch(reportIframeCommsError);
