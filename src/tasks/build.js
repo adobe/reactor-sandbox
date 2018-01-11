@@ -65,26 +65,31 @@ module.exports = function() {
   // We need to replace the extension bridge from akamai with one that is bundled inside the build.
   fs.copySync(files.EXTENSION_BRIDGE_PATH, files.DIST_PATH);
 
+  var script = '<script>' +
+      'var basePath = window.parent.location.href.replace(/\\/[^\/]*$/, "");' +
+      'document.write(\'<script src="\' + basePath + \'\/extensionbridge.min.js">' +
+      '<\\/script><script src="\' + basePath + \'\/extensionbridge-child.js"><\\/script>\');' +
+    '</script>';
+
   replace.sync({
-    files: path.join(path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME), '*\.html'),
-    replace: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?></script>', 'igm'),
-    with: '<script src="../' + files.EXTENSION_BRIDGE + '"></script>' +
-          '<script src="../' + files.EXTENSION_BRIDGE_CHILD + '"></script>',
+    files: path.join(files.DIST_PATH, '**/*\.html'),
+    from: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?></script>', 'igm'),
+    to: script,
     allowEmptyPaths: false
   });
 
   replace.sync({
     files: path.join(path.resolve(files.DIST_PATH, 'noConfigIframe\.html')),
-    replace: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?></script>', 'igm'),
-    with: '<script src="./' + files.EXTENSION_BRIDGE + '"></script>' +
+    from: new RegExp('<script.*src=".*' + files.EXTENSION_BRIDGE + '".*?></script>', 'igm'),
+    to: '<script src="./' + files.EXTENSION_BRIDGE + '"></script>' +
     '<script src="./' + files.EXTENSION_BRIDGE_CHILD + '"></script>',
     allowEmptyPaths: false
   });
 
   replace.sync({
     files: path.resolve(path.join(files.DIST_PATH, files.EXTENSION_BRIDGE)),
-    replace: new RegExp('/extensionbridge/' + files.EXTENSION_BRIDGE_CHILD),
-    with: 'about:blank',
+    from: new RegExp('/extensionbridge/' + files.EXTENSION_BRIDGE_CHILD),
+    to: 'about:blank',
     allowEmptyPaths: false
   });
 };
