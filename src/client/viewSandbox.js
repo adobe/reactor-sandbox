@@ -220,6 +220,12 @@ const init = () => {
     }
   };
 
+  const getSelectedViewGroupValue = () => {
+    if (viewGroupSelector.selectedIndex !== -1) {
+      return viewGroupSelector.options[viewGroupSelector.selectedIndex].value;
+    }
+  };
+
   const getViewURLFromSelector = () => {
     if (viewSelector.selectedIndex !== -1) {
       const option = viewSelector.options[viewSelector.selectedIndex];
@@ -245,28 +251,39 @@ const init = () => {
 
   const getDefaultInitInfo = () => {
     const selectedViewDescriptor = getSelectedViewDescriptor();
-    return {
-      settings: null,
-      extensionSettings: {
+    const selectedViewGroup = getSelectedViewGroupValue();
+
+    const info = {};
+
+    info.settings = null;
+
+    if (selectedViewGroup !== VIEW_GROUPS.CONFIGURATION) {
+      info.extensionSettings = {
         foo: 'bar'
-      },
-      propertySettings: {
-        domains: [
-          'adobe.com',
-          'example.com'
-        ],
-        linkDelay: 100,
-        trackingCookieName: 'sat_track',
-        undefinedVarsReturnEmpty: false
-      },
-      tokens: {
-        imsAccess: 'X34DF56GHHBBFFGH'
-      },
-      company: {
-        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
-      },
-      schema: selectedViewDescriptor ? selectedViewDescriptor.schema : null
+      };
+    }
+
+    info.propertySettings = {
+      domains: [
+        'adobe.com',
+        'example.com'
+      ],
+      linkDelay: 100,
+      trackingCookieName: 'sat_track',
+      undefinedVarsReturnEmpty: false
     };
+
+    info.tokens = {
+      imsAccess: 'X34DF56GHHBBFFGH'
+    };
+
+    info.company = {
+      orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+    };
+
+    info.schema = selectedViewDescriptor ? selectedViewDescriptor.schema : null;
+
+    return info;
   };
 
   const loadSelectedViewIntoIframe = () => {
