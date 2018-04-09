@@ -14,16 +14,39 @@
 
 
 
-var task = process.argv.slice(2)[0];
+const path = require('path');
+const chalk = require('chalk');
+const sandboxPkg = require('../../package.json');
+const turbinePkg = require(path.resolve('node_modules/@adobe/reactor-turbine/package.json'));
+const updateNotifier = require('update-notifier');
 
-switch (task) {
-  case 'build':
-    require('./build')();
-    break;
-  case 'init':
-    require('./init')();
-    break;
-  default:
-    require('./run')();
-    break;
+const task = process.argv.slice(2)[0];
+
+const sandboxUpdateNotifier = updateNotifier({
+  pkg: sandboxPkg,
+  updateCheckInterval: 0
+});
+
+const turbineUpdateNotifier = updateNotifier({
+  pkg: turbinePkg,
+  updateCheckInterval: 0
+});
+
+if (sandboxUpdateNotifier.update || turbineUpdateNotifier.update) {
+  console.log(chalk.red(`Your sandbox is out of date. To ensure you are testing against the ` +
+    `latest code, please first update your sandbox by running ` +
+    `${chalk.cyan('npm i @adobe/reactor-sandbox @adobe/reactor-turbine')}.`));
+} else {
+  switch (task) {
+    case 'build':
+      require('./build')();
+      break;
+    case 'init':
+      require('./init')();
+      break;
+    default:
+      require('./run')();
+      break;
+  }
 }
+
