@@ -15,8 +15,8 @@
     "lint": "eslint 'src/**/*.js'"
   },
   "dependencies": {
-    "@adobe/reactor-bridge": "^9.1.0",
-    "@adobe/reactor-validator": "^1.0.0",
+    "@adobe/reactor-bridge": "9.1.1",
+    "@adobe/reactor-validator": "1.2.0",
     "ajv": "^5.2.3",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.0",
