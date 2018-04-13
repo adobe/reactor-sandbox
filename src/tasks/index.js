@@ -13,9 +13,12 @@
  ****************************************************************************************/
 
 const sandboxPkgPath = '../../package.json';
-delete require.cache[sandboxPkgPath];
-
 const turbinePkgPath = path.resolve('node_modules/@adobe/reactor-turbine/package.json');
+
+// After running the update command (npm i @adobe/reactor-sandbox@latest...), the sandbox
+// was still showing the warning message the next time was run. We want to always compare
+// the real installed version (not a cached version).
+delete require.cache[sandboxPkgPath];
 delete require.cache[turbinePkgPath];
 
 const path = require('path');
