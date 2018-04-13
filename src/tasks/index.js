@@ -12,34 +12,25 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
+const execSync = require('child_process').execSync;
 const path = require('path');
-const sandboxPkgPath = '../../package.json';
-const turbinePkgPath = path.resolve('node_modules/@adobe/reactor-turbine/package.json');
-
-// After running the update command (npm i @adobe/reactor-sandbox@latest...), the sandbox
-// was still showing the warning message the next time was run. We want to always compare
-// the real installed version (not a cached version).
-delete require.cache[sandboxPkgPath];
-delete require.cache[turbinePkgPath];
-
 const chalk = require('chalk');
-const sandboxPkg = require(sandboxPkgPath);
-const turbinePkg = require(turbinePkgPath);
-const updateNotifier = require('update-notifier');
+const sandboxPkg = require('../../package.json');
+const turbinePkg = require(path.resolve('node_modules/@adobe/reactor-turbine/package.json'));
+const semverDiff = require('semver-diff');
+
+const getLatestVersion = packageName => {
+  return execSync('npm view ' + packageName + ' version')
+    .toString('utf8')
+    .replace(/\n$/, '');
+};
+
+const sandboxOutdated = semverDiff(sandboxPkg.version, getLatestVersion('@adobe/reactor-sandbox'));
+const turbineOutdated = semverDiff(turbinePkg.version, getLatestVersion('@adobe/reactor-turbine'));
 
 const task = process.argv.slice(2)[0];
 
-const sandboxUpdateNotifier = updateNotifier({
-  pkg: sandboxPkg,
-  updateCheckInterval: 0
-});
-
-const turbineUpdateNotifier = updateNotifier({
-  pkg: turbinePkg,
-  updateCheckInterval: 0
-});
-
-if (sandboxUpdateNotifier.update || turbineUpdateNotifier.update) {
+if (sandboxOutdated || turbineOutdated) {
   console.log(
     chalk.red(
       'Your sandbox is out of date. To ensure you are testing against the ' +
