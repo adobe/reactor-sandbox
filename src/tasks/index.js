@@ -12,10 +12,10 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const sandboxPkgPath = '../../package.json'
+const sandboxPkgPath = '../../package.json';
 delete require.cache[sandboxPkgPath];
 
-const turbinePkgPath = path.resolve('node_modules/@adobe/reactor-turbine/package.json')
+const turbinePkgPath = path.resolve('node_modules/@adobe/reactor-turbine/package.json');
 delete require.cache[turbinePkgPath];
 
 const path = require('path');
@@ -37,20 +37,23 @@ const turbineUpdateNotifier = updateNotifier({
 });
 
 if (sandboxUpdateNotifier.update || turbineUpdateNotifier.update) {
-  console.log(chalk.red(`Your sandbox is out of date. To ensure you are testing against the ` +
-    `latest code, please first update your sandbox by running ` +
-    `${chalk.cyan('npm i @adobe/reactor-sandbox@latest @adobe/reactor-turbine@latest')}.`));
-} else {
-  switch (task) {
-    case 'build':
-      require('./build')();
-      break;
-    case 'init':
-      require('./init')();
-      break;
-    default:
-      require('./run')();
-      break;
-  }
+  console.log(
+    chalk.red(
+      'Your sandbox is out of date. To ensure you are testing against the ' +
+        'latest code, please first update your sandbox by running ' +
+        `${chalk.cyan('npm i @adobe/reactor-sandbox@latest @adobe/reactor-turbine@latest')}.`
+    )
+  );
 }
 
+switch (task) {
+  case 'build':
+    require('./build')();
+    break;
+  case 'init':
+    require('./init')();
+    break;
+  default:
+    require('./run')();
+    break;
+}
