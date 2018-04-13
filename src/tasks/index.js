@@ -35,7 +35,7 @@ const turbineUpdateNotifier = updateNotifier({
 if (sandboxUpdateNotifier.update || turbineUpdateNotifier.update) {
   console.log(chalk.red(`Your sandbox is out of date. To ensure you are testing against the ` +
     `latest code, please first update your sandbox by running ` +
-    `${chalk.cyan('npm i @adobe/reactor-sandbox @adobe/reactor-turbine')}.`));
+    `${chalk.cyan('npm i @adobe/reactor-sandbox@latest @adobe/reactor-turbine@latest')}.`));
 } else {
   switch (task) {
     case 'build':
