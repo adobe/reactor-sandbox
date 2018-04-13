@@ -12,12 +12,16 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
+const sandboxPkgPath = '../../package.json'
+delete require.cache[sandboxPkgPath];
 
+const turbinePkgPath = path.resolve('node_modules/@adobe/reactor-turbine/package.json')
+delete require.cache[turbinePkgPath];
 
 const path = require('path');
 const chalk = require('chalk');
-const sandboxPkg = require('../../package.json');
-const turbinePkg = require(path.resolve('node_modules/@adobe/reactor-turbine/package.json'));
+const sandboxPkg = require(sandboxPkgPath);
+const turbinePkg = require(turbinePkgPath);
 const updateNotifier = require('update-notifier');
 
 const task = process.argv.slice(2)[0];
