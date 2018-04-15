@@ -163,18 +163,24 @@ module.exports = function() {
   });
 
   app.get('/editor-container.js', function(req, res) {
-    eval(
-      fs
-        .readFileSync(path.resolve(files.CONSUMER_CLIENT_SRC_PATH, files.CONTAINER_FILENAME))
-        .toString('utf8')
-        .replace('module.exports = ', 'var container =')
-        .replace('};', '}')
-        .trim()
-    );
-    var containerContent = JSON.stringify(container);
+    try {
+      eval(
+        fs
+          .readFileSync(path.resolve(files.CONSUMER_CLIENT_SRC_PATH, files.CONTAINER_FILENAME))
+          .toString('utf8')
+          .replace('module.exports = ', 'var container =')
+          .replace('};', '}')
+          .trim()
+      );
 
-    res.setHeader('Content-Type', 'application/json');
-    res.send(containerContent);
+      var containerContent = JSON.stringify(container);
+
+      res.setHeader('Content-Type', 'application/json');
+      res.send(containerContent);
+    } catch (error) {
+      res.status(404);
+      res.send('File not found.');
+    }
   });
 
   app.get('/editor-registry.js', function(req, res) {
