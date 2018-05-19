@@ -19,7 +19,7 @@ module.exports = (extensionDescriptorPaths, { request, ports }) => {
         extensionDisplayName: extensionDescriptor.displayName,
         extensionName: extensionDescriptor.name,
         displayName: component.displayName,
-        libPath: `${extensionDescriptor.name}/${extensionDescriptor.version}/${component.libPath}`,
+        libPath: component.libPath,
         viewPath: component.viewPath
           ? `extensionViews/${extensionDescriptor.name}/${extensionDescriptor.version}/${
             component.viewPath

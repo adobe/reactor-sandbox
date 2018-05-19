@@ -64,6 +64,7 @@ module.exports = function() {
       console.error(chalk.red(validationError));
       res.status(500).send(validationError);
     } else {
+      res.setHeader('Content-Type', 'application/javascript');
       res.send(getContainer());
     }
   });
