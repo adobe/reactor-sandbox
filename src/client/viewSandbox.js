@@ -60,25 +60,23 @@ const codeMirrorConfig = {
   lint: true,
   value: '{}',
   extraKeys: {
-    'Tab': cm => {
-      cm.replaceSelection('  ' , 'end');
+    Tab: cm => {
+      cm.replaceSelection('  ', 'end');
     }
   }
 };
 
-const clearSelectOptions = comboBox => comboBox.innerHTML = '';
+const clearSelectOptions = comboBox => (comboBox.innerHTML = '');
 
-const openCodeEditor = () =>
-  Promise.resolve('Edited Code ' + Math.round(Math.random() * 10000));
+const openCodeEditor = () => Promise.resolve('Edited Code ' + Math.round(Math.random() * 10000));
 
-const openRegexTester = () =>
-  Promise.resolve('Edited Regex ' + Math.round(Math.random() * 10000));
+const openRegexTester = () => Promise.resolve('Edited Regex ' + Math.round(Math.random() * 10000));
 
 const openDataElementSelector = (options = {}) => {
   let value = 'dataElement' + Math.round(Math.random() * 10000);
   // Tokenize by default. The tokenize option must be set explicitly to false to disable it.
   if (options.tokenize !== false) {
-    value = `%${ value }%`;
+    value = `%${value}%`;
   }
   return value;
 };
@@ -113,7 +111,7 @@ const getCategorizedItems = items => {
   return groupedItems;
 };
 
-const reportIframeCommsError = (error) => {
+const reportIframeCommsError = error => {
   alert('An error has occurred. Please see the browser console.');
   throw error;
 };
@@ -123,12 +121,13 @@ const init = () => {
   const viewSelector = document.getElementById('extensionViewSelector');
   const validateButton = document.getElementById('validateButton');
   const validateOutput = document.getElementById('validateOutput');
-  const initEditor =
-    CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
+  const initEditor = CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
   const initButton = document.getElementById('initButton');
   const resetInitButton = document.getElementById('resetInitButton');
-  const getSettingsEditor =
-    CodeMirror(document.getElementById('getSettingsEditorContainer'), codeMirrorConfig);
+  const getSettingsEditor = CodeMirror(
+    document.getElementById('getSettingsEditorContainer'),
+    codeMirrorConfig
+  );
   const getSettingsButton = document.getElementById('getSettingsButton');
   const copySettingsToInitButton = document.getElementById('copySettingsToInitButton');
   const extensionViewPane = document.getElementById('extensionViewPane');
@@ -142,46 +141,55 @@ const init = () => {
     localStorage.setItem('lastSelectedViewGroup', groupKey);
 
     var categorizedItems = getCategorizedItems(extensionDescriptor[groupKey]);
-    Object.keys(categorizedItems).sort((a, b) => {
-      const categoriesToBePlacedLast = [NOT_AVAILABLE, OTHER];
+    Object.keys(categorizedItems)
+      .sort((a, b) => {
+        const categoriesToBePlacedLast = [NOT_AVAILABLE, OTHER];
 
-      for (let i = 0; i < categoriesToBePlacedLast.length; i++) {
-        if (a === categoriesToBePlacedLast[i] || b === categoriesToBePlacedLast[i]) {
-          return a === categoriesToBePlacedLast[i] ? 1 : -1;
+        for (let i = 0; i < categoriesToBePlacedLast.length; i++) {
+          if (a === categoriesToBePlacedLast[i] || b === categoriesToBePlacedLast[i]) {
+            return a === categoriesToBePlacedLast[i] ? 1 : -1;
+          }
         }
-      }
 
-      if (a < b) {
-        return -1;
-      } else if (a > b) {
-        return 1;
-      } else {
-        return 0;
-      }
-    }).forEach(categoryName => {
-      let parentNode;
+        if (a < b) {
+          return -1;
+        } else if (a > b) {
+          return 1;
+        } else {
+          return 0;
+        }
+      })
+      .forEach(categoryName => {
+        let parentNode;
 
-      // Don't create `optgroup` node if the items don't belong to any category.
-      // These items should be appended directly to the viewSelector node.
-      if (categoryName !== NOT_AVAILABLE) {
-        parentNode = document.createElement('optgroup');
-        parentNode.label = categoryName;
+        // Don't create `optgroup` node if the items don't belong to any category.
+        // These items should be appended directly to the viewSelector node.
+        if (categoryName !== NOT_AVAILABLE) {
+          parentNode = document.createElement('optgroup');
+          parentNode.label = categoryName;
 
-        viewSelector.appendChild(parentNode);
-      } else {
-        parentNode = viewSelector;
-      }
+          viewSelector.appendChild(parentNode);
+        } else {
+          parentNode = viewSelector;
+        }
 
-      const items = categorizedItems[categoryName];
-      items.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.viewPath ? 'extensionViews/' + item.viewPath : 'noConfigIframe.html';
-        option.text = item.displayName;
-        option.descriptor = item;
-        option.selected = item.name === lastSelectedView;
-        parentNode.appendChild(option);
+        const items = categorizedItems[categoryName];
+        items.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.viewPath
+            ? 'extensionViews/' +
+              extensionDescriptor.name +
+              '/' +
+              extensionDescriptor.version +
+              '/' +
+              item.viewPath
+            : 'noConfigIframe.html';
+          option.text = item.displayName;
+          option.descriptor = item;
+          option.selected = item.name === lastSelectedView;
+          parentNode.appendChild(option);
+        });
       });
-    });
 
     // If Extension Configuration is the selected "group", there's no need to show
     // the second select because there's never more than one view in that group.
@@ -209,7 +217,7 @@ const init = () => {
   let bridge;
   let extensionView;
 
-  const populateInitEditor = (initInfo) => {
+  const populateInitEditor = initInfo => {
     initEditor.setValue(JSON.stringify(initInfo, null, 2));
   };
 
@@ -236,10 +244,7 @@ const init = () => {
     }
 
     info.propertySettings = {
-      domains: [
-        'adobe.com',
-        'example.com'
-      ],
+      domains: ['adobe.com', 'example.com'],
       linkDelay: 100,
       trackingCookieName: 'sat_track',
       undefinedVarsReturnEmpty: false
@@ -293,7 +298,7 @@ const init = () => {
         markAsDirty
       });
 
-      bridge.promise.then(value => extensionView = value).catch(reportIframeCommsError);
+      bridge.promise.then(value => (extensionView = value)).catch(reportIframeCommsError);
     }
   };
 
@@ -306,25 +311,23 @@ const init = () => {
   const reportValidation = () => {
     extensionView
       .validate()
-      .then(valid =>  {
+      .then(valid => {
         if (valid) {
           const selectedViewDescriptor = getSelectedViewDescriptor();
           if (selectedViewDescriptor && selectedViewDescriptor.schema) {
-            return extensionView
-              .getSettings()
-              .then(settings => {
-                const ajv = Ajv();
-                ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
+            return extensionView.getSettings().then(settings => {
+              const ajv = Ajv();
+              ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
 
-                const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
+              const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
 
-                if (matchesSchema) {
-                  validateOutput.innerHTML = 'Valid';
-                } else {
-                  validateOutput.innerHTML =
-                    '<span class="error">Settings object does not match schema</span>';
-                }
-              });
+              if (matchesSchema) {
+                validateOutput.innerHTML = 'Valid';
+              } else {
+                validateOutput.innerHTML =
+                  '<span class="error">Settings object does not match schema</span>';
+              }
+            });
           } else {
             validateOutput.innerHTML = '<span class="error">Schema not defined</span>';
           }
@@ -368,14 +371,12 @@ const init = () => {
     const initInfo = JSON.parse(initEditor.getValue());
     const defaultInfo = getDefaultInitInfo();
 
-    if (!deepEqual(initInfo,  defaultInfo)) {
+    if (!deepEqual(initInfo, defaultInfo)) {
       setCachedInitInfo(initInfo);
       resetInitButton.disabled = false;
     }
 
-    extensionView
-      .init(initInfo)
-      .catch(reportIframeCommsError);
+    extensionView.init(initInfo).catch(reportIframeCommsError);
   };
 
   const resetInit = () => {
@@ -385,9 +386,7 @@ const init = () => {
     populateInitEditor(defaultInfo);
     resetInitButton.disabled = true;
 
-    extensionView
-      .init(defaultInfo)
-      .catch(reportIframeCommsError);
+    extensionView.init(defaultInfo).catch(reportIframeCommsError);
   };
 
   const getCachedInitInfo = () => {
@@ -396,7 +395,7 @@ const init = () => {
     return infoCache[viewURL];
   };
 
-  const setCachedInitInfo = (initInfo) => {
+  const setCachedInitInfo = initInfo => {
     const infoCache = JSON.parse(localStorage.getItem('initInfo') || '{}');
     const viewURL = getViewURLFromSelector();
     infoCache[viewURL] = initInfo;
@@ -438,9 +437,7 @@ const init = () => {
 
   Split(['#extensionViewPane', '#controlPane'], {
     minSize: 0,
-    sizes: [
-      65, 35
-    ]
+    sizes: [65, 35]
   });
 
   loadSelectedViewIntoIframe();
