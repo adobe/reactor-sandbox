@@ -19,7 +19,7 @@ module.exports = (extensionDescriptorPaths, { request, ports }) => {
         extensionDisplayName: extensionDescriptor.displayName,
         extensionName: extensionDescriptor.name,
         displayName: component.displayName,
-        libPath: component.libPath,
+        libPath: `${extensionDescriptor.name}/${extensionDescriptor.version}/${component.libPath}`,
         viewPath: component.viewPath
           ? `extensionViews/${extensionDescriptor.name}/${extensionDescriptor.version}/${
             component.viewPath
@@ -77,7 +77,15 @@ module.exports = (extensionDescriptorPaths, { request, ports }) => {
       },
       conditions: {},
       actions: {},
-      dataElements: {}
+      dataElements: {
+        'sandbox/localStorage.js': {
+          extensionDisplayName: 'Sandbox',
+          extensionName: 'sandbox',
+          displayName: 'Local Storage',
+          libPath: 'localStorage.js',
+          viewPath: '/localStorage.html'
+        }
+      }
     },
     extensions: {}
   };
