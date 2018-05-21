@@ -29,6 +29,8 @@ const extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
 const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 const editorRegistry = require('./helpers/editorRegistry');
+var bodyParser = require('body-parser');
+var saveContainer = require('./helpers/saveContainer');
 
 const PORT = 3000;
 const SSL_PORT = 4000;
@@ -42,6 +44,7 @@ module.exports = function() {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
+  app.use(bodyParser.json());
 
   https
     .createServer(
@@ -199,6 +202,16 @@ module.exports = function() {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(registryContent));
+  });
+
+  app.post('/editor-container.js', function(req, res) {
+    try {
+      saveContainer(req.body);
+      res.sendStatus(204);
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    }
   });
 
   app.listen(PORT, function(error) {
