@@ -11,6 +11,7 @@
  ****************************************************************************************/
 
 const path = require('path');
+const currentExtensionDescriptor = require('./getExtensionDescriptor')();
 
 module.exports = (extensionDescriptorPaths, { request, ports }) => {
   const populateComponentsType = (type, extensionDescriptor, registry) => {
@@ -54,6 +55,7 @@ module.exports = (extensionDescriptorPaths, { request, ports }) => {
   };
 
   const registry = {
+    currentExtensionName: currentExtensionDescriptor.name,
     environment: {
       server: {
         host: request.protocol + '://' + request.hostname,
