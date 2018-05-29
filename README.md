@@ -20,7 +20,7 @@ Once Node.js is installed, run the sandbox by executing the following command fr
 npx @adobe/reactor-sandbox
 ```
 
-A server will be started at [http://localhost:3000](http://localhost:3000). If you navigate to that address in your browser, you will see the View Sandbox which allows you to test your views. You'll need to have previously created a view in your extension for it to show up in the sandbox. You can switch between views you would like to test using the controls toward the top of the page.
+A server will be started at [http://localhost:3000](http://localhost:3000) (HTTP) and [https://localhost:4000](https://localhost:4000) (HTTPS). If you navigate to one of addresses in your browser (you may have to accept a security certificate if you use the HTTPS server), you will see the View Sandbox which allows you to test your views. You'll need to have previously created a view in your extension for it to show up in the sandbox. You can switch between views you would like to test using the controls toward the top of the page.
 
 You may also click on the "Go to library sandbox" button at the top-right of the page to navigate to the library sandbox where you can test your library logic. See [Configuring the Sandbox](#configuring-the-sandbox) for how to configure the library sandbox for proper testing.
 
