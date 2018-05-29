@@ -13,10 +13,8 @@
  ****************************************************************************************/
 
 const execSync = require('child_process').execSync;
-const path = require('path');
 const chalk = require('chalk');
 const sandboxPkg = require('../../package.json');
-const turbinePkg = require(path.resolve('node_modules/@adobe/reactor-turbine/package.json'));
 const semverDiff = require('semver-diff');
 
 const getLatestVersion = packageName => {
@@ -26,16 +24,15 @@ const getLatestVersion = packageName => {
 };
 
 const sandboxOutdated = semverDiff(sandboxPkg.version, getLatestVersion('@adobe/reactor-sandbox'));
-const turbineOutdated = semverDiff(turbinePkg.version, getLatestVersion('@adobe/reactor-turbine'));
 
 const task = process.argv.slice(2)[0];
 
-if (sandboxOutdated || turbineOutdated) {
+if (sandboxOutdated) {
   console.log(
     chalk.red(
       'Your sandbox is out of date. To ensure you are testing against the ' +
         'latest code, please first update your sandbox by running ' +
-        `${chalk.cyan('npm i @adobe/reactor-sandbox@latest @adobe/reactor-turbine@latest')}.`
+        `${chalk.cyan('npm i @adobe/reactor-sandbox@latest')}.`
     )
   );
 }
