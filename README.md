@@ -41,3 +41,23 @@ This will generate a directory within your project named `.sandbox` that contain
   * `libSandbox.html` includes some simple HTML along with script tags to load a complete `container.js` and the Turbine engine. `libSandbox.html` can be modified to manually test whatever you would like. For example, if you'd like to test that your brand new "focus" event type is working as desired, you can add a text input to the `libSandbox.html` to ensure your dummy rule fires when a form element receives focus.
 
 You are welcome to commit `.sandbox` to your version control repository.
+
+## Installing as a Dependency
+
+If you find yourself using the the sandbox tool frequently, you may wish to install it as a dependency in your project. This will allow the sandbox tool to run more quickly and provide more control over when you upgrade to newer versions of the sandbox.
+
+If you do not yet have a `package.json` in your project's directory, you will need to generate one by running the following command from the command line within your project's directory: 
+ 
+```
+npm init
+```
+
+You will need to provide the information requested on the screen. The values you provide are not particularly important and will not affect how your extension operates. After this process is complete, you should have a file called `package.json` inside your directory.
+
+Once you have a `package.json`, you can install the sandbox as a dependency by running the following command from the command line within your project's directory:
+
+```
+npm i -D @adobe/reactor-sandbox
+```
+
+At this point, you can continue running the sandbox as outlined above.
