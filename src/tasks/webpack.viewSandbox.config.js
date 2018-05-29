@@ -38,9 +38,11 @@ module.exports = {
     new IgnorePlugin(/regenerator|nodent|js\-beautify/, /ajv/)
   ],
   resolveLoader: {
-    // Important so that the webpack loaders are found when sandbox is being used with npx
+    // Important so that the webpack loaders are found when sandbox is being used both
+    // with npx and as an installed dependency.
     modules: [
-      path.resolve(__dirname, "../../node_modules")
+      path.resolve(__dirname, "../../node_modules"),
+      'node_modules'
     ],
     moduleExtensions: ['-loader']
   }
