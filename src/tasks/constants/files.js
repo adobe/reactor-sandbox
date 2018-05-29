@@ -17,7 +17,7 @@ var ENGINE_FILENAME = 'engine.js';
 var CLIENT_SRC_PATH = path.resolve(__dirname, '../../client');
 var EXTENSION_BRIDGE = 'extensionbridge.min.js';
 var EXTENSION_BRIDGE_CHILD = 'extensionbridge-child.js';
-var EXTENSION_BRIDGE_PATH = path.resolve('node_modules/@adobe/reactor-bridge/dist/');
+var EXTENSION_BRIDGE_PATH = path.join(require.resolve('@adobe/reactor-bridge'), '../../dist/');
 
 var files = {
   EXTENSION_DESCRIPTOR_FILENAME: 'extension.json',
