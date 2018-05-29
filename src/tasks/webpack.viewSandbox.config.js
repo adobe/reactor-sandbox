@@ -1,5 +1,5 @@
 
-
+const path = require('path');
 const files = require('./constants/files');
 const IgnorePlugin = require('webpack').IgnorePlugin;
 
@@ -38,6 +38,10 @@ module.exports = {
     new IgnorePlugin(/regenerator|nodent|js\-beautify/, /ajv/)
   ],
   resolveLoader: {
+    // Important so that the webpack loaders are found when sandbox is being used with npx
+    modules: [
+      path.resolve(__dirname, "../../node_modules")
+    ],
     moduleExtensions: ['-loader']
   }
 };

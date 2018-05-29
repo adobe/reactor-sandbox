@@ -15,6 +15,7 @@
     "lint": "eslint 'src/**/*.js'"
   },
   "dependencies": {
+    "@adobe/reactor-turbine": "25.1.0",
     "@adobe/reactor-bridge": "9.2.1",
     "@adobe/reactor-validator": "1.2.0",
     "ajv": "^5.2.3",
@@ -36,9 +37,6 @@
     "split.js": "^1.2.0",
     "webpack": "^3.8.1",
     "webpack-dev-middleware": "^1.6.1"
-  },
-  "peerDependencies": {
-    "@adobe/reactor-turbine": ">=22.0.0"
   },
   "bin": {
     "reactor-sandbox": "./src/tasks/index.js"
