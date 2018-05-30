@@ -1,12 +1,16 @@
-# @adobe/reactor-sandbox
+# Launch Extension Sandbox
 
 [![npm (scoped)](https://img.shields.io/npm/v/@adobe/reactor-sandbox.svg?style=flat)](https://www.npmjs.com/package/@adobe/reactor-sandbox)
 
+Launch, by Adobe, is a next-generation tag management solution enabling simplified deployment of marketing technologies. For more information regarding Launch, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
+
 This project provides a sandbox in which you can manually test your Launch extension. You can test both (1) your views that will eventually appear in the Launch application and (2) your library logic that will eventually run on the user's website.
 
-For more information regarding Launch, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
+For more information about developing an extension for Launch, please visit our [extension development guide](https://developer.adobelaunch.com/guides/extensions/). 
 
-## Running the Sandbox
+## Usage
+
+### Running the Sandbox
 
 Before running the sandbox, you must first have [Node.js](https://nodejs.org/en/) installed on your computer. Your npm version (npm comes bundled with Node.js) will need to be at least 5.2.0. You can check the installed version by running the following command from a command line:
                                                                                                       
@@ -27,7 +31,7 @@ You may also click on the "Go to library sandbox" button at the top-right of the
 
 Once this is in place, you may then run the sandbox by executing the command `npm run sandbox` from the command line.
 
-## Configuring the Sandbox
+### Configuring the Sandbox
 
 To configure the Library Sandbox portion of the sandbox that allows you to test your library logic, execute the following command from the command line within your project's directory:
 
@@ -42,7 +46,7 @@ This will generate a directory within your project named `.sandbox` that contain
 
 You are welcome to commit `.sandbox` to your version control repository.
 
-## Installing as a Dependency
+### Installing as a Dependency
 
 If you find yourself using the the sandbox tool frequently, you may wish to install it as a dependency in your project. This will allow the sandbox tool to run more quickly and provide more control over when you upgrade to newer versions of the sandbox.
 
@@ -61,3 +65,37 @@ npm i -D @adobe/reactor-sandbox
 ```
 
 At this point, you can continue running the sandbox as outlined above.
+
+## Contributing
+
+Contributions are welcomed! Read the [Contributing Guide](CONTRIBUTING.md) for more information.
+
+To get started:
+
+1. Install [node.js](https://nodejs.org/).
+3. Clone the repository.
+4. After navigating into the project directory, install project dependencies by running `npm install`.
+
+To manually test your changes, first run the following command from the sandbox tool directory:
+
+```
+npm link
+```
+
+Then, in a directory containing an extension (any extension you would like to use for testing), run the following command:
+
+```
+npx @adobe/reactor-sandbox
+```
+
+Npx will execute the sandbox tool using your locally linked code rather than the code published on the public npm repository.
+
+### Scripts
+
+To ensure your code meets our linting standards, run the following command:
+
+`npm run lint`
+
+## Licensing
+
+This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
