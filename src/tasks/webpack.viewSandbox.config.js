@@ -41,7 +41,7 @@ module.exports = {
     // Important so that the webpack loaders are found when sandbox is being used both
     // with npx and as an installed dependency.
     modules: [
-      path.resolve(__dirname, "../../node_modules"),
+      path.resolve(__dirname, '../../node_modules'),
       'node_modules'
     ],
     moduleExtensions: ['-loader']
