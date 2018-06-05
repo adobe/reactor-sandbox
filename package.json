@@ -15,8 +15,8 @@
     "lint": "eslint 'src/**/*.js'"
   },
   "dependencies": {
-    "@adobe/reactor-turbine": "25.1.0",
     "@adobe/reactor-bridge": "9.2.1",
+    "@adobe/reactor-turbine": "25.1.0",
     "@adobe/reactor-validator": "1.2.0",
     "ajv": "^5.2.3",
     "babel-core": "^6.18.2",
@@ -33,6 +33,7 @@
     "match-requires": "^1.0.2",
     "mkdirp": "^0.5.1",
     "native-promise-only-ponyfill": "^1.0.1",
+    "reactor-sandbox-rule-editor": "file:../reactor-sandbox-editor/reactor-sandbox-rule-editor-1.0.0.tgz",
     "replace-in-file": "^2.6.4",
     "semver-diff": "^2.1.0",
     "split.js": "^1.2.0",
