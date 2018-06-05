@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "9.0.7-alpha.1",
+  "version": "9.0.7-alpha.2",
   "description": "Tasks for creating a sandbox for manually testing Launch extensions.",
   "author": {
     "name": "Adobe Systems",
