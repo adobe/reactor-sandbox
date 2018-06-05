@@ -34,7 +34,7 @@
     "match-requires": "^1.0.2",
     "mkdirp": "^0.5.1",
     "native-promise-only-ponyfill": "^1.0.1",
-    "reactor-sandbox-rule-editor": "file:../reactor-sandbox-editor/reactor-sandbox-rule-editor-1.0.0.tgz",
+    "reactor-sandbox-rule-editor": "git+https://github.com/dompuiu/reactor-sandbox-editor.git",
     "replace-in-file": "^2.6.4",
     "semver-diff": "^2.1.0",
     "split.js": "^1.2.0",
