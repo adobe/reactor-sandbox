@@ -232,8 +232,8 @@ const generateReplacements = (entity, type, propertyPath, containerConfig, repla
 
     generateDelegateReplacements(entity, type, propertyPath, containerConfig, replacements);
   } else {
-    ['events', 'conditions', 'actions'].forEach((delegateType, i) => {
-      (entity[delegateType] || []).forEach(delegateConfig => {
+    ['events', 'conditions', 'actions'].forEach(delegateType => {
+      (entity[delegateType] || []).forEach((delegateConfig, i) => {
         let delegatePropertyPath = propertyPath.slice(0);
         delegatePropertyPath.push(delegateType, i, 'settings');
 
