@@ -56,7 +56,10 @@ module.exports = function() {
     )
     .listen(SSL_PORT);
 
-  app.use(express.static(path.resolve(__dirname, '../../build')));
+  // Serve the rule editor
+  app.use(
+    express.static(path.dirname(require.resolve('reactor-sandbox-rule-editor/build/editor.html')))
+  );
 
   app.get('/' + files.CONTAINER_FILENAME, function(req, res) {
     // Always pull the latest extension descriptor. The extension developer may have changed it
