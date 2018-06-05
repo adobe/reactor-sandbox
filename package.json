@@ -12,7 +12,8 @@
     "url": "git@github.com:Adobe-Marketing-Cloud/reactor-sandbox.git"
   },
   "scripts": {
-    "lint": "eslint 'src/**/*.js'"
+    "lint": "eslint 'src/**/*.js'",
+    "prepare": "rm -rf editor && cp -R node_modules/reactor-sandbox-rule-editor/build editor"
   },
   "dependencies": {
     "@adobe/reactor-bridge": "9.2.1",
