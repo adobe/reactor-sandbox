@@ -29,8 +29,9 @@ const extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
 const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 const editorRegistry = require('./helpers/editorRegistry');
-var bodyParser = require('body-parser');
-var saveContainer = require('./helpers/saveContainer');
+const bodyParser = require('body-parser');
+const saveContainer = require('./helpers/saveContainer');
+const unTransform = require('./helpers/unTransform');
 
 const PORT = 3000;
 const SSL_PORT = 4000;
@@ -180,7 +181,7 @@ module.exports = function() {
           .trim()
       );
 
-      var containerContent = JSON.stringify(container);
+      var containerContent = JSON.stringify(container, unTransform);
 
       res.setHeader('Content-Type', 'application/json');
       res.send(containerContent);
