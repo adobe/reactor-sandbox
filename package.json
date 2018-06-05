@@ -13,8 +13,7 @@
     "url": "git@github.com:Adobe-Marketing-Cloud/reactor-sandbox.git"
   },
   "scripts": {
-    "lint": "eslint 'src/**/*.js'",
-    "prepare": "rm -rf editor && cp -R node_modules/reactor-sandbox-rule-editor/build editor"
+    "lint": "eslint 'src/**/*.js'"
   },
   "dependencies": {
     "@adobe/reactor-bridge": "9.2.1",
@@ -35,7 +34,6 @@
     "match-requires": "^1.0.2",
     "mkdirp": "^0.5.1",
     "native-promise-only-ponyfill": "^1.0.1",
-    "reactor-sandbox-rule-editor": "^1.0.0",
     "replace-in-file": "^2.6.4",
     "semver-diff": "^2.1.0",
     "split.js": "^1.2.0",
