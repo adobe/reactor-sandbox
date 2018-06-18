@@ -13,7 +13,9 @@
     "url": "git@github.com:Adobe-Marketing-Cloud/reactor-sandbox.git"
   },
   "scripts": {
-    "lint": "eslint 'src/**/*.js'"
+    "lint": "eslint 'src/**/*.js'",
+    "prepack": "cp -R node_modules/reactor-sandbox-rule-editor/build ./editor",
+    "postpack": "rm -R ./editor"
   },
   "dependencies": {
     "@adobe/reactor-bridge": "9.2.1",
@@ -44,6 +46,7 @@
     "reactor-sandbox": "./src/tasks/index.js"
   },
   "devDependencies": {
-    "eslint": "^4.9.0"
+    "eslint": "^4.9.0",
+    "reactor-sandbox-rule-editor": "^1.0.1"
   }
 }
