@@ -12,6 +12,8 @@
 
 import Promise from 'native-promise-only-ponyfill';
 import { loadIframe, setPromise, setDebug } from '@adobe/reactor-bridge';
+import baseSchema from '@adobe/reactor-turbine-schemas/schemas/extension-package.json';
+import mobileSchema from '@adobe/reactor-turbine-schemas/schemas/extension-package-mobile.json';
 import Ajv from 'ajv';
 import Split from 'split.js';
 import deepEqual from 'deep-equal';
@@ -316,10 +318,18 @@ const init = () => {
           const selectedViewDescriptor = getSelectedViewDescriptor();
           if (selectedViewDescriptor && selectedViewDescriptor.schema) {
             return extensionView.getSettings().then(settings => {
-              const ajv = Ajv();
+              const ajv = new Ajv({schemaId: 'auto'});
               ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
 
-              const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
+              let validate;
+
+              if (extensionDescriptor.platform === 'mobile') {
+                validate = ajv.compile(baseSchema);
+                validate = ajv.compile(mobileSchema);
+              }
+
+              validate = ajv.compile(selectedViewDescriptor.schema);
+              const matchesSchema = validate(settings);
 
               if (matchesSchema) {
                 validateOutput.innerHTML = 'Valid';
