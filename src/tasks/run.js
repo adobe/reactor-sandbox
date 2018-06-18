@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-
-
 /**
  * Runs a webserver that provides the sandbox environment. Refreshing will load the latest content.
  */
@@ -25,10 +23,15 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chalk = require('chalk');
 const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
+const getExtensionDescriptors = require('./helpers/getExtensionDescriptors');
 const getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
 const extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
 const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
+const editorRegistry = require('./helpers/editorRegistry');
+const bodyParser = require('body-parser');
+const saveContainer = require('./helpers/saveContainer');
+const unTransform = require('./helpers/unTransform');
 
 const PORT = 3000;
 const SSL_PORT = 4000;
@@ -37,10 +40,25 @@ module.exports = function() {
   let validationError;
   const app = express();
 
-  https.createServer({
-    key: fs.readFileSync(__dirname + '/../../cert/key.pem'),
-    cert: fs.readFileSync(__dirname + '/../../cert/cert.pem')
-  }, app).listen(SSL_PORT);
+  app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
+  app.use(bodyParser.json());
+
+  https
+    .createServer(
+      {
+        key: fs.readFileSync(__dirname + '/../../cert/key.pem'),
+        cert: fs.readFileSync(__dirname + '/../../cert/cert.pem')
+      },
+      app
+    )
+    .listen(SSL_PORT);
+
+  // Serve the rule editor
+  app.use(express.static(path.resolve(__dirname + '/../../editor')));
 
   app.get('/' + files.CONTAINER_FILENAME, function(req, res) {
     // Always pull the latest extension descriptor. The extension developer may have changed it
@@ -51,6 +69,7 @@ module.exports = function() {
       console.error(chalk.red(validationError));
       res.status(500).send(validationError);
     } else {
+      res.setHeader('Content-Type', 'application/javascript');
       res.send(getContainer());
     }
   });
@@ -74,25 +93,25 @@ module.exports = function() {
     const extensionVersion = params.extensionVersion;
     const file = params.file;
 
-    // Get the descriptor that matches the extension name and the version from the request.
-    const extensionDescriptorPath =
-      extensionDescriptorPaths.filter(function(extensionDescriptorPath) {
-        const extensionDescriptor = require(path.resolve(extensionDescriptorPath));
-        return extensionDescriptor.name === extensionName
-          && extensionDescriptor.version === extensionVersion;
-      })[0];
+    // In case someone edited `extension.json` we want always to get the latest
+    // data everytime a new request arrives.
+    const extensionDescriptors = getExtensionDescriptors();
 
-    if (!extensionDescriptorPath) {
+    // Get the descriptor that matches the extension name and the version from the request.
+    const extensionDescriptor = extensionDescriptors[extensionName];
+
+    if (!extensionDescriptor || extensionDescriptor.version !== extensionVersion) {
       res.status(404).send('Cannot GET ' + req.originalUrl);
       return;
     }
 
-    const extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+    const extensionDescriptorPath = extensionDescriptor.extensionDescriptorPath;
     // If no hosted files are defined in the descriptor, do nothing.
-    const hostedFilePath = (extensionDescriptor['hostedLibFiles'] || [])
-      .filter(function(hostedFilePath) {
-        return hostedFilePath.endsWith(file);
-      })[0];
+    const hostedFilePath = (extensionDescriptor['hostedLibFiles'] || []).filter(function(
+      hostedFilePath
+    ) {
+      return hostedFilePath.endsWith(file);
+    })[0];
 
     if (!hostedFilePath) {
       res.status(404).send('Cannot GET ' + req.originalUrl);
@@ -122,8 +141,23 @@ module.exports = function() {
 
   app.use(webpackMiddleware(webpack(webpackConfig), webpackMiddlewareOptions));
 
-  const extensionViewsPath = path.resolve(extensionDescriptor.viewBasePath);
-  app.use('/' + files.EXTENSION_VIEWS_DIRNAME, express.static(extensionViewsPath));
+  // We server all the view folders from each detected extension.
+  const extensionDescriptors = getExtensionDescriptors();
+  Object.keys(extensionDescriptors).forEach(key => {
+    const extensionDescriptor = extensionDescriptors[key];
+
+    const extensionViewsPath = path.resolve(
+      path.dirname(path.resolve(extensionDescriptor.extensionDescriptorPath)),
+      extensionDescriptor.viewBasePath
+    );
+
+    app.use(
+      `/${files.EXTENSION_VIEWS_DIRNAME}/${extensionDescriptor.name}/${
+        extensionDescriptor.version
+      }`,
+      express.static(extensionViewsPath)
+    );
+  });
 
   // Give priority to consumer-provided files first and if they aren't provided we'll fall
   // back to the defaults.
@@ -134,15 +168,64 @@ module.exports = function() {
     res.redirect('/' + files.VIEW_SANDBOX_HTML_FILENAME);
   });
 
+  app.get('/editor-container.js', function(req, res) {
+    try {
+      eval(
+        fs
+          .readFileSync(path.resolve(files.CONSUMER_CLIENT_SRC_PATH, files.CONTAINER_FILENAME))
+          .toString('utf8')
+          .replace('module.exports = ', 'var container =')
+          .replace('};', '}')
+          .trim()
+      );
+
+      var containerContent = JSON.stringify(container, unTransform);
+
+      res.setHeader('Content-Type', 'application/json');
+      res.send(containerContent);
+    } catch (error) {
+      res.status(404);
+      res.send('File not found.');
+    }
+  });
+
+  app.get('/editor-registry.js', function(req, res) {
+    // In case someone edited `extension.json` we want always to get the latest
+    // data everytime a new request arrives.
+    const extensionDescriptors = getExtensionDescriptors();
+
+    const registryContent = editorRegistry(extensionDescriptors, {
+      request: req,
+      ports: {
+        http: PORT,
+        https: SSL_PORT
+      }
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(registryContent));
+  });
+
+  app.post('/editor-container.js', function(req, res) {
+    try {
+      saveContainer(req.body);
+      res.sendStatus(204);
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    }
+  });
+
   app.listen(PORT, function(error) {
     if (error) {
       throw error;
     } else {
       console.log(
-        '\nExtension sandbox running at http://localhost:' + PORT +
-        ' and at https://localhost:' + SSL_PORT);
+        '\nExtension sandbox running at http://localhost:' +
+          PORT +
+          ' and at https://localhost:' +
+          SSL_PORT
+      );
     }
   });
 };
-
-
