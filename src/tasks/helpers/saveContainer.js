@@ -32,7 +32,7 @@ const generateFilename = () => {
   return `file${filename}.js`;
 };
 
-const turbinePkg = require(path.resolve('node_modules/@adobe/reactor-turbine/package.json'));
+const turbinePkg = require('@adobe/reactor-turbine/package.json');
 const CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
   files.CONSUMER_CLIENT_SRC_PATH,
   files.CONTAINER_FILENAME

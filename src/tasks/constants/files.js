@@ -28,9 +28,7 @@ var files = {
   ENGINE_FILENAME: 'engine.js',
   SANDBOX_CSS_PATH: path.resolve(CLIENT_SRC_PATH, 'sandbox.css'),
   VIEW_SANDBOX_JS_PATH: path.resolve(CLIENT_SRC_PATH, 'viewSandbox.js'),
-  // While we could use require.resolve to find the path to turbine it doesn't seem to find the
-  // path when sandbox is npm linked into a project.
-  TURBINE_ENGINE_PATH: path.resolve('node_modules/@adobe/reactor-turbine/dist', ENGINE_FILENAME),
+  TURBINE_ENGINE_PATH: require.resolve('@adobe/reactor-turbine/dist/' + ENGINE_FILENAME),
   VIEW_SANDBOX_HTML_FILENAME: 'viewSandbox.html',
   LIB_SANDBOX_HTML_FILENAME: 'libSandbox.html',
   DIST_PATH: path.resolve('sandbox'),
