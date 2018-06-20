@@ -25,7 +25,6 @@ const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 const getExtensionDescriptors = require('./helpers/getExtensionDescriptors');
 const getExtensionDescriptorScript = require('./helpers/getExtensionDescriptorScript');
-const extensionDescriptorPaths = require('./helpers/extensionDescriptorPaths');
 const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 const editorRegistry = require('./helpers/editorRegistry');
