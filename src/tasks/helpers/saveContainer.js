@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const files = require('../constants/files');
 const beautify = require('js-beautify').js_beautify;
 const getExtensionDescriptors = require('./getExtensionDescriptors');
 const extensionDescriptors = getExtensionDescriptors();
-const mkdirp = require('mkdirp');
 const LIBRARY_LOADED_LIB_PATH = 'core/src/lib/events/libraryLoaded.js';
 const PAGE_BOTTOM_LIB_PATH = 'core/src/lib/events/pageBottom.js';
 let token = -1;
@@ -90,7 +89,7 @@ const generateFunctionTransformReplacements = (
 const fileTransform = (transformData, fileContent) => {
   const filename = generateFilename();
 
-  mkdirp.sync(`${files.CONSUMER_CLIENT_SRC_PATH}/files`);
+  fs.ensureDirSync(`${files.CONSUMER_CLIENT_SRC_PATH}/files`);
   fs.writeFileSync(`${files.CONSUMER_CLIENT_SRC_PATH}/files/${filename}`, fileContent);
 
   return `"/files/${filename}"`;
@@ -117,7 +116,7 @@ const customTransform = (transformData, fileContent) => {
   const fileName = `/files/${generateFilename()}`;
   fileContent = `_satellite.__registerScript("${fileName}", "${fileContent}");`;
 
-  mkdirp.sync(`${files.CONSUMER_CLIENT_SRC_PATH}/files`);
+  fs.ensureDirSync(`${files.CONSUMER_CLIENT_SRC_PATH}/files`);
   fs.writeFileSync(`${files.CONSUMER_CLIENT_SRC_PATH}/${fileName}`, fileContent);
 
   return `"${fileName}"`;
@@ -295,6 +294,7 @@ module.exports = config => {
 
   const fileContent = `module.exports = ${JSON.stringify(config)}`;
 
+  fs.ensureDirSync(files.CONSUMER_CLIENT_SRC_PATH);
   fs.writeFileSync(
     CONSUMER_CONTAINER_TEMPLATE_PATH,
     /* eslint-disable-next-line camelcase */
