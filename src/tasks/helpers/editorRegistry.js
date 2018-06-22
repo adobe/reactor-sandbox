@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const path = require('path');
 const currentExtensionDescriptor = require('./getExtensionDescriptor')();
 
 module.exports = (extensionDescriptorPaths, { request, ports }) => {
