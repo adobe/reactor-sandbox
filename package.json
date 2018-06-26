@@ -20,8 +20,9 @@
   "dependencies": {
     "@adobe/reactor-bridge": "9.2.1",
     "@adobe/reactor-turbine": "25.1.0",
+    "@adobe/reactor-turbine-schemas": "*",
     "@adobe/reactor-validator": "1.2.0",
-    "ajv": "^5.2.3",
+    "ajv": "^6.5.0",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.0",
     "babel-plugin-transform-object-rest-spread": "^6.16.0",
