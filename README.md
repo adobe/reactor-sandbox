@@ -6,14 +6,14 @@ Launch, by Adobe, is a next-generation tag management solution enabling simplifi
 
 This project provides a sandbox in which you can manually test your Launch extension. You can test both (1) your views that will eventually appear in the Launch application and (2) your library logic that will eventually run on the user's website.
 
-For more information about developing an extension for Launch, please visit our [extension development guide](https://developer.adobelaunch.com/guides/extensions/). 
+For more information about developing an extension for Launch, please visit our [extension development guide](https://developer.adobelaunch.com/guides/extensions/).
 
 ## Usage
 
 ### Running the Sandbox
 
 Before running the sandbox, you must first have [Node.js](https://nodejs.org/en/) installed on your computer. Your npm version (npm comes bundled with Node.js) will need to be at least 5.2.0. You can check the installed version by running the following command from a command line:
-                                                                                                      
+
 ```
 npm -v
 ```
@@ -33,7 +33,7 @@ Once this is in place, you may then run the sandbox by executing the command `np
 
 ### Configuring the Sandbox
 
-To configure the Library Sandbox portion of the sandbox that allows you to test your library logic, execute the following command from the command line within your project's directory:
+Web Extensions can also test the library logic inside the sandbox. To configure the Library Sandbox portion, execute the following command from the command line within your project's directory:
 
 ```
 npx @adobe/reactor-sandbox init
@@ -44,14 +44,16 @@ This will generate a directory within your project named `.sandbox` that contain
   * `container.js` When Launch publishes a library, it consists of two parts: (1) a data structure that stores information about saved rules, data elements, and extension configuration and (2) an engine to operate on such a data structure. `container.js` is the data structure (not the engine) that you may modify to simulate saved rules, data elements, and extension configuration. This template will be used to produce a complete `container.js` (JavaScript from your extension will be added) which will be used in tandem with the Turbine engine inside the sandbox. We have tried to provide inline comments on how to modify `container.js`, but if you need further help, please [let the Launch team know](https://developer.adobelaunch.com/guides/extensions/development-resources/) and we can help you out.
   * `libSandbox.html` includes some simple HTML along with script tags to load a complete `container.js` and the Turbine engine. `libSandbox.html` can be modified to manually test whatever you would like. For example, if you'd like to test that your brand new "focus" event type is working as desired, you can add a text input to the `libSandbox.html` to ensure your dummy rule fires when a form element receives focus.
 
+Mobile extensions don't have a Library Sandbox portion. Running `npx @adobe/reactor-sandbox init` from inside a mobile extension, will show an error.
+
 You are welcome to commit `.sandbox` to your version control repository.
 
 ### Installing as a Dependency
 
 If you find yourself using the the sandbox tool frequently, you may wish to install it as a dependency in your project. This will allow the sandbox tool to run more quickly and provide more control over when you upgrade to newer versions of the sandbox.
 
-If you do not yet have a `package.json` in your project's directory, you will need to generate one by running the following command from the command line within your project's directory: 
- 
+If you do not yet have a `package.json` in your project's directory, you will need to generate one by running the following command from the command line within your project's directory:
+
 ```
 npm init
 ```
