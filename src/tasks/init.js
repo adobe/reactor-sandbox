@@ -19,9 +19,17 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const chalk = require('chalk');
 const files = require('./constants/files');
 
 module.exports = () => {
+  const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
+
+  if (descriptor.platform !== 'web') {
+    console.error(chalk.red('The `init` command is supported only for web extensions.'));
+    process.exit(1);
+  }
+
   [
     files.CONTAINER_FILENAME,
     files.LIB_SANDBOX_HTML_FILENAME

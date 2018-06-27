@@ -117,6 +117,13 @@ const reportIframeCommsError = error => {
 };
 
 const init = () => {
+  // Hide link to the library sandbox for non web extensions.
+  if (
+    !extensionDescriptor.platform || extensionDescriptor.platform !== 'web'
+  ) {
+    document.querySelector('[href="libSandbox.html"]').style.display = 'none';
+  }
+
   const viewGroupSelector = document.getElementById('viewGroupSelector');
   const viewSelector = document.getElementById('extensionViewSelector');
   const validateButton = document.getElementById('validateButton');
@@ -140,7 +147,7 @@ const init = () => {
     const groupKey = viewGroupSelector.value;
     localStorage.setItem('lastSelectedViewGroup', groupKey);
 
-    var categorizedItems = getCategorizedItems(extensionDescriptor[groupKey]);
+    const categorizedItems = getCategorizedItems(extensionDescriptor[groupKey]);
     Object.keys(categorizedItems)
       .sort((a, b) => {
         const categoriesToBePlacedLast = [NOT_AVAILABLE, OTHER];
@@ -308,6 +315,8 @@ const init = () => {
     }
   };
 
+  const loadSchema = uri => fetch(uri).then(response => response.json());
+
   const reportValidation = () => {
     extensionView
       .validate()
@@ -316,17 +325,22 @@ const init = () => {
           const selectedViewDescriptor = getSelectedViewDescriptor();
           if (selectedViewDescriptor && selectedViewDescriptor.schema) {
             return extensionView.getSettings().then(settings => {
-              const ajv = Ajv();
+              const ajv = Ajv({
+                loadSchema: loadSchema,
+                schemaId: 'auto'
+              });
               ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
 
-              const matchesSchema = ajv.validate(selectedViewDescriptor.schema, settings);
+              ajv.compileAsync(selectedViewDescriptor.schema).then(validate => {
+                const matchesSchema = validate(settings);
 
-              if (matchesSchema) {
-                validateOutput.innerHTML = 'Valid';
-              } else {
-                validateOutput.innerHTML =
-                  '<span class="error">Settings object does not match schema</span>';
-              }
+                if (matchesSchema) {
+                  validateOutput.innerHTML = 'Valid';
+                } else {
+                  validateOutput.innerHTML =
+                    '<span class="error">Settings object does not match schema</span>';
+                }
+              });
             });
           } else {
             validateOutput.innerHTML = '<span class="error">Schema not defined</span>';
@@ -408,18 +422,16 @@ const init = () => {
   }
 
   // Populate View Selector.
-  if (extensionDescriptor) {
-    viewGroupOptionDescriptors.forEach(optionDescriptor => {
-      var items = extensionDescriptor[optionDescriptor.value];
-      if (items && items.length) {
-        var option = document.createElement('option');
-        option.value = optionDescriptor.value;
-        option.text = optionDescriptor.label;
-        option.selected = optionDescriptor.value === lastSelectedViewGroup;
-        viewGroupSelector.appendChild(option);
-      }
-    });
-  }
+  viewGroupOptionDescriptors.forEach(optionDescriptor => {
+    var items = extensionDescriptor[optionDescriptor.value];
+    if (items && items.length) {
+      var option = document.createElement('option');
+      option.value = optionDescriptor.value;
+      option.text = optionDescriptor.label;
+      option.selected = optionDescriptor.value === lastSelectedViewGroup;
+      viewGroupSelector.appendChild(option);
+    }
+  });
 
   populateViewSelector();
 
