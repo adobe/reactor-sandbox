@@ -1,1 +1,5 @@
 .idea
+.babelrc
+.editorconfig
+.eslintrc
+.travis.yml
