@@ -135,7 +135,7 @@ module.exports = function() {
   const webpackConfig = require('./webpack.viewSandbox.config');
 
   const webpackMiddlewareOptions = {
-    stats: 'errors-only'
+    stats: 'minimal'
   };
 
   app.use(webpackMiddleware(webpack(webpackConfig), webpackMiddlewareOptions));
