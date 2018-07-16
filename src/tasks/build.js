@@ -50,7 +50,15 @@ module.exports = function() {
   webpack(webpackConfig).run(function() {});
 
   const extensionViewsPath = path.resolve(extensionDescriptor.viewBasePath);
-  fs.copySync(extensionViewsPath, path.resolve(files.DIST_PATH, files.EXTENSION_VIEWS_DIRNAME));
+  fs.copySync(
+    extensionViewsPath,
+    path.resolve(
+      files.DIST_PATH,
+      files.EXTENSION_VIEWS_DIRNAME,
+      extensionDescriptor.name,
+      extensionDescriptor.version
+    )
+  );
 
   fs.copySync(files.CLIENT_SRC_PATH, files.DIST_PATH);
 
