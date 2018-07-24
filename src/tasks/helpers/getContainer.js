@@ -115,6 +115,11 @@ const augmentModules = function(extensionOutput, extensionDescriptor, extensionP
 
       if (featureDescriptors) {
         featureDescriptors.forEach(function(featureDescriptor) {
+          // Mobile extensions don't have library modules.
+          if (!featureDescriptor.libPath) {
+            return;
+          }
+
           const modulePath = path.posix.join(
             extensionPath,
             extensionDescriptor.libBasePath || '',
