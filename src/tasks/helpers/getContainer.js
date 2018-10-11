@@ -65,14 +65,15 @@ const augmentModule = (modulesOutput, extensionName, extensionPath, modulePath, 
     // Allow extension devs to require JS files without the js extension
     .map(module => path.extname(module) === '.js' ? module : module + '.js')
     .forEach(function(requiredRelativePath) {
-      const requiredPath = path.posix.resolve(path.dirname(modulePath), requiredRelativePath);
+      const requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
       augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
     });
 
   // The reference path is a unique path that starts with the extension name, then a slash,
   // then the path to the file within the extension's directory.
+  // On Windows, the path contains `\` instead of `/`, so we do a global replace at the end.
   const referencePath =
-    path.posix.join(extensionName, path.posix.relative(extensionPath, modulePath));
+    path.join(extensionName, path.relative(extensionPath, modulePath)).replace(/\\/g, '/');
 
   // It's possible this module has already been added to the output. If it has, we just need to
   // merge any new meta information that hasn't already been stored for the module. This supports
@@ -120,7 +121,7 @@ const augmentModules = function(extensionOutput, extensionDescriptor, extensionP
             return;
           }
 
-          const modulePath = path.posix.join(
+          const modulePath = path.join(
             extensionPath,
             extensionDescriptor.libBasePath || '',
             featureDescriptor.libPath);
