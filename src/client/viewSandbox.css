@@ -81,7 +81,7 @@ iframe {
   left: 0;
 }
 
-coral-panel-content {
+.coral-PanelContent {
   display: flex;
   flex-direction: column;
   height: 100%;
