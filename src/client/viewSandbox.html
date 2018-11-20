@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <title>Reactor Extension View Sandbox</title>
 
-    <script>
-      window.Coral = window.Coral || {};
-      Coral.options = { typeKitId: 'buj6cmr'};
-    </script>
-
-    <link rel="stylesheet" href="https://assets.adobedtm.com/activation/reactor/coralui/3.17.0/css/coral.css">
+    <link rel="stylesheet" href="spectrum-css/2.6.0/standalone/spectrum-light.css">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/codemirror.css" rel="stylesheet" type="text/css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.css" rel="stylesheet" type="text/css">
@@ -25,13 +20,13 @@
     <link href="sandbox.css" rel="stylesheet" type="text/css">
     <link href="viewSandbox.css" rel="stylesheet" type="text/css">
  </head>
-  <body id="viewSandbox" class="coral--light">
+  <body id="viewSandbox" class="spectrum spectrum--light">
     <div id="content">
-      <a class="nav coral-Button coral-Button--quiet" href="libSandbox.html">Go to library sandbox</a>
+      <a class="nav spectrum-Button spectrum-Button--secondary spectrum-Button--quiet" href="libSandbox.html">Go to library sandbox</a>
 
-      <h1 class="coral-Heading coral-Heading--1">Reactor Extension View Sandbox</h1>
+      <h1 class="spectrum-Body1">Reactor Extension View Sandbox</h1>
 
-      <div>
+      <div class="spectrum-Body5">
         Select View:
         <select id="viewGroupSelector"></select>
         <select id="extensionViewSelector"></select>
@@ -41,37 +36,45 @@
         <div id="panes">
           <div id="extensionViewPane"></div>
           <div id="controlPane">
-            <div class="coral-TabView">
-              <div class="coral-TabList">
-                <span class="coral-Tab is-selected" data-panel-id="initPanel">Init</span>
-                <span class="coral-Tab" data-panel-id="getSettingsPanel">Get Settings</span>
-                <span class="coral-Tab" data-panel-id="validatePanel">Validate</span>
+            <div class="spectrum-TabView">
+              <div class="spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--compact">
+                <div class="spectrum-Tabs-item is-selected">
+                  <label class="spectrum-Tabs-itemLabel" data-panel-id="initPanel" data-panel-style="width: 36px">Init</label>
+                </div>
+                <div class="spectrum-Tabs-item">
+                  <label class="spectrum-Tabs-itemLabel" data-panel-id="getSettingsPanel" data-panel-style="width: 86px; left: 49px">Get Settings</label>
+                </div>
+                <div class="spectrum-Tabs-item">
+                  <label class="spectrum-Tabs-itemLabel" data-panel-id="validatePanel" data-panel-style="width: 60px; left: 152px">Validate</label>
+                </div>
+                <div id="tabsIndicator" class="spectrum-Tabs-selectionIndicator" style="width: 36px; left: 0px;"></div>
               </div>
-              <div class="coral-PanelStack">
-                <div class="coral-Panel is-selected" id="initPanel">
-                  <div class="coral-PanelContent">
+
+              <div class="spectrum-PanelStack">
+                <div class="spectrum-Panel is-selected" id="initPanel">
+                  <div class="spectrum-PanelContent">
                     <div id="initEditorContainer" class="editorContainer"></div>
                     <div class="panelButtonHolder">
-                      <button id="initButton" class="coral-Button panelButton">Init</button>
-                      <button id="resetInitButton" class="coral-Button panelButton resetInitButton">Reset</button>
+                      <button id="initButton" class="spectrum-Button spectrum-Button--primary panelButton">Init</button>
+                      <button id="resetInitButton" class="spectrum-Button spectrum-Button--primary panelButton resetInitButton">Reset</button>
                     </div>
                   </div>
                 </div>
-                <div class="coral-Panel" id="getSettingsPanel">
-                  <div class="coral-PanelContent">
+                <div class="spectrum-Panel" id="getSettingsPanel">
+                  <div class="spectrum-PanelContent">
                     <div class="panelButtonHolder">
-                      <button id="getSettingsButton" class="coral-Button panelButton">Get Settings</button>
+                      <button id="getSettingsButton" class="spectrum-Button spectrum-Button--primary panelButton">Get Settings</button>
                     </div>
                     <div id="getSettingsEditorContainer" class="editorContainer"></div>
                     <div class="panelButtonHolder">
-                      <button id="copySettingsToInitButton" class="coral-Button panelButton">Copy Settings to Init Panel</button>
+                      <button id="copySettingsToInitButton" class="spectrum-Button spectrum-Button--primary panelButton">Copy Settings to Init Panel</button>
                     </div>
                   </div>
                 </div>
-                <div class="coral-Panel" id="validatePanel">
-                  <div class="coral-PanelContent">
+                <div class="spectrum-Panel" id="validatePanel">
+                  <div class="spectrum-PanelContent">
                     <div class="panelButtonHolder">
-                      <button id="validateButton" class="coral-Button panelButton">Validate</button>
+                      <button id="validateButton" class="spectrum-Button spectrum-Button--primary panelButton">Validate</button>
                     </div>
                     <div id="validateOutput"></div>
                   </div>

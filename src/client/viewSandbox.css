@@ -4,6 +4,10 @@ iframe {
   border: 0;
 }
 
+body {
+  margin: 0;
+}
+
 .error {
   color: red;
 }
@@ -57,31 +61,36 @@ iframe {
   padding-left: 12px;
 }
 
-.coral-TabList {
+.spectrum-Tabs {
   /* Prevent tabs from breaking onto new lines when the pane gets small. */
   min-width: 500px;
 }
 
-.coral-TabView {
+.spectrum-TabView {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.coral-PanelStack{
+.spectrum-PanelStack{
   position: relative;
   height: 100%
 }
 
-.coral-Panel {
+.spectrum-Panel {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+  display: none;
 }
 
-.coral-PanelContent {
+.spectrum-Panel.is-selected {
+  display: block;
+}
+
+.spectrum-PanelContent {
   display: flex;
   flex-direction: column;
   height: 100%;
