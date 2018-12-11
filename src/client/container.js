@@ -61,6 +61,9 @@ module.exports = {
     //   settings: {}
     // }
   },
+  company: {
+    orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+  },
   property: {
     name: 'Sandbox property',
     settings: {
