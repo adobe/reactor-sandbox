@@ -11,12 +11,11 @@
  ****************************************************************************************/
 
 import Promise from 'native-promise-only-ponyfill';
-import { loadIframe, setPromise, setDebug } from '@adobe/reactor-bridge';
+import { loadIframe, setDebug } from '@adobe/reactor-bridge';
 import Ajv from 'ajv';
 import Split from 'split.js';
 import deepEqual from 'deep-equal';
 
-setPromise(Promise);
 // setDebug(true);
 
 const VIEW_GROUPS = {

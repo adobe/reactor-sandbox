@@ -18,9 +18,9 @@
     "postpack": "rm -R ./editor"
   },
   "dependencies": {
-    "@adobe/reactor-bridge": "9.2.3",
-    "@adobe/reactor-turbine": "25.1.3",
-    "@adobe/reactor-validator": "^2.0.5",
+    "@adobe/reactor-bridge": "10.0.0",
+    "@adobe/reactor-turbine": "25.4.0",
+    "@adobe/reactor-validator": "2.0.5",
     "ajv": "^6.5.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
