@@ -6,7 +6,7 @@ Launch, by Adobe, is a next-generation tag management solution enabling simplifi
 
 This project provides a sandbox in which you can manually test your Launch extension. You can test both (1) your views that will eventually appear in the Launch application and (2) your library logic that will eventually run on the user's website.
 
-For more information about developing an extension for Launch, please visit our [extension development guide](https://developer.adobelaunch.com/guides/extensions/).
+For more information about developing an extension for Launch, please visit our [extension development guide](https://developer.adobelaunch.com/extensions/).
 
 ## Usage
 
