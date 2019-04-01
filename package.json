@@ -45,6 +45,6 @@
   },
   "devDependencies": {
     "eslint": "^5.0.1",
-    "reactor-sandbox-rule-editor": "^1.1.0"
+    "reactor-sandbox-rule-editor": "^1.2.0"
   }
 }
