@@ -130,6 +130,7 @@ const init = () => {
   const initEditor = CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
   const initButton = document.getElementById('initButton');
   const resetInitButton = document.getElementById('resetInitButton');
+  const tabsIndicator = document.getElementById('tabsIndicator');
   const getSettingsEditor = CodeMirror(
     document.getElementById('getSettingsEditorContainer'),
     codeMirrorConfig
@@ -285,9 +286,11 @@ const init = () => {
       if (cachedInitInfo && !deepEqual(cachedInitInfo, defaultInitInfo)) {
         extensionInitOptions = cachedInitInfo;
         resetInitButton.disabled = false;
+        resetInitButton.removeAttribute('disabled');
       } else {
         extensionInitOptions = defaultInitInfo;
         resetInitButton.disabled = true;
+        resetInitButton.setAttribute('disabled', 'disabled');
       }
 
       populateInitEditor(extensionInitOptions);
@@ -455,7 +458,19 @@ const init = () => {
 
   // There are some timing issues between the CoralUI panelstack and CodeMirror rendering.
   // Without this, sometimes the CodeMirror editors don't render correctly.
-  document.querySelector('coral-panelstack').addEventListener('coral-panelstack:change', () => {
+  document.querySelector('.spectrum-Tabs').addEventListener('click', (e) => {
+    if (!e.target.hasAttribute('data-panel-id')) {
+      return;
+    }
+
+    document.querySelector('.spectrum-Tabs-item.is-selected').classList.remove('is-selected');
+    document.querySelector('.spectrum-Panel.is-selected').classList.remove('is-selected');
+
+    e.target.parentNode.classList.add('is-selected');
+    document.getElementById(e.target.dataset.panelId).classList.add('is-selected');
+
+    tabsIndicator.setAttribute('style', e.target.dataset.panelStyle);
+
     setTimeout(() => {
       initEditor.refresh();
       getSettingsEditor.refresh();
