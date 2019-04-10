@@ -320,6 +320,9 @@ const init = () => {
   const loadSchema = uri => fetch(uri).then(response => response.json());
 
   const reportValidation = () => {
+    validateButton.disabled = true;
+    validateButton.textContent = 'Waiting for validation response...';
+
     extensionView
       .validate()
       .then(valid => {
@@ -350,15 +353,25 @@ const init = () => {
         } else {
           validateOutput.innerHTML = 'Invalid';
         }
+
+        validateButton.disabled = false;
+        validateButton.textContent = 'Validate';
       })
       .catch(reportIframeCommsError);
   };
 
   const reportSettings = () => {
+    getSettingsButton.disabled = true;
+    copySettingsToInitButton.disabled = true;
+    getSettingsButton.textContent = 'Waiting for the extension settings...';
+
     extensionView
       .getSettings()
       .then(settings => {
         getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
+        getSettingsButton.disabled = false;
+        copySettingsToInitButton.disabled = false;
+        getSettingsButton.textContent = 'Get Settings';
       })
       .catch(reportIframeCommsError);
   };
