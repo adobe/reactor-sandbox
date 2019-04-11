@@ -23,30 +23,30 @@ const VIEW_GROUPS = {
   EVENTS: 'events',
   CONDITIONS: 'conditions',
   ACTIONS: 'actions',
-  DATA_ELEMENTS: 'dataElements'
+  DATA_ELEMENTS: 'dataElements',
 };
 
 const viewGroupOptionDescriptors = [
   {
     value: VIEW_GROUPS.CONFIGURATION,
-    label: 'Extension Configuration'
+    label: 'Extension Configuration',
   },
   {
     value: VIEW_GROUPS.EVENTS,
-    label: 'Events'
+    label: 'Events',
   },
   {
     value: VIEW_GROUPS.CONDITIONS,
-    label: 'Conditions'
+    label: 'Conditions',
   },
   {
     value: VIEW_GROUPS.ACTIONS,
-    label: 'Actions'
+    label: 'Actions',
   },
   {
     value: VIEW_GROUPS.DATA_ELEMENTS,
-    label: 'Data Elements'
-  }
+    label: 'Data Elements',
+  },
 ];
 
 const NOT_AVAILABLE = '--N/A--';
@@ -61,15 +61,17 @@ const codeMirrorConfig = {
   extraKeys: {
     Tab: cm => {
       cm.replaceSelection('  ', 'end');
-    }
-  }
+    },
+  },
 };
 
 const clearSelectOptions = comboBox => (comboBox.innerHTML = '');
 
-const openCodeEditor = () => Promise.resolve('Edited Code ' + Math.round(Math.random() * 10000));
+const openCodeEditor = () =>
+  Promise.resolve('Edited Code ' + Math.round(Math.random() * 10000));
 
-const openRegexTester = () => Promise.resolve('Edited Regex ' + Math.round(Math.random() * 10000));
+const openRegexTester = () =>
+  Promise.resolve('Edited Regex ' + Math.round(Math.random() * 10000));
 
 const openDataElementSelector = (options = {}) => {
   let value = 'dataElement' + Math.round(Math.random() * 10000);
@@ -117,9 +119,7 @@ const reportIframeCommsError = error => {
 
 const init = () => {
   // Hide link to the library sandbox for non web extensions.
-  if (
-    !extensionDescriptor.platform || extensionDescriptor.platform !== 'web'
-  ) {
+  if (!extensionDescriptor.platform || extensionDescriptor.platform !== 'web') {
     document.querySelector('[href="libSandbox.html"]').style.display = 'none';
   }
 
@@ -127,7 +127,10 @@ const init = () => {
   const viewSelector = document.getElementById('extensionViewSelector');
   const validateButton = document.getElementById('validateButton');
   const validateOutput = document.getElementById('validateOutput');
-  const initEditor = CodeMirror(document.getElementById('initEditorContainer'), codeMirrorConfig);
+  const initEditor = CodeMirror(
+    document.getElementById('initEditorContainer'),
+    codeMirrorConfig
+  );
   const initButton = document.getElementById('initButton');
   const resetInitButton = document.getElementById('resetInitButton');
   const tabsIndicator = document.getElementById('tabsIndicator');
@@ -136,7 +139,9 @@ const init = () => {
     codeMirrorConfig
   );
   const getSettingsButton = document.getElementById('getSettingsButton');
-  const copySettingsToInitButton = document.getElementById('copySettingsToInitButton');
+  const copySettingsToInitButton = document.getElementById(
+    'copySettingsToInitButton'
+  );
   const extensionViewPane = document.getElementById('extensionViewPane');
 
   const lastSelectedView = localStorage.getItem('lastSelectedView');
@@ -153,7 +158,10 @@ const init = () => {
         const categoriesToBePlacedLast = [NOT_AVAILABLE, OTHER];
 
         for (let i = 0; i < categoriesToBePlacedLast.length; i++) {
-          if (a === categoriesToBePlacedLast[i] || b === categoriesToBePlacedLast[i]) {
+          if (
+            a === categoriesToBePlacedLast[i] ||
+            b === categoriesToBePlacedLast[i]
+          ) {
             return a === categoriesToBePlacedLast[i] ? 1 : -1;
           }
         }
@@ -246,7 +254,7 @@ const init = () => {
 
     if (selectedViewGroup !== VIEW_GROUPS.CONFIGURATION) {
       info.extensionSettings = {
-        foo: 'bar'
+        foo: 'bar',
       };
     }
 
@@ -254,15 +262,15 @@ const init = () => {
       domains: ['adobe.com', 'example.com'],
       linkDelay: 100,
       trackingCookieName: 'sat_track',
-      undefinedVarsReturnEmpty: false
+      undefinedVarsReturnEmpty: false,
     };
 
     info.tokens = {
-      imsAccess: 'X34DF56GHHBBFFGH'
+      imsAccess: 'X34DF56GHHBBFFGH',
     };
 
     info.company = {
-      orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg',
     };
 
     info.schema = selectedViewDescriptor ? selectedViewDescriptor.schema : null;
@@ -304,10 +312,12 @@ const init = () => {
         openCodeEditor,
         openRegexTester,
         openDataElementSelector,
-        markAsDirty
+        markAsDirty,
       });
 
-      bridge.promise.then(value => (extensionView = value)).catch(reportIframeCommsError);
+      bridge.promise
+        .then(value => (extensionView = value))
+        .catch(reportIframeCommsError);
     }
   };
 
@@ -321,7 +331,7 @@ const init = () => {
 
   const reportValidation = () => {
     validateButton.disabled = true;
-    validateButton.textContent = 'Waiting for validation response...';
+    validateButton.textContent = 'Awaiting validation...';
 
     extensionView
       .validate()
@@ -332,9 +342,11 @@ const init = () => {
             return extensionView.getSettings().then(settings => {
               const ajv = Ajv({
                 loadSchema: loadSchema,
-                schemaId: 'auto'
+                schemaId: 'auto',
               });
-              ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
+              ajv.addMetaSchema(
+                require('ajv/lib/refs/json-schema-draft-04.json')
+              );
 
               ajv.compileAsync(selectedViewDescriptor.schema).then(validate => {
                 const matchesSchema = validate(settings);
@@ -348,32 +360,36 @@ const init = () => {
               });
             });
           } else {
-            validateOutput.innerHTML = '<span class="error">Schema not defined</span>';
+            validateOutput.innerHTML =
+              '<span class="error">Schema not defined</span>';
           }
         } else {
           validateOutput.innerHTML = 'Invalid';
         }
-
+      })
+      .catch(reportIframeCommsError)
+      .finally(() => {
         validateButton.disabled = false;
         validateButton.textContent = 'Validate';
-      })
-      .catch(reportIframeCommsError);
+      });
   };
 
   const reportSettings = () => {
     getSettingsButton.disabled = true;
     copySettingsToInitButton.disabled = true;
-    getSettingsButton.textContent = 'Waiting for the extension settings...';
+    getSettingsButton.textContent = 'Awaiting settings...';
 
     extensionView
       .getSettings()
       .then(settings => {
         getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
+      })
+      .catch(reportIframeCommsError)
+      .finally(() => {
         getSettingsButton.disabled = false;
         copySettingsToInitButton.disabled = false;
         getSettingsButton.textContent = 'Get Settings';
-      })
-      .catch(reportIframeCommsError);
+      });
   };
 
   const copySettingsToInit = () => {
@@ -387,7 +403,9 @@ const init = () => {
         try {
           initContent = JSON.parse(initEditor.getValue());
         } catch (e) {
-          alert('Unable to copy settings to init panel. Init panel contents is not valid JSON.');
+          alert(
+            'Unable to copy settings to init panel. Init panel contents is not valid JSON.'
+          );
         }
 
         initContent.settings = settings;
@@ -464,23 +482,29 @@ const init = () => {
 
   Split(['#extensionViewPane', '#controlPane'], {
     minSize: 0,
-    sizes: [65, 35]
+    sizes: [65, 35],
   });
 
   loadSelectedViewIntoIframe();
 
   // There are some timing issues between the CoralUI panelstack and CodeMirror rendering.
   // Without this, sometimes the CodeMirror editors don't render correctly.
-  document.querySelector('.spectrum-Tabs').addEventListener('click', (e) => {
+  document.querySelector('.spectrum-Tabs').addEventListener('click', e => {
     if (!e.target.hasAttribute('data-panel-id')) {
       return;
     }
 
-    document.querySelector('.spectrum-Tabs-item.is-selected').classList.remove('is-selected');
-    document.querySelector('.spectrum-Panel.is-selected').classList.remove('is-selected');
+    document
+      .querySelector('.spectrum-Tabs-item.is-selected')
+      .classList.remove('is-selected');
+    document
+      .querySelector('.spectrum-Panel.is-selected')
+      .classList.remove('is-selected');
 
     e.target.parentNode.classList.add('is-selected');
-    document.getElementById(e.target.dataset.panelId).classList.add('is-selected');
+    document
+      .getElementById(e.target.dataset.panelId)
+      .classList.add('is-selected');
 
     tabsIndicator.setAttribute('style', e.target.dataset.panelStyle);
 
