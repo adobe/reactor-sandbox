@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@adobe/reactor-bridge": "^10.1.0",
-    "@adobe/reactor-turbine": "25.4.0",
+    "@adobe/reactor-turbine": "25.4.1",
     "@adobe/reactor-validator": "2.0.6",
     "ajv": "^6.5.1",
     "babel-core": "^6.26.3",
