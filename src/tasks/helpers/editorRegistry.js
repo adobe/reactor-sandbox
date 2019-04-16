@@ -77,7 +77,14 @@ module.exports = (extensionDescriptorPaths, { request, ports }) => {
         }
       },
       conditions: {},
-      actions: {},
+      actions: {
+        'sandbox/logEventInfo.js': {
+          extensionDisplayName: 'Sandbox',
+          extensionName: 'sandbox',
+          displayName: 'Log Event Info',
+          libPath: 'logEventInfo.js'
+        }
+      },
       dataElements: {
         'sandbox/localStorage.js': {
           extensionDisplayName: 'Sandbox',

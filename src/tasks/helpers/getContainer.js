@@ -184,6 +184,15 @@ const augmentSandboxEvents = function(extensionsOutput) {
             };
           }
         },
+        'sandbox/logEventInfo.js': {
+          displayName: 'Log Event Info',
+          name: 'log-event-info',
+          script: function(module) {
+            module.exports = function(settings, event) {
+              console.log("Event object received by action:", event);
+            };
+          }
+        },
         'sandbox/localStorage.js': {
           script: function(module) {
             module.exports = function(settings) {
