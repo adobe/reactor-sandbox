@@ -1,6 +1,6 @@
 # Launch Extension Sandbox
 
-[![npm (scoped)](https://img.shields.io/npm/v/@adobe/reactor-sandbox.svg?style=flat)](https://www.npmjs.com/package/@adobe/reactor-sandbox)
+[![npm (scoped)](https://img.shields.io/npm/v/@adobe/reactor-sandbox.svg?style=flat)](https://www.npmjs.com/package/@adobe/reactor-sandbox) [![Greenkeeper badge](https://badges.greenkeeper.io/adobe/reactor-sandbox.svg)](https://greenkeeper.io/)
 
 Launch, by Adobe, is a next-generation tag management solution enabling simplified deployment of marketing technologies. For more information regarding Launch, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
 
