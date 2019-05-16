@@ -35,9 +35,8 @@ const unTransform = require('./helpers/unTransform');
 const PORT = 3000;
 const SSL_PORT = 4000;
 
-module.exports = function() {
+const configureApp = app => {
   let validationError;
-  const app = express();
 
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -214,17 +213,26 @@ module.exports = function() {
       res.send(error.message);
     }
   });
+};
 
-  app.listen(PORT, function(error) {
-    if (error) {
-      throw error;
-    } else {
-      console.log(
-        '\nExtension sandbox running at http://localhost:' +
-          PORT +
-          ' and at https://localhost:' +
-          SSL_PORT
-      );
-    }
+module.exports = function() {
+  return new Promise((resolve, reject) => {
+    const app = express();
+
+    configureApp(app);
+
+    app.listen(PORT, function(error) {
+      if (error) {
+        reject(error);
+      } else {
+        console.log(
+          '\nExtension sandbox running at http://localhost:' +
+            PORT +
+            ' and at https://localhost:' +
+            SSL_PORT
+        );
+        resolve();
+      }
+    });
   });
 };

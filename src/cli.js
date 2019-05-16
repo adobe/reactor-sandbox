@@ -12,39 +12,25 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const execSync = require('child_process').execSync;
 const chalk = require('chalk');
-const sandboxPkg = require('../../package.json');
-const semverDiff = require('semver-diff');
+const validateSandboxVersion = require("./helpers/validateSandboxVersion");
 
-const getLatestVersion = packageName => {
-  return execSync('npm view ' + packageName + ' version')
-    .toString('utf8')
-    .replace(/\n$/, '');
-};
-
-const sandboxOutdated = semverDiff(sandboxPkg.version, getLatestVersion('@adobe/reactor-sandbox'));
+validateSandboxVersion();
 
 const task = process.argv.slice(2)[0];
 
-if (sandboxOutdated) {
-  console.log(
-    chalk.red(
-      'Your sandbox is out of date. To ensure you are testing against the ' +
-        'latest code, please first update your sandbox by running ' +
-        `${chalk.cyan('npm i @adobe/reactor-sandbox@latest')}.`
-    )
-  );
-}
+let execute;
 
 switch (task) {
-  case 'build':
-    require('./build')();
-    break;
   case 'init':
-    require('./init')();
+    execute = require('./tasks/init');
     break;
   default:
-    require('./run')();
+    execute = require('./tasks/run');
     break;
 }
+
+execute().catch(error => {
+  console.error(chalk.red(error));
+  process.exit(1);
+});

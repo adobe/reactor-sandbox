@@ -68,6 +68,23 @@ npm i -D @adobe/reactor-sandbox
 
 At this point, you can continue running the sandbox as outlined above.
 
+## Advanced Integration with Node Scripts 
+
+For advanced users who need greater control of the sandbox from node-based build tools, you also have the option of importing the sandbox tool into your scripts and controlling it programmatically.
+
+After [installing the sandbox as a dependency](#installing-as-a-dependency), you may use it from your node scripts as follows:
+
+```js
+const sandbox = require("@adobe/reactor-sandbox");
+sandbox.run();
+```
+
+The sandbox module provides the following methods:
+
+`run` - Runs the sandbox. A promise will be returned that will be resolved once the server is ready.
+
+`init` - Initializes sandbox configuration files. A promise will be returned that will be resolved once the files have been generated.
+
 ## Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](CONTRIBUTING.md) for more information.
