@@ -315,6 +315,10 @@ const init = () => {
         markAsDirty,
       });
 
+      // We expose extensionBridgePromise on window so consumers using the sandbox
+      // for automated testing can more easily exercise the extension view.
+      window.extensionBridgePromise = bridge.promise;
+
       bridge.promise
         .then(value => (extensionView = value))
         .catch(reportIframeCommsError);
