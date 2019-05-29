@@ -18,8 +18,7 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const express = require('express');
-const webpack = require('webpack');
-const webpackMiddleware = require('webpack-dev-middleware');
+const Bundler = require('parcel-bundler');
 const chalk = require('chalk');
 const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
@@ -130,15 +129,6 @@ const configureApp = app => {
     console.error(chalk.red(validationError));
   }
 
-  // Produces viewSandbox.js
-  const webpackConfig = require('./webpack.viewSandbox.config');
-
-  const webpackMiddlewareOptions = {
-    stats: 'minimal'
-  };
-
-  app.use(webpackMiddleware(webpack(webpackConfig), webpackMiddlewareOptions));
-
   // We server all the view folders from each detected extension.
   const extensionDescriptors = getExtensionDescriptors();
   Object.keys(extensionDescriptors).forEach(key => {
@@ -159,8 +149,8 @@ const configureApp = app => {
 
   // Give priority to consumer-provided files first and if they aren't provided we'll fall
   // back to the defaults.
-  app.use(express.static(files.CONSUMER_CLIENT_SRC_PATH));
-  app.use(express.static(files.CLIENT_SRC_PATH));
+  app.use(express.static(files.CONSUMER_PROVIDED_FILES_PATH));
+  app.use(express.static(files.CLIENT_PUBLIC_PATH));
 
   app.get('/', function(req, res) {
     res.redirect('/' + files.VIEW_SANDBOX_HTML_FILENAME);
@@ -170,7 +160,7 @@ const configureApp = app => {
     try {
       eval(
         fs
-          .readFileSync(path.resolve(files.CONSUMER_CLIENT_SRC_PATH, files.CONTAINER_FILENAME))
+          .readFileSync(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME))
           .toString('utf8')
           .replace('module.exports = ', 'var container =')
           .replace('};', '}')
@@ -213,6 +203,9 @@ const configureApp = app => {
       res.send(error.message);
     }
   });
+
+  const bundler = new Bundler(files.VIEW_SANDBOX_JS_PATH);
+  app.use(bundler.middleware());
 };
 
 module.exports = function() {
