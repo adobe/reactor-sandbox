@@ -38,13 +38,14 @@ const CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
 );
 
 const getValueFromObject = (obj, propertyPath) => {
-  propertyPath.forEach(key => {
+  for (let i = 0; i < propertyPath.length; i += 1) {
+    const key = propertyPath[i];
     if (!obj[key]) {
       return null;
     }
 
     obj = obj[key];
-  });
+  }
 
   return obj;
 };
@@ -52,17 +53,21 @@ const getValueFromObject = (obj, propertyPath) => {
 const setValueToObject = (obj, propertyPath, value) => {
   let parentObj = null;
   let parentKey = null;
-  propertyPath.forEach(key => {
+
+  for (let i = 0; i < propertyPath.length; i += 1) {
+    const key = propertyPath[i];
     if (!obj[key]) {
-      return;
+      return false;
     }
 
     parentObj = obj;
     parentKey = key;
     obj = obj[key];
-  });
+  }
 
   parentObj[parentKey] = value;
+
+  return true;
 };
 
 const functionTransform = (transformData, fnCode) => {
@@ -77,20 +82,30 @@ const generateFunctionTransformReplacements = (
 ) => {
   propertyPath = propertyPath.concat(transformData.propertyPath.split('.'));
   const replacementToken = generateToken();
+  const functionContent = getValueFromObject(containerConfig, propertyPath);
 
-  replacements[replacementToken] = functionTransform(
-    transformData,
-    getValueFromObject(containerConfig, propertyPath)
+  const result = setValueToObject(
+    containerConfig,
+    propertyPath,
+    replacementToken
   );
 
-  setValueToObject(containerConfig, propertyPath, replacementToken);
+  if (result) {
+    replacements[replacementToken] = functionTransform(
+      transformData,
+      functionContent
+    );
+  }
 };
 
-const fileTransform = (transformData, fileContent) => {
+const fileTransform = fileContent => {
   const filename = generateFilename();
 
   fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
-  fs.writeFileSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files/${filename}`, fileContent);
+  fs.writeFileSync(
+    `${files.CONSUMER_PROVIDED_FILES_PATH}/files/${filename}`,
+    fileContent
+  );
 
   return `"/files/${filename}"`;
 };
@@ -104,12 +119,16 @@ const generateFileTransformReplacements = (
   propertyPath = propertyPath.concat(transformData.propertyPath.split('.'));
   const replacementToken = generateToken();
 
-  replacements[replacementToken] = fileTransform(
-    transformData,
-    getValueFromObject(containerConfig, propertyPath)
+  const fileContent = getValueFromObject(containerConfig, propertyPath);
+  const result = setValueToObject(
+    containerConfig,
+    propertyPath,
+    replacementToken
   );
 
-  setValueToObject(containerConfig, propertyPath, replacementToken);
+  if (result) {
+    replacements[replacementToken] = fileTransform(fileContent);
+  }
 };
 
 const customTransform = (transformData, fileContent) => {
@@ -117,7 +136,10 @@ const customTransform = (transformData, fileContent) => {
   fileContent = `_satellite.__registerScript("${fileName}", "${fileContent}");`;
 
   fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
-  fs.writeFileSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/${fileName}`, fileContent);
+  fs.writeFileSync(
+    `${files.CONSUMER_PROVIDED_FILES_PATH}/${fileName}`,
+    fileContent
+  );
 
   return `"${fileName}"`;
 };
@@ -136,7 +158,10 @@ const generateCustomTransformReplacements = (
   const rule = getValueFromObject(containerConfig, rulePropertyPath);
   const isExternalRule =
     rule.events.filter(
-      e => [LIBRARY_LOADED_LIB_PATH, PAGE_BOTTOM_LIB_PATH].indexOf(e.modulePath) !== -1
+      e =>
+        [LIBRARY_LOADED_LIB_PATH, PAGE_BOTTOM_LIB_PATH].indexOf(
+          e.modulePath
+        ) === -1
     ).length > 0;
 
   if (!isExternalRule) {
@@ -145,16 +170,29 @@ const generateCustomTransformReplacements = (
 
   propertyPath = propertyPath.concat(transformData.propertyPath.split('.'));
   const replacementToken = generateToken();
-
-  replacements[replacementToken] = customTransform(
-    transformData,
-    getValueFromObject(containerConfig, propertyPath)
+  const customTransformContent = getValueFromObject(
+    containerConfig,
+    propertyPath
   );
 
-  setValueToObject(containerConfig, propertyPath, replacementToken);
+  const result = setValueToObject(
+    containerConfig,
+    propertyPath,
+    replacementToken
+  );
 
-  const delegateSettings = getValueFromObject(containerConfig, propertyPath.slice(0, -1));
-  delegateSettings.isExternal = true;
+  if (result) {
+    replacements[replacementToken] = customTransform(
+      transformData,
+      customTransformContent
+    );
+
+    const delegateSettings = getValueFromObject(
+      containerConfig,
+      propertyPath.slice(0, -1)
+    );
+    delegateSettings.isExternal = true;
+  }
 };
 
 const generateTransformReplacements = (
@@ -173,7 +211,12 @@ const generateTransformReplacements = (
       );
       break;
     case 'file':
-      generateFileTransformReplacements(transformData, propertyPath, containerConfig, replacements);
+      generateFileTransformReplacements(
+        transformData,
+        propertyPath,
+        containerConfig,
+        replacements
+      );
       break;
     case 'customCode':
       generateCustomTransformReplacements(
@@ -197,8 +240,9 @@ const getTransformsData = (type, delegateConfig) => {
     }
 
     const descriptors = extensionDescriptors[extensionName][type];
-    return descriptors.filter(delegateDescriptor => delegateDescriptor.libPath === modulePath)[0]
-      .transforms;
+    return descriptors.filter(
+      delegateDescriptor => delegateDescriptor.libPath === modulePath
+    )[0].transforms;
   } else {
     const extensionKey = Object.keys(extensionDescriptors).filter(
       k => extensionDescriptors[k].displayName === delegateConfig.displayName
@@ -220,16 +264,33 @@ const generateDelegateReplacements = (
   }
 
   transformsData.forEach(transformData =>
-    generateTransformReplacements(transformData, propertyPath, containerConfig, replacements)
+    generateTransformReplacements(
+      transformData,
+      propertyPath,
+      containerConfig,
+      replacements
+    )
   );
 };
 
-const generateReplacements = (entity, type, propertyPath, containerConfig, replacements) => {
+const generateReplacements = (
+  entity,
+  type,
+  propertyPath,
+  containerConfig,
+  replacements
+) => {
   let delegateConfig;
   if (type !== 'rules') {
     propertyPath.push('settings');
 
-    generateDelegateReplacements(entity, type, propertyPath, containerConfig, replacements);
+    generateDelegateReplacements(
+      entity,
+      type,
+      propertyPath,
+      containerConfig,
+      replacements
+    );
   } else {
     ['events', 'conditions', 'actions'].forEach(delegateType => {
       (entity[delegateType] || []).forEach((delegateConfig, i) => {
@@ -265,7 +326,7 @@ const generateTransformsData = config => {
 
   return {
     config: config,
-    replacements: replacements
+    replacements: replacements,
   };
 };
 
@@ -286,8 +347,8 @@ module.exports = config => {
       turbineVersion: turbinePkg.version,
       turbineBuildDate: new Date().toISOString(),
       buildDate: new Date().toISOString(),
-      environment: 'development'
-    }
+      environment: 'development',
+    },
   });
 
   ({ config, replacements } = generateTransformsData(config));
