@@ -11,7 +11,7 @@
  ****************************************************************************************/
 
 import Ajv from 'ajv';
-import Split from '../../../node_modules/split.js/split';
+import Split from 'split.js';
 import deepEqual from 'deep-equal';
 import loadExtensionView from './loadExtensionView';
 
