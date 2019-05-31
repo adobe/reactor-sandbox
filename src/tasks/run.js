@@ -18,8 +18,7 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const express = require('express');
-const webpack = require('webpack');
-const webpackMiddleware = require('webpack-dev-middleware');
+const Bundler = require('parcel-bundler');
 const chalk = require('chalk');
 const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
@@ -35,9 +34,8 @@ const unTransform = require('./helpers/unTransform');
 const PORT = 3000;
 const SSL_PORT = 4000;
 
-module.exports = function() {
+const configureApp = app => {
   let validationError;
-  const app = express();
 
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -131,15 +129,6 @@ module.exports = function() {
     console.error(chalk.red(validationError));
   }
 
-  // Produces viewSandbox.js
-  const webpackConfig = require('./webpack.viewSandbox.config');
-
-  const webpackMiddlewareOptions = {
-    stats: 'minimal'
-  };
-
-  app.use(webpackMiddleware(webpack(webpackConfig), webpackMiddlewareOptions));
-
   // We server all the view folders from each detected extension.
   const extensionDescriptors = getExtensionDescriptors();
   Object.keys(extensionDescriptors).forEach(key => {
@@ -160,8 +149,8 @@ module.exports = function() {
 
   // Give priority to consumer-provided files first and if they aren't provided we'll fall
   // back to the defaults.
-  app.use(express.static(files.CONSUMER_CLIENT_SRC_PATH));
-  app.use(express.static(files.CLIENT_SRC_PATH));
+  app.use(express.static(files.CONSUMER_PROVIDED_FILES_PATH));
+  app.use(express.static(files.CLIENT_PUBLIC_PATH));
 
   app.get('/', function(req, res) {
     res.redirect('/' + files.VIEW_SANDBOX_HTML_FILENAME);
@@ -171,7 +160,7 @@ module.exports = function() {
     try {
       eval(
         fs
-          .readFileSync(path.resolve(files.CONSUMER_CLIENT_SRC_PATH, files.CONTAINER_FILENAME))
+          .readFileSync(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME))
           .toString('utf8')
           .replace('module.exports = ', 'var container =')
           .replace('};', '}')
@@ -215,16 +204,28 @@ module.exports = function() {
     }
   });
 
-  app.listen(PORT, function(error) {
-    if (error) {
-      throw error;
-    } else {
-      console.log(
-        '\nExtension sandbox running at http://localhost:' +
-          PORT +
-          ' and at https://localhost:' +
-          SSL_PORT
-      );
-    }
+  const bundler = new Bundler(files.VIEW_SANDBOX_JS_PATH);
+  app.use(bundler.middleware());
+};
+
+module.exports = function() {
+  return new Promise((resolve, reject) => {
+    const app = express();
+
+    configureApp(app);
+
+    app.listen(PORT, function(error) {
+      if (error) {
+        reject(error);
+      } else {
+        console.log(
+          '\nExtension sandbox running at http://localhost:' +
+            PORT +
+            ' and at https://localhost:' +
+            SSL_PORT
+        );
+        resolve();
+      }
+    });
   });
 };

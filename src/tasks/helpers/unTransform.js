@@ -3,7 +3,7 @@ const files = require('../constants/files');
 const fs = require('fs');
 const readFileContent = fileName => {
   let code = fs
-    .readFileSync(`${files.CONSUMER_CLIENT_SRC_PATH}/files/${fileName}`)
+    .readFileSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files/${fileName}`)
     .toString('utf8');
 
   const customCodeMatch = code.match(

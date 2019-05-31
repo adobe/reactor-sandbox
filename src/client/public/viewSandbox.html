@@ -15,8 +15,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/lint.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/lint/json-lint.js"></script>
 
-    <script src="extensionDescriptor.js"></script>
-    <script src="viewSandbox.js"></script>
     <link href="sandbox.css" rel="stylesheet" type="text/css">
     <link href="viewSandbox.css" rel="stylesheet" type="text/css">
  </head>
@@ -34,7 +32,9 @@
 
       <div id="panesWrapper">
         <div id="panes">
-          <div id="extensionViewPane"></div>
+          <div id="extensionViewPane">
+            <iframe id="extensionViewIframe" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+          </div>
           <div id="controlPane">
             <div class="spectrum-TabView">
               <div class="spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--compact">
@@ -86,5 +86,7 @@
       </div>
     </div>
     <div id="editModeBackdrop"></div>
+    <script src="extensionDescriptor.js"></script>
+    <script src="viewSandbox.js"></script>
   </body>
 </html>

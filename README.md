@@ -68,6 +68,74 @@ npm i -D @adobe/reactor-sandbox
 
 At this point, you can continue running the sandbox as outlined above.
 
+## Advanced Integration with Node Scripts 
+
+For advanced users who need greater control of the sandbox from node-based build tools, you also have the option of importing the sandbox tool into your scripts and controlling it programmatically.
+
+After [installing the sandbox as a dependency](#installing-as-a-dependency), you may use it from your node scripts as follows:
+
+```js
+const sandbox = require("@adobe/reactor-sandbox");
+sandbox.run();
+```
+
+The sandbox module provides the following methods:
+
+`run` - Runs the sandbox. A promise will be returned that will be resolved once the server is ready.
+
+`init` - Initializes sandbox configuration files. A promise will be returned that will be resolved once the files have been generated.
+
+## Using the Sandbox for Automated Testing
+
+While the sandbox is primarily intended for manually testing an extension, it can also come in handy for automated tests. If you would like to test your extension's user interface using an end-to-end testing tool like [TestCafe](https://github.com/DevExpress/testcafe) or [Cypress](https://github.com/cypress-io/cypress), the view sandbox provides the ability to do so.
+
+Once the sandbox has been started and the view sandbox displayed in a browser, a global method named `loadExtensionView` is exposed and can be used to load an extension view programmatically as follows:
+
+```js
+window.loadExtensionView({
+  viewPath: "myView.html",
+  initInfo: {
+    settings: {
+      foo: "bar"
+    }
+  }
+});
+```
+
+This will load the extension view into the iframe in the view sandbox and will then call the  `init` method that your extension has registered with the extension bridge. The `loadExtensionView` method supports the following options:
+
+* `viewPath` (required) The view path to the extension view you wish to load. It must match the `viewPath` property specified for the view in your extension's `extension.json` file.
+* `initInfo` (optional) The `info` object that will be passed to the `init` method your extension has registered with the extension bridge.
+* `openCodeEditor` (optional) A mock function that will be called when your extension calls `window.extensionBridge.openCodeEditor`. 
+* `openRegexTester` (optional) A mock function that will be called when your extension calls `window.extensionBridge.openRegexTester`.
+* `openDataElementSelector` (optional) A mock function that will be called when your extension calls `window.extensionBridge.openDataElementSelector`.
+
+The `loadExtensionView` method will return a promise that, once the view is loaded and initialized, will be resolved with an object containing the following methods:
+
+* `init` Calling this method will call the `init` method your extension has registered with the extension bridge. It returns a promise that will be resolved once the extension view has handled the `init` call.
+* `getSettings` Calling this method will call the `getSettings` method your extension has registered with the extension bridge. It returns a promise that will be resolved with the settings returned from your extension's `getSettings` method.
+* `validate`  Calling this method will call the `validate` method your extension has registered with the extension bridge. It returns a promise that will be resolved with the validation result boolean returned from your extension's `validate` method.
+
+As an example, I might want to load an extension view, use a testing tool to mimic user behavior in the extension view, then retrieve the settings and assert that they are as expected. This might look as follows:
+
+```js
+// Load the extension view.
+const extensionView = await window.loadExtensionView({
+  viewPath: "myView.html"
+});
+
+// At this point, use the testing tool to mimic user behavior
+// within the extension view.
+  
+// Retrieve settings.
+const settings = await extensionView.getSettings();
+
+// Assert that settings are as expected.
+expect(settings).toEqual({
+  foo: "bar"
+});
+```
+
 ## Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](CONTRIBUTING.md) for more information.

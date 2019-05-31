@@ -19,28 +19,32 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const chalk = require('chalk');
 const files = require('./constants/files');
 
 module.exports = () => {
-  const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
+  return new Promise((resolve, reject) => {
+    const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
 
-  if (descriptor.platform !== 'web') {
-    console.error(chalk.red('The `init` command is supported only for web extensions.'));
-    process.exit(1);
-  }
+    if (descriptor.platform !== 'web') {
+      reject('The `init` command is supported only for web extensions.');
+    }
 
-  [
-    files.CONTAINER_FILENAME,
-    files.LIB_SANDBOX_HTML_FILENAME
-  ].forEach((filename) => {
-    fs.copy(
-      path.resolve(files.CLIENT_SRC_PATH, filename),
-      path.resolve(files.CONSUMER_CLIENT_SRC_PATH, filename),
-      {
-        clobber: false
-      }
-    );
+    Promise.all([
+      files.CONTAINER_FILENAME,
+      files.LIB_SANDBOX_HTML_FILENAME
+    ].map((filename) => {
+      return fs.copy(
+        path.resolve(files.CLIENT_PUBLIC_PATH, filename),
+        path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, filename),
+        {
+          clobber: false
+        }
+      );
+    })).then(() => {
+      // We use a .then() so that the promise exposed to the consumers
+      // doesn't get resolved with any value.
+      resolve();
+    });
   });
 };
 

@@ -33,7 +33,7 @@ const DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
 );
 
 const CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.CONSUMER_CLIENT_SRC_PATH,
+  files.CONSUMER_PROVIDED_FILES_PATH,
   files.CONTAINER_FILENAME);
 
 const wrapInFunction = (content, argNames) => {

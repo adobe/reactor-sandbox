@@ -33,7 +33,7 @@ const generateFilename = () => {
 
 const turbinePkg = require('@adobe/reactor-turbine/package.json');
 const CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.CONSUMER_CLIENT_SRC_PATH,
+  files.CONSUMER_PROVIDED_FILES_PATH,
   files.CONTAINER_FILENAME
 );
 
@@ -89,8 +89,8 @@ const generateFunctionTransformReplacements = (
 const fileTransform = (transformData, fileContent) => {
   const filename = generateFilename();
 
-  fs.ensureDirSync(`${files.CONSUMER_CLIENT_SRC_PATH}/files`);
-  fs.writeFileSync(`${files.CONSUMER_CLIENT_SRC_PATH}/files/${filename}`, fileContent);
+  fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
+  fs.writeFileSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files/${filename}`, fileContent);
 
   return `"/files/${filename}"`;
 };
@@ -116,8 +116,8 @@ const customTransform = (transformData, fileContent) => {
   const fileName = `/files/${generateFilename()}`;
   fileContent = `_satellite.__registerScript("${fileName}", "${fileContent}");`;
 
-  fs.ensureDirSync(`${files.CONSUMER_CLIENT_SRC_PATH}/files`);
-  fs.writeFileSync(`${files.CONSUMER_CLIENT_SRC_PATH}/${fileName}`, fileContent);
+  fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
+  fs.writeFileSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/${fileName}`, fileContent);
 
   return `"${fileName}"`;
 };
@@ -294,7 +294,7 @@ module.exports = config => {
 
   const fileContent = `module.exports = ${JSON.stringify(config)}`;
 
-  fs.ensureDirSync(files.CONSUMER_CLIENT_SRC_PATH);
+  fs.ensureDirSync(files.CONSUMER_PROVIDED_FILES_PATH);
   fs.writeFileSync(
     CONSUMER_CONTAINER_TEMPLATE_PATH,
     /* eslint-disable-next-line camelcase */
