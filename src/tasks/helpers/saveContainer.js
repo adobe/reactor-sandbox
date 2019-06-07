@@ -70,6 +70,27 @@ const setValueToObject = (obj, propertyPath, value) => {
   return true;
 };
 
+const deleteValueFromObject = (obj, propertyPath) => {
+  let parentObj = null;
+  let parentKey = null;
+
+  for (let i = 0; i < propertyPath.length; i += 1) {
+    const key = propertyPath[i];
+    if (!obj[key]) {
+      return false;
+    }
+
+    parentObj = obj;
+    parentKey = key;
+    obj = obj[key];
+  }
+
+  delete parentObj[parentKey];
+
+  return true;
+};
+
+
 const functionTransform = (transformData, fnCode) => {
   return `function(${transformData.parameters.join(', ')}) {${fnCode}}`;
 };
@@ -202,6 +223,9 @@ const generateTransformReplacements = (
   replacements
 ) => {
   switch (transformData.type) {
+    case 'remove':
+      executeRemoveTransform(transformData, propertyPath, containerConfig);
+      break;
     case 'function':
       generateFunctionTransformReplacements(
         transformData,
@@ -227,6 +251,19 @@ const generateTransformReplacements = (
       );
       break;
   }
+};
+
+const executeRemoveTransform = (
+  transformData,
+  propertyPath,
+  containerConfig
+) => {
+  propertyPath = propertyPath.concat(transformData.propertyPath.split('.'));
+
+  deleteValueFromObject(
+    containerConfig,
+    propertyPath
+  );
 };
 
 const getTransformsData = (type, delegateConfig) => {
