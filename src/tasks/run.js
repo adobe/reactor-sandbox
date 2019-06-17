@@ -18,7 +18,6 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const express = require('express');
-const Bundler = require('parcel-bundler');
 const chalk = require('chalk');
 const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
@@ -150,7 +149,7 @@ const configureApp = app => {
   // Give priority to consumer-provided files first and if they aren't provided we'll fall
   // back to the defaults.
   app.use(express.static(files.CONSUMER_PROVIDED_FILES_PATH));
-  app.use(express.static(files.CLIENT_PUBLIC_PATH));
+  app.use(express.static(files.CLIENT_DIST_PATH));
 
   app.get('/', function(req, res) {
     res.redirect('/' + files.VIEW_SANDBOX_HTML_FILENAME);
@@ -203,9 +202,6 @@ const configureApp = app => {
       res.send(error.message);
     }
   });
-
-  const bundler = new Bundler(files.VIEW_SANDBOX_JS_PATH);
-  app.use(bundler.middleware());
 };
 
 module.exports = function() {
