@@ -34,7 +34,7 @@ module.exports = () => {
       files.LIB_SANDBOX_HTML_FILENAME
     ].map((filename) => {
       return fs.copy(
-        path.resolve(files.CLIENT_PUBLIC_PATH, filename),
+        path.resolve(files.CLIENT_DIST_PATH, filename),
         path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, filename),
         {
           clobber: false

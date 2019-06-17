@@ -14,7 +14,7 @@
 
 var path = require('path');
 var ENGINE_FILENAME = 'engine.js';
-var CLIENT_PUBLIC_PATH = path.resolve(__dirname, '../../client/public');
+var CLIENT_DIST_PATH = path.resolve(__dirname, '../../../dist');
 var CLIENT_SRC_PATH = path.resolve(__dirname, '../../client/src');
 var EXTENSION_BRIDGE = 'extensionbridge.min.js';
 var EXTENSION_BRIDGE_CHILD = 'extensionbridge-child.js';
@@ -23,7 +23,7 @@ var EXTENSION_BRIDGE_PATH = path.join(require.resolve('@adobe/reactor-bridge'), 
 var files = {
   EXTENSION_DESCRIPTOR_FILENAME: 'extension.json',
   EXTENSION_DESCRIPTOR_SCRIPT_FILENAME: 'extensionDescriptor.js',
-  CLIENT_PUBLIC_PATH: CLIENT_PUBLIC_PATH,
+  CLIENT_DIST_PATH: CLIENT_DIST_PATH,
   CLIENT_SRC_PATH: CLIENT_SRC_PATH,
   CONSUMER_PROVIDED_FILES_PATH: path.resolve('.sandbox'),
   CONTAINER_FILENAME: 'container.js',
