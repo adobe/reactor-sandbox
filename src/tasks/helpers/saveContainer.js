@@ -154,7 +154,7 @@ const generateFileTransformReplacements = (
 
 const customTransform = (transformData, fileContent) => {
   const fileName = `/files/${generateFilename()}`;
-  fileContent = `_satellite.__registerScript("${fileName}", "${fileContent}");`;
+  fileContent = `_satellite.__registerScript("${fileName}", "${fileContent.replace(/\s/g, '')}");`;
 
   fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
   fs.writeFileSync(
