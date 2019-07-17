@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-
-
 /**
  * Generates files that the consumer may change to configure the sandbox. The directory of files
  * is ".sandbox" and will be placed in the current working directory.
@@ -23,30 +21,31 @@ const files = require('./constants/files');
 
 module.exports = () => {
   return new Promise((resolve, reject) => {
-    const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
+    const descriptor = require(path.resolve(
+      files.EXTENSION_DESCRIPTOR_FILENAME
+    ));
 
     if (descriptor.platform !== 'web') {
       reject('The `init` command is supported only for web extensions.');
     }
 
-    Promise.all([
-      files.CONTAINER_FILENAME,
-      files.LIB_SANDBOX_HTML_FILENAME
-    ].map((filename) => {
-      return fs.copy(
-        path.resolve(files.CLIENT_DIST_PATH, filename),
-        path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, filename),
-        {
-          clobber: false
-        }
-      );
-    })).then(() => {
+    Promise.all(
+      [
+        [files.CLIENT_SRC_PATH, files.CONTAINER_FILENAME],
+        [files.CLIENT_DIST_PATH, files.LIB_SANDBOX_HTML_FILENAME],
+      ].map(([filepath, filename]) => {
+        return fs.copy(
+          path.resolve(filepath, filename),
+          path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, filename),
+          {
+            clobber: false,
+          }
+        );
+      })
+    ).then(() => {
       // We use a .then() so that the promise exposed to the consumers
       // doesn't get resolved with any value.
       resolve();
     });
   });
 };
-
-
-
