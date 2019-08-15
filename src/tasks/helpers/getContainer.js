@@ -189,7 +189,7 @@ const augmentSandboxEvents = function(extensionsOutput) {
           name: 'log-event-info',
           script: function(module) {
             module.exports = function(settings, event) {
-              console.log("Event object received by action:", event);
+              console.log('Event object received by action:', event);
             };
           }
         },
@@ -204,6 +204,24 @@ const augmentSandboxEvents = function(extensionsOutput) {
               } catch (e) {
                 return null;
               }
+            };
+          }
+        },
+        'sandbox/javascriptVariable.js': {
+          script: function(module) {
+            module.exports = function(settings) {
+              var propertyChain = settings.path.split('.');
+              var currentValue = window;
+
+              for (var i = 0, len = propertyChain.length; i < len; i++) {
+                if (currentValue == null) {
+                  return undefined;
+                }
+
+                currentValue = currentValue[propertyChain[i]];
+              }
+
+              return currentValue;
             };
           }
         }

@@ -13,7 +13,7 @@
  ****************************************************************************************/
 
 const chalk = require('chalk');
-const validateSandboxVersion = require("./helpers/validateSandboxVersion");
+const validateSandboxVersion = require('./helpers/validateSandboxVersion');
 
 validateSandboxVersion();
 

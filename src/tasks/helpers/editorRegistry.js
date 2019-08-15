@@ -92,6 +92,13 @@ module.exports = (extensionDescriptorPaths, { request, ports }) => {
           displayName: 'Local Storage',
           libPath: 'localStorage.js',
           viewPath: '/localStorage.html'
+        },
+        'sandbox/javascriptVariable.js': {
+          extensionDisplayName: 'Sandbox',
+          extensionName: 'sandbox',
+          displayName: 'JavaScript Variable',
+          libPath: 'javascriptVariable.js',
+          viewPath: '/javascriptVariable.html'
         }
       }
     },
