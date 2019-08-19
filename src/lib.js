@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const init = require("./tasks/init");
-const run = require("./tasks/run");
-const validateSandboxVersion = require("./helpers/validateSandboxVersion");
+const init = require('./tasks/init');
+const run = require('./tasks/run');
+const validateSandboxVersion = require('./helpers/validateSandboxVersion');
 
 validateSandboxVersion();
 
