@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:Adobe-Marketing-Cloud/reactor-sandbox.git"
+    "url": "git@github.com:adobe/reactor-sandbox.git"
   },
   "scripts": {
     "lint": "eslint 'src/**/*.js'",
