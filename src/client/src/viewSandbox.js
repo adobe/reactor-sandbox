@@ -15,6 +15,8 @@ import Split from 'split.js';
 import deepEqual from 'deep-equal';
 import loadExtensionView from './loadExtensionView';
 
+const LOG_PREFIX = 'reactor-sandbox:';
+
 const VIEW_GROUPS = {
   CONFIGURATION: 'configuration',
   EVENTS: 'events',
@@ -305,10 +307,14 @@ const reportValidation = () => {
   extensionView
     .validate()
     .then(valid => {
+      console.log(`${LOG_PREFIX} validate() returned`, valid);
+
       if (valid) {
         const selectedViewDescriptor = getSelectedViewDescriptor();
         if (selectedViewDescriptor && selectedViewDescriptor.schema) {
           return extensionView.getSettings().then(settings => {
+            console.log(`${LOG_PREFIX} getSettings() returned`, settings);
+
             const ajv = Ajv({
               loadSchema: loadSchema,
               schemaId: 'auto',
@@ -324,7 +330,10 @@ const reportValidation = () => {
                 validateOutput.innerHTML = 'Valid';
               } else {
                 validateOutput.innerHTML =
-                  '<span class="error">Settings object does not match schema</span>';
+                  '<span class="error">' + 
+                  '  Settings object does not match schema.' + 
+                  '  Ensure result of getSettings() is correct.' + 
+                  '</span>';
               }
             });
           });
@@ -351,9 +360,13 @@ const reportSettings = () => {
   extensionView
     .getSettings()
     .then(settings => {
+      console.log(`${LOG_PREFIX} getSettings() returned`, settings);
       getSettingsEditor.setValue(JSON.stringify(settings, null, 2));
     })
-    .catch(reportIframeCommsError)
+    .catch(error=>{
+      console.log(`${LOG_PREFIX} getSettings() errored`, error);
+      return reportIframeCommsError(error);
+    })
     .finally(() => {
       getSettingsButton.disabled = false;
       copySettingsToInitButton.disabled = false;
@@ -392,6 +405,7 @@ const init = () => {
     resetInitButton.disabled = false;
   }
 
+  console.log(`${LOG_PREFIX} init() with`, initInfo);
   extensionView.init(initInfo).catch(reportIframeCommsError);
 };
 
@@ -402,6 +416,7 @@ const resetInit = () => {
   populateInitEditor(defaultInfo);
   resetInitButton.disabled = true;
 
+  console.log(`${LOG_PREFIX} init() with`, defaultInfo);
   extensionView.init(defaultInfo).catch(reportIframeCommsError);
 };
 
