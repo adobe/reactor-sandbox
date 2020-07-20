@@ -1,0 +1,10 @@
+.add-button {
+  clear: both;
+}
+
+.rule-components-list:after {
+  content: '';
+  display: table;
+  clear: both;
+  padding-bottom: 1rem;
+}

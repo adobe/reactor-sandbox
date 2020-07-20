@@ -1,0 +1,15 @@
+.main-container {
+  text-align: center;
+}
+
+.main-container .pure-button {
+  margin-left: 0.5rem;
+}
+
+.status-success strong {
+  color: green;
+}
+
+.status-failed strong {
+  color: red;
+}

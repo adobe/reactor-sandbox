@@ -1,12 +1,9 @@
-
-
 module.exports = {
   rules: [
     // Set up rules that you would like to test. For each event/condition/action:
     //  - modulePath is the name of your extension (as defined in your extension.json) plus the
     //    path to the library module file.
     //  - settings is an object containing user input saved from your extension view.
-
     // {
     //   name: 'Example Rule',
     //   events: [
@@ -40,7 +37,6 @@ module.exports = {
     //  - modulePath is the name of your extension (as defined in your extension.json) plus the
     //    path to the library module file.
     //  - settings is an object containing user input saved from your extension view.
-
     // productId: {
     //   // This is a simple data element type provided by the sandbox which retrieves a value
     //   // from local storage. This data element type is provided as a convenience in case
@@ -55,7 +51,6 @@ module.exports = {
   extensions: {
     // Set up an extension configuration you would like to test. The top-level object key is the
     // name of your extension (as defined in your extension.json).
-
     // 'example-extension': {
     //   displayName: 'Example Extension',
     //   settings: {}
@@ -67,10 +62,7 @@ module.exports = {
   property: {
     name: 'Sandbox property',
     settings: {
-      domains: [
-        'adobe.com',
-        'example.com'
-      ],
+      domains: ['adobe.com', 'example.com'],
       linkDelay: 100,
       trackingCookieName: 'sat_track',
       undefinedVarsReturnEmpty: false

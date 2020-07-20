@@ -3,3 +3,9 @@
 .editorconfig
 .eslintrc
 .travis.yml
+.env
+adobe-reactor-sandbox-*.tgz
+
+src/rulesEditor
+src/index.js
+public

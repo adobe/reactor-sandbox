@@ -10,20 +10,23 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const extensionDescriptorPaths = require('./extensionDescriptorPaths');
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+
 const path = require('path');
+const extensionDescriptorPaths = require('./extensionDescriptorPaths');
 
 module.exports = () => {
   // We have all the logic inside the function because we want to give
   // the most current data from inside the descriptors each time the function is called.
   const extensionDescriptors = {};
 
-  extensionDescriptorPaths.forEach(extensionDescriptorPath => {
-    extensionDescriptorPath = path.resolve(extensionDescriptorPath);
-    delete require.cache[extensionDescriptorPath];
+  extensionDescriptorPaths.forEach((extensionDescriptorPath) => {
+    const resolvedExtensionDescriptorPath = path.resolve(extensionDescriptorPath);
+    delete require.cache[resolvedExtensionDescriptorPath];
 
-    const extensionDescriptor = require(extensionDescriptorPath);
-    extensionDescriptor.extensionDescriptorPath = extensionDescriptorPath;
+    const extensionDescriptor = require(resolvedExtensionDescriptorPath);
+    extensionDescriptor.extensionDescriptorPath = resolvedExtensionDescriptorPath;
     extensionDescriptors[extensionDescriptor.name] = extensionDescriptor;
   });
 

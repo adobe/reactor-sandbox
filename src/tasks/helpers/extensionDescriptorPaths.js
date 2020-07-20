@@ -13,5 +13,6 @@ governing permissions and limitations under the License.
 const glob = require('glob');
 const files = require('../constants/files');
 
-module.exports =
-  glob.sync('{node_modules/*/,node_modules/@*/*/,}' + files.EXTENSION_DESCRIPTOR_FILENAME);
+module.exports = glob.sync(
+  `{node_modules/*/,node_modules/@*/*/,}${files.EXTENSION_DESCRIPTOR_FILENAME}`
+);

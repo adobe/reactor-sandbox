@@ -10,40 +10,38 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-var Form = {
-  create: function(fields, root) {
+// eslint-disable-next-line no-unused-vars
+const Form = {
+  create(fields, root) {
+    // eslint-disable-next-line no-param-reassign
     root.innerHTML = this.buildForm(fields);
     this.setupExtensionBridge(fields);
   },
 
-  buildForm: function(fields) {
-    return '<div class="pure-form pure-form-stacked">' +
-      '<fieldset>' +
-      this.buildFields(fields) +
-      '</fieldset>' +
-      '</div>';
+  buildForm(fields) {
+    return `${'<div class="pure-form pure-form-stacked"><fieldset>'}${this.buildFields(
+      fields
+    )}</fieldset></div>`;
   },
 
-  buildFields: function(fields) {
-    var fieldsContent = '';
+  buildFields(fields) {
+    let fieldsContent = '';
 
-    Object.keys(fields).forEach(function(fieldName) {
+    Object.keys(fields).forEach((fieldName) => {
       fieldsContent += this.buildField(fieldName, fields[fieldName]);
     }, this);
 
     return fieldsContent;
   },
 
-  buildField: function(fieldName, fieldData) {
-    return '<div class="pure-control-group">' +
-      '<label for="' + fieldName + '">' + fieldData.title + '</label>' +
-      '<input id="' + fieldName + '" type="text">' +
-      this.buildFieldMessage(fieldData) +
-      '</div>';
+  buildField(fieldName, fieldData) {
+    return `${'<div class="pure-control-group"><label for="'}${fieldName}">${
+      fieldData.title
+    }</label><input id="${fieldName}" type="text">${this.buildFieldMessage(fieldData)}</div>`;
   },
 
-  buildFieldMessage: function(fieldData) {
-    var msg = '';
+  buildFieldMessage(fieldData) {
+    let msg = '';
 
     if (fieldData.type === 'array') {
       msg += 'Comma separated values are accepted.';
@@ -53,16 +51,16 @@ var Form = {
       msg += ' (optional)';
     }
 
-    return '<span class="pure-form-message-inline">' + msg + '</span>';
+    return `<span class="pure-form-message-inline">${msg}</span>`;
   },
 
-  setupExtensionBridge: function(fields) {
-    var fieldNames = Object.keys(fields);
+  setupExtensionBridge(fields) {
+    const fieldNames = Object.keys(fields);
 
     window.extensionBridge.register({
-      init: function(info) {
-        fieldNames.forEach(function(fieldName) {
-          var fieldValue = (info.settings && info.settings[fieldName]) || '';
+      init(info) {
+        fieldNames.forEach((fieldName) => {
+          let fieldValue = (info.settings && info.settings[fieldName]) || '';
           if (Array.isArray(fieldValue)) {
             fieldValue = fieldValue.join(',');
           }
@@ -70,31 +68,29 @@ var Form = {
         }, this);
       },
 
-      getSettings: function() {
-        var settings = {};
+      getSettings() {
+        const settings = {};
 
-        fieldNames.forEach(function(fieldName) {
+        fieldNames.forEach((fieldName) => {
           settings[fieldName] = document.getElementById(fieldName).value || '';
           if (fields[fieldName].type === 'array') {
-            settings[fieldName] = settings[fieldName].split(',').map(function(s) {
-              return s.trim();
-            });
+            settings[fieldName] = settings[fieldName].split(',').map((s) => s.trim());
           }
         }, this);
 
-        Object.keys(settings).forEach(function(key) {
+        Object.keys(settings).forEach((key) => {
           return (settings[key] === '' || settings[key] == null) && delete settings[key];
         });
 
         return settings;
       },
 
-      validate: function() {
-        var result = true;
+      validate() {
+        let result = true;
 
-        fieldNames.forEach(function(fieldName) {
+        fieldNames.forEach((fieldName) => {
           if (fields[fieldName].required) {
-            var fieldInput = document.getElementById(fieldName);
+            const fieldInput = document.getElementById(fieldName);
             if (!fieldInput.value) {
               fieldInput.parentNode.classList.add('error');
               result = false;

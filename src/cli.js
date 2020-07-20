@@ -12,10 +12,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable global-require */
+
+const path = require('path');
 const chalk = require('chalk');
 const validateSandboxVersion = require('./helpers/validateSandboxVersion');
+const validateExtensionBridge = require('./helpers/validateExtensionBridge');
 
 validateSandboxVersion();
+validateExtensionBridge();
 
 const task = process.argv.slice(2)[0];
 
@@ -26,11 +31,13 @@ switch (task) {
     execute = require('./tasks/init');
     break;
   default:
+    console.log('IN RUN TASK ', path.join(__dirname));
     execute = require('./tasks/run');
     break;
 }
 
-execute().catch(error => {
+execute().catch((error) => {
+  // eslint-disable-next-line no-console
   console.error(chalk.red(error));
   process.exit(1);
 });

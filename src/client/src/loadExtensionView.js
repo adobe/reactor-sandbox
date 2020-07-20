@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import {loadIframe, ERROR_CODES} from '@adobe/reactor-bridge';
+import { loadIframe, ERROR_CODES } from '@adobe/reactor-bridge';
 import defaultOpenCodeEditor from './openCodeEditor';
 import defaultOpenRegexTester from './openRegexTester';
 import defaultOpenDataElementSelector from './openDataElementSelector';
@@ -18,20 +18,26 @@ import defaultOpenDataElementSelector from './openDataElementSelector';
 let bridge;
 const iframe = document.getElementById('extensionViewIframe');
 
-module.exports = ({
-  viewPath,
-  initInfo,
-  openCodeEditor = defaultOpenCodeEditor,
-  openRegexTester = defaultOpenRegexTester,
-  openDataElementSelector = defaultOpenDataElementSelector
-}) => {
+export default (
+  {
+    viewPath,
+    initInfo,
+    openCodeEditor = defaultOpenCodeEditor,
+    openRegexTester = defaultOpenRegexTester,
+    openDataElementSelector = defaultOpenDataElementSelector
+  },
+  isWindowCall
+) => {
+  if (isWindowCall) {
+    debugger;
+  }
   if (bridge) {
     bridge.destroy();
   }
 
-  iframe.src = viewPath ?
-    `extensionViews/${extensionDescriptor.name}/${extensionDescriptor.version}/${viewPath}` :
-    'noConfigIframe.html';
+  iframe.src = viewPath
+    ? `extensionViews/${window.extensionDescriptor.name}/${window.extensionDescriptor.version}/${viewPath}`
+    : 'noConfigIframe.html';
 
   bridge = loadIframe({
     iframe,
@@ -41,7 +47,7 @@ module.exports = ({
     openDataElementSelector
   });
 
-  return bridge.promise.catch(error => {
+  return bridge.promise.catch((error) => {
     // We can safely ignore connections that were destroyed before completing.
     if (error !== ERROR_CODES.DESTROYED) {
       throw error;

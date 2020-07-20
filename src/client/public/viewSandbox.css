@@ -32,33 +32,44 @@ body {
   actually be 100% height.
 */
 #panesWrapper {
-  position: relative;
+  margin-top: 12px;
   height: 100%;
 }
 
 #panes {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  /*
+  display: flex;
+  flex-direction: row;
+  */
+  height: 100%;
+}
+
+.react-spectrum-TabPanel {
   overflow: hidden;
-  margin-top: 12px;
-  position: absolute;
+}
+
+.react-spectrum-TabPanel-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  flex: 1;
 }
 
 #extensionViewPane {
-  background: white;
-  float: left;
+  display: inline-block;
   height: 100%;
+  vertical-align: top;
+  background: white;
   overflow-y: hidden;
 }
 
 #controlPane {
-  float: left;
+  display: inline-block;
   height: 100%;
+  vertical-align: top;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-left: 12px;
 }
 
 .spectrum-Tabs {
@@ -99,15 +110,20 @@ body {
 .editorContainer {
   position: relative;
   flex: 1;
+  width: 100%;
+}
+
+.codeMirror-Wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
 }
 
 .CodeMirror {
-  position: absolute;
-  height: auto;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  height: 100%;
 }
 
 #initEditorContainer .CodeMirror {
@@ -147,5 +163,18 @@ body {
 .gutter.gutter-horizontal {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
   cursor: ew-resize;
-  float: left;
+  display: inline-block;
+  height: 100%;
+}
+
+.validation {
+  padding: 0 12px 12px 12px;
+}
+
+.validation.error {
+  color: red;
+}
+
+.validation.success {
+  color: green;
 }

@@ -10,5 +10,4 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = () =>
-  Promise.resolve('Edited Code ' + Math.round(Math.random() * 10000));
+module.exports = () => Promise.resolve(`Edited Code ${Math.round(Math.random() * 10000)}`);

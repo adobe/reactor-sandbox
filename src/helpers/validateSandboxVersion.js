@@ -10,15 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const execSync = require('child_process').execSync;
+const { execSync } = require('child_process');
 const chalk = require('chalk');
-const sandboxPkg = require('../../package.json');
 const semverDiff = require('semver-diff');
+const sandboxPkg = require('../../package.json');
 
-const getLatestVersion = packageName => {
-  return execSync('npm view ' + packageName + ' version')
-    .toString('utf8')
-    .replace(/\n$/, '');
+const getLatestVersion = (packageName) => {
+  return execSync(`npm view ${packageName} version`).toString('utf8').replace(/\n$/, '');
 };
 
 module.exports = () => {
@@ -28,11 +26,12 @@ module.exports = () => {
   );
 
   if (sandboxOutdated) {
+    // eslint-disable-next-line no-console
     console.log(
       chalk.red(
         'Your sandbox is out of date. To ensure you are testing against the ' +
-        'latest code, please first update your sandbox by running ' +
-        `${chalk.cyan('npm i @adobe/reactor-sandbox@latest')}.`
+          'latest code, please first update your sandbox by running ' +
+          `${chalk.cyan('npm i @adobe/reactor-sandbox@latest')}.`
       )
     );
   }

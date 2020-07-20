@@ -21,7 +21,7 @@ const getTokenizedValue = (value) => {
 };
 
 module.exports = (options = {}) => {
-  let value = 'dataElement' + Math.round(Math.random() * 10000);
+  let value = `dataElement${Math.round(Math.random() * 10000)}`;
   // Tokenize by default. The tokenize option must be set explicitly to false to disable it.
   if (options.tokenize !== false) {
     value = getTokenizedValue(value);

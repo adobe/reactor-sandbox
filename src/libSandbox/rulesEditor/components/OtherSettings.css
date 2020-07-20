@@ -1,0 +1,8 @@
+.other-settings-container {
+  width: 45rem;
+  margin: 2rem auto;
+}
+
+.other-settings-container .pure-form-aligned .pure-control-group {
+  margin-right: 4rem;
+}

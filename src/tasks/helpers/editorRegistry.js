@@ -10,54 +10,52 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable no-param-reassign */
+
 const currentExtensionDescriptor = require('./getExtensionDescriptor')();
 
+const populateComponentsType = (type, extDescriptor, registry) => {
+  (extDescriptor[type] || []).forEach((component) => {
+    registry.components[type][`${extDescriptor.name}/${component.libPath}`] = {
+      extensionDisplayName: extDescriptor.displayName,
+      extensionName: extDescriptor.name,
+      displayName: component.displayName,
+      libPath: component.libPath,
+      viewPath: component.viewPath
+        ? `extensionViews/${extDescriptor.name}/${extDescriptor.version}/${component.viewPath}`
+        : null
+    };
+  });
+};
+
+const populateComponents = (extensionDescriptors, registry) => {
+  Object.keys(extensionDescriptors).forEach((key) => {
+    const extensionDescriptor = extensionDescriptors[key];
+    ['events', 'conditions', 'actions', 'dataElements'].forEach((type) =>
+      populateComponentsType(type, extensionDescriptor, registry)
+    );
+  });
+};
+
+const populateExtensionsData = (extensionDescriptors, registry) => {
+  Object.keys(extensionDescriptors).forEach((key) => {
+    const ed = extensionDescriptors[key];
+    registry.extensions[ed.name] = {
+      displayName: ed.displayName,
+      name: ed.name,
+      viewPath: (ed.configuration || {}).viewPath
+        ? `extensionViews/${ed.name}/${ed.version}/${ed.configuration.viewPath}`
+        : null
+    };
+  });
+};
+
 module.exports = (extensionDescriptorPaths, { request, ports }) => {
-  const populateComponentsType = (type, extensionDescriptor, registry) => {
-    (extensionDescriptor[type] || []).forEach(component => {
-      registry.components[type][`${extensionDescriptor.name}/${component.libPath}`] = {
-        extensionDisplayName: extensionDescriptor.displayName,
-        extensionName: extensionDescriptor.name,
-        displayName: component.displayName,
-        libPath: component.libPath,
-        viewPath: component.viewPath
-          ? `extensionViews/${extensionDescriptor.name}/${extensionDescriptor.version}/${
-            component.viewPath
-          }`
-          : null
-      };
-    });
-  };
-
-  const populateComponents = function(extensionDescriptors, registry) {
-    Object.keys(extensionDescriptors).forEach(key => {
-      const extensionDescriptor = extensionDescriptors[key];
-      ['events', 'conditions', 'actions', 'dataElements'].forEach(type =>
-        populateComponentsType(type, extensionDescriptor, registry)
-      );
-    });
-  };
-
-  const populateExtensionsData = function(extensionDescriptors, registry) {
-    Object.keys(extensionDescriptors).forEach(key => {
-      const extensionDescriptor = extensionDescriptors[key];
-      registry.extensions[extensionDescriptor.name] = {
-        displayName: extensionDescriptor.displayName,
-        name: extensionDescriptor.name,
-        viewPath: (extensionDescriptor.configuration || {}).viewPath
-          ? `extensionViews/${extensionDescriptor.name}/${extensionDescriptor.version}/${
-            extensionDescriptor.configuration.viewPath
-          }`
-          : null
-      };
-    });
-  };
-
   const registry = {
     currentExtensionName: currentExtensionDescriptor.name,
     environment: {
       server: {
-        host: request.protocol + '://' + request.hostname,
+        host: `${request.protocol}://${request.hostname}`,
         port: ports[request.protocol]
       }
     },

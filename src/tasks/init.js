@@ -15,30 +15,32 @@ governing permissions and limitations under the License.
  * is ".sandbox" and will be placed in the current working directory.
  */
 
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+
 const fs = require('fs-extra');
 const path = require('path');
 const files = require('./constants/files');
 
 module.exports = () => {
+  console.log('running local')
   return new Promise((resolve, reject) => {
-    const descriptor = require(path.resolve(
-      files.EXTENSION_DESCRIPTOR_FILENAME
-    ));
+    const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
 
     if (descriptor.platform !== 'web') {
-      reject('The `init` command is supported only for web extensions.');
+      reject(new Error('The `init` command is supported only for web extensions.'));
     }
 
     Promise.all(
       [
         [files.CLIENT_SRC_PATH, files.CONTAINER_FILENAME],
-        [files.CLIENT_DIST_PATH, files.LIB_SANDBOX_HTML_FILENAME],
+        [files.CLIENT_DIST_PATH, files.LIB_SANDBOX_HTML_FILENAME]
       ].map(([filepath, filename]) => {
         return fs.copy(
           path.resolve(filepath, filename),
           path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, filename),
           {
-            clobber: false,
+            clobber: false
           }
         );
       })

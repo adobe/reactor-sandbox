@@ -1,0 +1,42 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 5rem;
+  z-index: 2;
+}
+
+.modal {
+  background-color: #fff;
+  border-radius: 5;
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 0 2rem 2rem;
+}
+
+.modal .header {
+  position: relative;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 1rem;
+}
+
+.modal .header .icono-cross {
+  position: absolute;
+  top: 0;
+  right: 1rem;
+}
+
+.modal .title {
+  font-weight: bold;
+  padding: 1.5rem 1rem 1rem 1rem;
+}
+
+.modal .footer {
+  border-top: 1px solid #ddd;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  text-align: center;
+}

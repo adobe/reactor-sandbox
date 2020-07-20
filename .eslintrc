@@ -1,4 +1,5 @@
 {
+  "parser": "babel-eslint",
   "env": {
     "browser": true,
     "jasmine": true,
@@ -8,17 +9,27 @@
     "ecmaVersion": 6,
     "sourceType": "module",
     "ecmaFeatures": {
-      "modules": true
+      "modules": true,
+      "jsx": true,
+      "classes": true,
+      "spread": true,
+      "arrowFunctions": true
     }
   },
+  "extends": ["react-app", "airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "plugins": ["react-hooks"],
   "rules": {
-    "camelcase": [2, {"properties": "always"}],
-    "indent": [2, 2, {"SwitchCase": 1}], // 2 spaces indentation
+    "prettier/prettier": "error",
+    "react/prop-types": 0,
+    "react/jsx-filename-extension": 0,
+    "jsx-a11y/label-has-for": 0,
+    "camelcase": [2, { "properties": "always" }],
+    "indent": [2, 2, { "SwitchCase": 1 }], // 2 spaces indentation
     "semi": [2, "always"],
     "keyword-spacing": ["error"],
     "space-before-function-paren": [2, "never"],
     "space-before-blocks": [2, "always"],
-    "space-infix-ops": [2, {"int32Hint": false}],
+    "space-infix-ops": [2, { "int32Hint": false }],
     "quotes": [1, "single", "avoid-escape"],
     "max-len": [2, 100, 4],
     "eqeqeq": [2, "allow-null"],
@@ -28,12 +39,23 @@
     "comma-style": [2],
     "one-var": [2, "never"],
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
-    "consistent-this": [0, "self"]
+    "consistent-this": [0, "self"],
+    "spaced-comment": 0,
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "all"
+      }
+    ],
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
   },
   "globals": {
     "Simulate": true,
     "TestPage": true,
     "runTestPage": true,
-    "_satellite": true
+    "_satellite": true,
+    "CodeMirror": true,
+    "extensionDescriptor": true
   }
 }
