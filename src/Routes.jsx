@@ -6,9 +6,9 @@ import { LastLocationProvider } from 'react-router-last-location';
 import NAMED_ROUTES from './constants';
 /* eslint-disable-next-line import/no-cycle */
 import Home from './Home';
-import ViewSandbox from './viewSandbox';
-import LibSandbox from './libSandbox';
-import LibSandboxRulesEditor from './libSandbox/rulesEditor';
+import ViewSandbox from './ViewSandbox';
+import LibSandbox from './LibSandbox';
+import LibSandboxRulesEditor from './LibSandbox/rulesEditor';
 import store from './store';
 
 export default function App() {
