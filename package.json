@@ -61,7 +61,7 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
     "react-router-last-location": "^2.0.1",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^3.4.3",
     "semver-diff": "^3.1.1",
     "split.js": "^1.6.2"
   },
