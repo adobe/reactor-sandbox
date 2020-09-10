@@ -9,6 +9,7 @@ import { Item } from '@adobe/react-spectrum';
 import { Tabs } from '@react-spectrum/tabs';
 import NAMED_ROUTES from '../constants';
 import ExtensionViewIframe from './ExtensionViewIframe';
+import { getExtensionDescriptorFromApi } from '../api';
 
 require('codemirror/mode/javascript/javascript.js');
 require('codemirror/lib/codemirror.css');
@@ -24,9 +25,6 @@ window.JSHINT = require('jshint').JSHINT;
 window.jsonlint = require('jsonlint-mod').parser;
 
 const LOG_PREFIX = 'reactor-sandbox:';
-const extensionDescriptor = {
-  ...window.extensionDescriptor
-};
 
 const VIEW_GROUPS = {
   CONFIGURATION: 'configuration',
@@ -160,6 +158,7 @@ export default function ViewSandbox() {
   const [validationButtonLabel, setValidationButtonLabel] = useState(VALIDATE_LABEL_DEFAULT);
   const [selectedTab, setSelectedTab] = useState('init');
   const iframeRef = useRef();
+  const [extensionDescriptor, setExtensionDescriptor] = useState({});
 
   const getCategorizedItems = (items) => {
     const groupedItems = {};
@@ -392,7 +391,7 @@ export default function ViewSandbox() {
    * returned value of a extensionView.getSettings call.
    * @returns {Promise<void>}
    */
-  const reportValidation = async () => {
+  const reportValidation = async() => {
     setIsValidating(true);
 
     const timeoutId = setTimeout(() => {
@@ -456,7 +455,7 @@ export default function ViewSandbox() {
     }
   };
 
-  const getSettings = async () => {
+  const getSettings = async() => {
     setIsGettingSettings(true);
 
     const timeoutId = setTimeout(() => {
@@ -489,33 +488,37 @@ export default function ViewSandbox() {
 
   // init
   useEffect(() => {
-    const options = viewGroupOptionDescriptors.reduce((allOptions, { label, value }) => {
-      if (!Object.prototype.hasOwnProperty.call(extensionDescriptor, value)) {
+    getExtensionDescriptorFromApi().then((extensionDescriptorResult) => {
+      setExtensionDescriptor(extensionDescriptorResult);
+
+      const options = viewGroupOptionDescriptors.reduce((allOptions, { label, value }) => {
+        if (!Object.prototype.hasOwnProperty.call(extensionDescriptorResult, value)) {
+          return allOptions;
+        }
+
+        const items = extensionDescriptorResult[value] || [];
+        // extension configuration is an object, so make an option for it if it exists.
+        if (value === VIEW_GROUPS.CONFIGURATION || (Array.isArray(items) && items.length)) {
+          return allOptions.concat(
+            <option key={label} value={value}>
+              {label}
+            </option>
+          );
+        }
+
         return allOptions;
+      }, []);
+
+      setViewGroupOptions(options);
+
+      if (options.length) {
+        changeViewGroupSelector(options[0].props.value);
       }
 
-      const items = extensionDescriptor[value] || [];
-      // extension configuration is an object, so make an option for it if it exists.
-      if (value === VIEW_GROUPS.CONFIGURATION || (Array.isArray(items) && items.length)) {
-        return allOptions.concat(
-          <option key={label} value={value}>
-            {label}
-          </option>
-        );
-      }
-
-      return allOptions;
-    }, []);
-
-    setViewGroupOptions(options);
-
-    if (options.length) {
-      changeViewGroupSelector(options[0].props.value);
-    }
-
-    Split(['#extensionViewPane', '#controlPane'], {
-      minSize: 0,
-      sizes: [65, 35]
+      Split(['#extensionViewPane', '#controlPane'], {
+        minSize: 0,
+        sizes: [65, 35]
+      });
     });
   }, []);
 

@@ -24,7 +24,7 @@ const extensionDescriptorPaths = require('./extensionDescriptorPaths');
 const FEATURE_TYPES = ['events', 'conditions', 'actions', 'dataElements', 'sharedModules', 'main'];
 
 const DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.CLIENT_SRC_PATH,
+  files.EXPRESS_CLIENT_SRC_PATH,
   files.CONTAINER_FILENAME
 );
 
@@ -170,7 +170,7 @@ const augmentSandboxEvents = (extensionsOutput) => {
         'sandbox/click.js': {
           displayName: 'Click',
           name: 'click',
-          script(module) {
+          script: (module) => {
             module.exports = (settings, trigger) => {
               document.addEventListener('click', (event) => {
                 trigger({
@@ -183,7 +183,7 @@ const augmentSandboxEvents = (extensionsOutput) => {
         'sandbox/pageTop.js': {
           displayName: 'Page Top',
           name: 'page-top',
-          script(module) {
+          script: (module) => {
             module.exports = (settings, trigger) => {
               trigger();
             };
@@ -192,7 +192,7 @@ const augmentSandboxEvents = (extensionsOutput) => {
         'sandbox/logEventInfo.js': {
           displayName: 'Log Event Info',
           name: 'log-event-info',
-          script(module) {
+          script: (module) => {
             module.exports = (settings, event) => {
               // eslint-disable-next-line no-console
               console.log('Event object received by action:', event);
@@ -200,7 +200,7 @@ const augmentSandboxEvents = (extensionsOutput) => {
           }
         },
         'sandbox/localStorage.js': {
-          script(module) {
+          script: (module) => {
             module.exports = (settings) => {
               // When local storage is disabled on Safari, the mere act of referencing
               // window.localStorage throws an error. For this reason, referencing
@@ -214,7 +214,7 @@ const augmentSandboxEvents = (extensionsOutput) => {
           }
         },
         'sandbox/javascriptVariable.js': {
-          script(module) {
+          script: (module) => {
             module.exports = (settings) => {
               const propertyChain = settings.path.split('.');
               let currentValue = window;

@@ -23,7 +23,6 @@ const path = require('path');
 const files = require('./constants/files');
 
 module.exports = () => {
-  console.log('running local')
   return new Promise((resolve, reject) => {
     const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
 
@@ -33,8 +32,8 @@ module.exports = () => {
 
     Promise.all(
       [
-        [files.CLIENT_SRC_PATH, files.CONTAINER_FILENAME],
-        [files.CLIENT_DIST_PATH, files.LIB_SANDBOX_HTML_FILENAME]
+        [files.EXPRESS_CLIENT_SRC_PATH, files.CONTAINER_FILENAME],
+        [files.EXPRESS_CLIENT_DIST_PATH, files.LIB_SANDBOX_HTML_FILENAME]
       ].map(([filepath, filename]) => {
         return fs.copy(
           path.resolve(filepath, filename),
