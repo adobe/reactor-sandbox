@@ -10,11 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const platform = window.extensionDescriptor.platform;
+
+const getTokenizedValue = (value) => {
+  if (platform === 'edge') {
+    return `{{${value}}}`;
+  } else {
+    return `%${value}%`;
+  }
+};
+
 module.exports = (options = {}) => {
   let value = 'dataElement' + Math.round(Math.random() * 10000);
   // Tokenize by default. The tokenize option must be set explicitly to false to disable it.
   if (options.tokenize !== false) {
-    value = `%${value}%`;
+    value = getTokenizedValue(value);
   }
   return value;
 };
