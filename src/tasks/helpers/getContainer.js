@@ -24,7 +24,7 @@ const extensionDescriptorPaths = require('./extensionDescriptorPaths');
 const FEATURE_TYPES = ['events', 'conditions', 'actions', 'dataElements', 'sharedModules', 'main'];
 
 const DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.EXPRESS_CLIENT_SRC_PATH,
+  files.INIT_FILES_SRC_PATH,
   files.CONTAINER_FILENAME
 );
 

@@ -14,30 +14,10 @@ governing permissions and limitations under the License.
 /* eslint-disable import/no-dynamic-require */
 
 const path = require('path');
-const fsExtra = require('fs-extra');
 const files = require('../constants/files');
 
 module.exports = () => {
   try {
-    // console.log('THE DESCRIPTOR FILE PATH IS ', path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
-    // console.log('AND THE CURRENT __DIRNAME IS ', path.resolve(__dirname));
-    // // TODO: couldn't resolve into public folder, timing issue???
-    // fsExtra.copySync(
-    //   path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME),
-    //   path.resolve(
-    //     __dirname,
-    //     '../../..',
-    //     'public',
-    //     'clientFiles',
-    //     files.EXTENSION_DESCRIPTOR_FILENAME
-    //   )
-    // );
-    //
-    // // TODO: doing this makes it so you have to "trust it will be there" upon import
-    // fsExtra.copySync(
-    //   path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME),
-    //   path.resolve(__dirname, '../..', 'clientFiles', files.EXTENSION_DESCRIPTOR_FILENAME)
-    // );
     const descriptorPath = path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME);
     // When the extension descriptor changes while node is running, we want the updated version.
     delete require.cache[descriptorPath];

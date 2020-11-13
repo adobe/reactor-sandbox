@@ -12,30 +12,17 @@ governing permissions and limitations under the License.
 
 const childProcess = require('child_process');
 const path = require('path');
-const fsExtra = require('fs-extra');
 
 const cwd = path.join(path.dirname(__filename), '../../');
 
 module.exports = () => {
-  fsExtra.readdir(cwd + '/dist', function (err, files) {
-    //handling error
-    if (err) {
-      return console.log('Unable to scan directory: ' + err);
-    }
-    //listing all files using forEach
-    files.forEach(function (file) {
-      // Do whatever you want to do with the file
-      console.log(file);
-    });
-  });
-
   const child = childProcess.spawn('npm', ['start'], {
     cwd
   });
 
   child.stdout.on('data', (data) => {
     // eslint-disable-next-line no-console
-    console.log('got some data ',data.toString());
+    console.log(data.toString());
   });
 
   child.on('error', (err) => {

@@ -1,28 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8" />
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="theme-color" content="#000000">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!--
+    <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w"
-    crossorigin="anonymous">
-  <link rel="stylesheet" href="http://icono-49d6.kxcdn.com/icono.min.css">
-  <link rel="stylesheet" href="//assets.adobedtm.com/activation/reactor/spectrum/2.9.0/spectrum-light.css">
-  <link rel="stylesheet" href="//localhost:3000/sandbox.css">
-  <script>
-    const protocol = window.location.protocol;
-    window.EXPRESS_PUBLIC_URL = `${protocol}//localhost:3000`;
-    window.REACT_PUBLIC_URL = `${protocol}//localhost:3001`;
-  </script>
-  <!--
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+      integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w"
+      crossorigin="anonymous"
+    />
+
+    <script>
+      const protocol = window.location.protocol;
+      window.EXPRESS_PUBLIC_URL = `${protocol}//localhost:3000`;
+      window.REACT_PUBLIC_URL = `${protocol}//localhost:3001`;
+    </script>
+    <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -30,15 +29,13 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-  <title>Rule Builder refresh test</title>
-</head>
+    <title>Reactor Extension Sandbox</title>
+  </head>
 
-<body class="spectrum spectrum--light">
-  <noscript>
-    You need to enable JavaScript to run this app.
-  </noscript>
-  <div id="root"></div>
-  <!--
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <div id="root"></div>
+    <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
       You can add webfonts, meta tags, or analytics to this file.
@@ -46,6 +43,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-</body>
-
+  </body>
 </html>

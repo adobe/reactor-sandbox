@@ -13,8 +13,8 @@ governing permissions and limitations under the License.
 const path = require('path');
 
 const ENGINE_FILENAME = 'engine.js';
-const EXPRESS_CLIENT_DIST_PATH = path.resolve(__dirname, '../../../dist');
-const EXPRESS_CLIENT_SRC_PATH = path.resolve(__dirname, '../../client/src');
+const INIT_FILES_SRC_PATH = path.resolve(__dirname, '../../client/initFiles');
+const SANDBOX_EXTENSION_SRC_PATH = path.resolve(__dirname, '../../client/sandboxExtension');
 const EXTENSION_BRIDGE = 'extensionbridge.min.js';
 const EXTENSION_BRIDGE_CHILD = 'extensionbridge-child.js';
 const EXTENSION_BRIDGE_PATH = path.join(require.resolve('@adobe/reactor-bridge'), '../../dist/');
@@ -22,13 +22,12 @@ const EXTENSION_BRIDGE_PATH = path.join(require.resolve('@adobe/reactor-bridge')
 const files = {
   EXTENSION_DESCRIPTOR_FILENAME: 'extension.json',
   EXTENSION_DESCRIPTOR_SCRIPT_FILENAME: 'extensionDescriptor',
-  EXPRESS_CLIENT_DIST_PATH,
-  EXPRESS_CLIENT_SRC_PATH,
+  INIT_FILES_SRC_PATH,
+  SANDBOX_EXTENSION_SRC_PATH,
   CONSUMER_PROVIDED_FILES_PATH: path.resolve('.sandbox'),
   CONTAINER_FILENAME: 'container.js',
   ENGINE_FILENAME: 'engine.js',
   LAUNCH_LIBRARY_FILENAME: 'launch-EN00000000000000000000000000000000.js',
-  VIEW_SANDBOX_JS_PATH: path.resolve(EXPRESS_CLIENT_SRC_PATH, 'viewSandbox.js'),
   TURBINE_ENGINE_PATH: require.resolve(`@adobe/reactor-turbine/dist/${ENGINE_FILENAME}`),
   VIEW_SANDBOX_HTML_FILENAME: 'viewSandbox.html',
   LIB_SANDBOX_HTML_FILENAME: 'libSandbox.html',

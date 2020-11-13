@@ -32,6 +32,7 @@ const saveContainer = require('./helpers/saveContainer');
 const unTransform = require('./helpers/unTransform');
 const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
+const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
 
 const PORT = 3000;
 const SSL_PORT = 4000;
@@ -44,11 +45,12 @@ process.on('uncaughtException', (err) => {
 const configureApp = (app) => {
   let validationError;
 
-  app.use((req, res, next) => {
+  app.use((_, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
+
   app.use(bodyParser.json());
 
   https
@@ -61,20 +63,31 @@ const configureApp = (app) => {
     )
     .listen(SSL_PORT);
 
-  // Serve the rule editor
-  app.use(express.static(path.resolve(`${__dirname}/../../build`)));
+  // // Serve the rule editor
+  // app.use(express.static(path.resolve(`${__dirname}/../../build`)));
 
-  app.get(`/${files.CONTAINER_FILENAME}`, (req, res) => {
-    const error = `/${files.CONTAINER_FILENAME} is no longer supported. See upgrade instructions.`;
-    res.statusMessage = error;
-    res.status(501).end();
-  });
+  // app.get(`/${files.CONTAINER_FILENAME}`, (req, res) => {
+  //   const error = `/${files.CONTAINER_FILENAME} is no longer supported. See upgrade instructions.`;
+  //   res.statusMessage = error;
+  //   res.status(501).end();
+  // });
 
-  app.get(`/${files.ENGINE_FILENAME}`, (req, res) => {
-    const error = `/${files.ENGINE_FILENAME} is no longer supported. See upgrade instructions.`;
-    res.statusMessage = error;
-    res.status(501).end();
-  });
+  // app.get(`/${files.ENGINE_FILENAME}`, (req, res) => {
+  //   const error = `/${files.ENGINE_FILENAME} is no longer supported. See upgrade instructions.`;
+  //   res.statusMessage = error;
+  //   res.status(501).end();
+  // });
+
+  const extensionDescriptor = getExtensionDescriptor();
+  console.log('VALIDATING EXTENSION DESCRIPTOR ON STARTUP OF EXPRESS');
+  validationError = validateExtensionDescriptor(extensionDescriptor);
+
+  // If there is a validation error, we're going to let express still run. This gives the
+  // extension developer a chance to fix their extension.json or whatever without having to
+  // re-run the sandbox.
+  if (validationError) {
+    console.error(chalk.red(validationError));
+  }
 
   app.get(`/${files.LAUNCH_LIBRARY_FILENAME}`, (req, res) => {
     // Always pull the latest extension descriptor. The extension developer may have changed it
@@ -87,7 +100,7 @@ const configureApp = (app) => {
     } else {
       const containerJS = getContainer();
       const turbine = fs.readFileSync(files.TURBINE_ENGINE_PATH);
-      const launchLibContents = turbine + containerJS;
+      const launchLibContents = containerJS + turbine;
       res.setHeader('Content-Type', 'application/javascript');
       res.send(launchLibContents);
     }
@@ -101,7 +114,7 @@ const configureApp = (app) => {
     res.sendFile(files.EXTENSION_BRIDGE_CHILD_PATH);
   });
 
-  // Server hosted lib files from inside extensions.
+  // Serve hosted lib files from inside extensions.
   app.get('/hostedLibFiles/:extensionName/:extensionVersion/:file', (req, res) => {
     const { params } = req;
     const { extensionName } = params;
@@ -136,18 +149,7 @@ const configureApp = (app) => {
     res.sendFile(path.join(extensionPath, hostedFilePath));
   });
 
-  const extensionDescriptor = getExtensionDescriptor();
-  console.log('VALIDATING EXTENSION DESCRIPTOR ON STARTUP OF EXPRESS');
-  validationError = validateExtensionDescriptor(extensionDescriptor);
-
-  // If there is a validation error, we're going to let express still run. This gives the
-  // extension developer a chance to fix their extension.json or whatever without having to
-  // re-run the sandbox.
-  if (validationError) {
-    console.error(chalk.red(validationError));
-  }
-
-  // We server all the view folders from each detected extension.
+  // We serve all the view folders from each detected extension.
   const extensionDescriptors = getExtensionDescriptors();
   Object.keys(extensionDescriptors).forEach((key) => {
     const ed = extensionDescriptors[key];
@@ -162,6 +164,15 @@ const configureApp = (app) => {
       express.static(extensionViewsPath)
     );
   });
+
+  app.get('/status', (_, res) =>
+    res.json({
+      librarySandbox: {
+        templateLocation: templateLocation(),
+        isLatestTemplate: isLatestTemplate()
+      }
+    })
+  );
 
   // const libSandboxUpgradeCheck = (res, filePath) => {
   //   console.log(filePath);
@@ -194,29 +205,28 @@ const configureApp = (app) => {
   //   })
   // );
 
-  app.get(`/${files.LIB_SANDBOX_HTML_FILENAME}`, (req, res, next) => {
-    const libSandboxContents = fs.readFileSync(
-      `${files.CONSUMER_PROVIDED_FILES_PATH}/${files.LIB_SANDBOX_HTML_FILENAME}`
-    );
-    const hasOldContainer = libSandboxContents.indexOf('container.js') !== -1;
-    const hasOldEngine = libSandboxContents.indexOf('engine.js') !== -1;
-    const hasNewProdLibrary = libSandboxContents.indexOf(files.LAUNCH_LIBRARY_FILENAME) !== -1;
-
-    if ((hasOldContainer && !hasNewProdLibrary) || (hasOldEngine && !hasNewProdLibrary)) {
-      res.redirect(301, files.LIB_SANDBOX_ERROR_FILENAME);
+  // Serve /libSandbox.html
+  app.get(`/${files.LIB_SANDBOX_HTML_FILENAME}`, (_, res) => {
+    if (templateLocation() === 'extension') {
+      res.sendFile(`${files.CONSUMER_PROVIDED_FILES_PATH}/${files.LIB_SANDBOX_HTML_FILENAME}`);
     } else {
-      next();
+      res.sendFile(`${files.INIT_FILES_SRC_PATH}/${files.LIB_SANDBOX_HTML_FILENAME}`);
     }
   });
 
+  // Server Sandbox Extension Files: noConfigIframe.html,
+  // localStorage.html (local storage data element),
+  // javascriptVariable.html (javascript variable data element).
+  app.use(express.static(files.SANDBOX_EXTENSION_SRC_PATH));
+
   // Give priority to consumer-provided files first and if they aren't provided we'll fall
   // back to the defaults.
-  app.use(express.static(files.CONSUMER_PROVIDED_FILES_PATH));
-  app.use(express.static(files.EXPRESS_CLIENT_DIST_PATH));
+  // app.use(express.static(files.CONSUMER_PROVIDED_FILES_PATH));
+  // app.use(express.static(files.EXPRESS_CLIENT_DIST_PATH));
 
-  app.get('/', (req, res) => {
-    res.redirect(`/${files.VIEW_SANDBOX_HTML_FILENAME}`);
-  });
+  // app.get('/', (req, res) => {
+  //   res.redirect(`/${files.VIEW_SANDBOX_HTML_FILENAME}`);
+  // });
 
   app.get('/editor-container.js', (req, res) => {
     try {
@@ -242,6 +252,17 @@ const configureApp = (app) => {
     }
   });
 
+  app.post('/editor-container.js', (req, res) => {
+    try {
+      saveContainer(req.body);
+      res.status(200);
+      res.send('OK');
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    }
+  });
+
   app.get('/editor-registry.js', (req, res) => {
     // In case someone edited `extension.json` we want always to get the latest
     // data everytime a new request arrives.
@@ -257,16 +278,6 @@ const configureApp = (app) => {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(registryContent));
-  });
-
-  app.post('/editor-container.js', (req, res) => {
-    try {
-      saveContainer(req.body);
-      res.sendStatus(204);
-    } catch (error) {
-      res.status(500);
-      res.send(error.message);
-    }
   });
 };
 

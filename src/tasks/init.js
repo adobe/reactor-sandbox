@@ -26,19 +26,20 @@ module.exports = () => {
   return new Promise((resolve, reject) => {
     const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
 
-    if (descriptor.platform !== 'web') {
+    if (descriptor.platform !== 'web' && descriptor.platform !== 'edge') {
       reject(new Error('The `init` command is supported only for web extensions.'));
     }
 
     Promise.all(
       [
-        [files.EXPRESS_CLIENT_SRC_PATH, files.CONTAINER_FILENAME],
-        [files.EXPRESS_CLIENT_DIST_PATH, files.LIB_SANDBOX_HTML_FILENAME]
+        [files.INIT_FILES_SRC_PATH, files.CONTAINER_FILENAME],
+        [files.INIT_FILES_SRC_PATH, files.LIB_SANDBOX_HTML_FILENAME]
       ].map(([filepath, filename]) => {
         return fs.copy(
           path.resolve(filepath, filename),
           path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, filename),
           {
+            overwrite: true,
             clobber: false
           }
         );

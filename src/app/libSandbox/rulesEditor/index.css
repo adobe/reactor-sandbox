@@ -1,0 +1,7 @@
+button.pure-menu-link {
+  border: none;
+}
+
+button.pure-menu-link:focus {
+  outline: none;
+}
