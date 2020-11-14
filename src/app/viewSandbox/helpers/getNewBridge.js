@@ -39,7 +39,7 @@ export default ({ selectedDescriptor, extensionDescriptor, parentContainerRef })
     iframe,
     openCodeEditor,
     openRegexTester,
-    openDataElementSelector
+    openDataElementSelector: openDataElementSelector(extensionDescriptor)
   });
 
   id += 1;
