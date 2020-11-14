@@ -10,36 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
-import { ButtonGroup, Button, Flex } from '@adobe/react-spectrum';
+import React from 'react';
+import { ButtonGroup, Button } from '@adobe/react-spectrum';
 import CodeMirrorEditor from './CodeMirrorEditor';
-import getDefaultInitInfo from './helpers/getDefaultInitInfo';
 
-const getInitContent = (selectedDescriptor) => {
-  console.log('getInitContent', getDefaultInitInfo(selectedDescriptor));
-  return JSON.stringify(getDefaultInitInfo(selectedDescriptor), null, 2);
-};
-
-export default ({ selectedDescriptor }) => {
-  const [codeContent, setCodeContent] = useState();
-
-  useEffect(() => {
-    setCodeContent(getInitContent(selectedDescriptor));
-  }, [selectedDescriptor]);
-
+export default ({ onChange, content, onResetPress, onInitPress }) => {
   return (
     <>
-      <CodeMirrorEditor onChange={setCodeContent} value={codeContent} />
+      <CodeMirrorEditor onChange={onChange} value={content} />
 
-      <ButtonGroup margin="size-150" position="absolute" bottom="size-0" width="100%">
-        <Flex direction="row" width="100%">
-          <Button variant="cta" flex>
-            Init
-          </Button>
-          <Button variant="secondary" marginEnd="size-300">
-            Reset
-          </Button>
-        </Flex>
+      <ButtonGroup margin="size-150" position="absolute" bottom="size-0">
+        <Button variant="cta" onPress={onInitPress}>
+          Init
+        </Button>
+        <Button variant="secondary" onPress={onResetPress}>
+          Reset
+        </Button>
       </ButtonGroup>
     </>
   );

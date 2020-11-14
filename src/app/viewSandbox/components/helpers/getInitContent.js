@@ -10,18 +10,25 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getSelectedViewIdentifier from './getSelectedViewIdentifier';
+import getDefaultInitInfo from './getDefaultInitInfo';
+import VIEW_GROUPS from '../../helpers/viewsGroups';
 
-export default ({ initInfo, selectedExtensionViewDescriptor, extensionDescriptor }) => {
-  const infoCache = JSON.parse(localStorage.getItem('initInfo') || '{}');
-
-  const viewId = getSelectedViewIdentifier({
-    selectedExtensionViewDescriptor,
-    extensionDescriptor
-  });
-
-  if (viewId) {
-    infoCache[viewId] = initInfo;
-    localStorage.setItem('initInfo', JSON.stringify(infoCache));
+export default ({ selectedDescriptor, extensionDescriptor }) => {
+  if (!extensionDescriptor || !selectedDescriptor.descriptor) {
+    return '';
   }
+
+  const { type, descriptor } = selectedDescriptor;
+
+  const cachedInitInfo = localStorage.getItem(
+    `initInfo/${extensionDescriptor.name}/${type}${
+      type !== VIEW_GROUPS.CONFIGURATION ? `/${descriptor.name}` : ''
+    }`
+  );
+
+  if (cachedInitInfo) {
+    return cachedInitInfo;
+  }
+
+  return getDefaultInitInfo(selectedDescriptor);
 };

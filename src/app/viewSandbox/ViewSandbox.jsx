@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /*
 Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -16,8 +17,8 @@ import { Flex, View } from '@adobe/react-spectrum';
 
 import { getExtensionDescriptorFromApi } from '../api';
 import ViewsSelector from './components/ViewsSelector';
-import ExtensionViewIframe from './components/ExtensionViewIframe';
 import ControlTabs from './components/ControlTabs';
+import getNewBridge from './helpers/getNewBridge';
 import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByValue';
 
 import './ViewSandbox.css';
@@ -28,7 +29,8 @@ export default () => {
     extensionViewDescriptorsByValue: null
   });
 
-  const [selectedDescriptor, setSelectedDescriptor] = useState({});
+  const [selectedDescriptor, setSelectedDescriptor] = useState(null);
+  const [currentExtensionBridge, setCurrentExtensionBridge] = useState(null);
 
   const extensionViewPaneRef = useRef();
 
@@ -47,6 +49,19 @@ export default () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const newBrige = getNewBridge({
+      parentContainerRef: extensionViewPaneRef,
+      extensionDescriptor: state.extensionDescriptor,
+      selectedDescriptor
+    });
+
+    if (newBrige) {
+      setCurrentExtensionBridge(newBrige);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDescriptor]);
+
   // render
   return (
     <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
@@ -54,15 +69,10 @@ export default () => {
         <ViewsSelector state={state} setSelectedDescriptor={setSelectedDescriptor} />
       </View>
       <Flex direction="row" flex UNSAFE_style={{ overflow: 'hidden' }}>
-        <div id="extensionViewPane" ref={extensionViewPaneRef} style={{ background: 'white' }}>
-          <ExtensionViewIframe
-            selectedDescriptor={selectedDescriptor}
-            extensionDescriptor={state.extensionDescriptor}
-            parentContainerRef={extensionViewPaneRef}
-          />
-        </div>
+        <div id="extensionViewPane" ref={extensionViewPaneRef} style={{ background: 'white' }} />
         <div id="controlPane">
           <ControlTabs
+            currentExtensionBridge={currentExtensionBridge}
             selectedDescriptor={selectedDescriptor}
             extensionDescriptor={state.extensionDescriptor}
           />

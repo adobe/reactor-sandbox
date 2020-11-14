@@ -32,14 +32,24 @@ export default ({ type, descriptor }) => {
 
   if (type !== VIEW_GROUPS.CONFIGURATION) {
     const { settings, ...rest } = info;
-    return {
-      settings,
-      extensionSettings: {
-        foo: 'bar'
+    return JSON.stringify(
+      {
+        settings,
+        extensionSettings: {
+          foo: 'bar'
+        },
+        ...rest
       },
-      ...rest
-    };
+      null,
+      2
+    );
   }
 
-  return info;
+  try {
+    return JSON.stringify(info, null, 2);
+  } catch (e) {
+    // eslint-disable-next-line no-alert
+    alert('An error has occurred. Please see the browser console.');
+    throw e;
+  }
 };
