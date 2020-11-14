@@ -1,8 +1,7 @@
-import { ERROR_CODES, loadIframe } from '@adobe/reactor-bridge';
+import { loadIframe } from '@adobe/reactor-bridge';
 import openCodeEditor from '../extensionBridgeComponents/openCodeEditor';
 import openRegexTester from '../extensionBridgeComponents/openRegexTester';
 import openDataElementSelector from '../extensionBridgeComponents/openDataElementSelector';
-import reportFatalError from '../components/helpers/reportFatalError';
 
 const buildExtensionViewUrl = ({ extensionDescriptor, selectedDescriptor: { descriptor } }) => {
   let src;
@@ -46,12 +45,6 @@ export default ({ selectedDescriptor, extensionDescriptor, parentContainerRef })
   newBridge.id = id;
 
   parentContainerRef.current.appendChild(iframe);
-
-  newBridge.promise.catch((error) => {
-    if (error.code !== ERROR_CODES.DESTROYED) {
-      reportFatalError(error);
-    }
-  });
 
   return newBridge;
 };
