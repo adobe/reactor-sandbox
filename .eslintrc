@@ -17,7 +17,7 @@
     }
   },
   "extends": ["react-app", "airbnb", "plugin:prettier/recommended", "prettier/react"],
-  "plugins": ["react-hooks"],
+  "plugins": ["react-hooks", "header"],
   "rules": {
     "prettier/prettier": "error",
     "react/prop-types": 0,
@@ -55,7 +55,8 @@
       }
     ],
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-    "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
+    "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
+    "header/header": [2, "block", [{ "pattern": "Copyright \\d{4} Adobe" }]]
   },
   "globals": {
     "Simulate": true,
