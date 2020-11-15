@@ -14,6 +14,7 @@ import React, { useState } from 'react';
 import { ButtonGroup, Button } from '@adobe/react-spectrum';
 import CodeMirrorEditor from './CodeMirrorEditor';
 import reportFatalError from './helpers/reportFatalError';
+import { LOG_PREFIX } from './helpers/constants';
 
 const onGetSettingsPress = ({ setSettings, extensionBridge }) => {
   if (extensionBridge) {
@@ -21,6 +22,8 @@ const onGetSettingsPress = ({ setSettings, extensionBridge }) => {
       api
         .getSettings()
         .then((settings) => {
+          // eslint-disable-next-line no-console
+          console.log(`${LOG_PREFIX} getSettings() returned`, settings);
           setSettings(JSON.stringify(settings, null, 2));
         })
         .catch(reportFatalError);

@@ -16,6 +16,7 @@ import { Button, Text, Flex, View } from '@adobe/react-spectrum';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import Alert from '@spectrum-icons/workflow/Alert';
 import reportFatalError from './helpers/reportFatalError';
+import { LOG_PREFIX } from './helpers/constants';
 
 const loadSchema = (uri) => fetch(uri).then((response) => response.json());
 
@@ -24,6 +25,12 @@ const onValidatePress = ({ extensionBridge, setValidationState, descriptor }) =>
     extensionBridge.promise.then((api) => {
       Promise.all([api.validate(), api.getSettings()])
         .then(([validationResult, settings]) => {
+          // eslint-disable-next-line no-console
+          console.log(`${LOG_PREFIX} validate() returned`, validationResult);
+
+          // eslint-disable-next-line no-console
+          console.log(`${LOG_PREFIX} getSettings() returned`, settings);
+
           if (validationResult === true) {
             const ajv = Ajv({
               loadSchema,

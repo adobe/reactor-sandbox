@@ -10,11 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export const SETTINGS_LABEL_DEFAULT = 'Get Settings';
-export const SETTINGS_LABEL_ASYNC = 'Awaiting Settings';
-export const VALIDATE_LABEL_DEFAULT = 'Validate';
-export const VALIDATE_LABEL_ASYNC = 'Awaiting Validate';
-export const VALIDATION_ERROR = 'error';
-export const VALIDATION_SUCCESS = 'success';
+export const LOG_PREFIX = 'reactor-sandbox:';
 export const NOT_AVAILABLE = '--N/A--';
 export const OTHER = 'Other';

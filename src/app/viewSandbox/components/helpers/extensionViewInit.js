@@ -14,6 +14,7 @@ governing permissions and limitations under the License.
 import { ERR_CONNECTION_DESTROYED } from 'penpal';
 import reportFatalError from './reportFatalError';
 import VIEW_GROUPS from '../../helpers/viewsGroups';
+import { LOG_PREFIX } from './constants';
 
 export default ({ extensionBridge, selectedDescriptor, extensionDescriptor, content }) => {
   if (!extensionBridge || !selectedDescriptor || !extensionDescriptor) {
@@ -40,6 +41,9 @@ export default ({ extensionBridge, selectedDescriptor, extensionDescriptor, cont
               }`,
               content
             );
+
+            // eslint-disable-next-line no-console
+            console.log(`${LOG_PREFIX} init() with`, parsedContent);
           })
           .catch(reportFatalError);
       } catch (error) {
