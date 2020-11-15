@@ -17,17 +17,11 @@ const cwd = path.join(path.dirname(__filename), '../../');
 
 module.exports = () => {
   const child = childProcess.spawn('npm', ['start'], {
-    cwd
+    cwd,
+    stdio: 'inherit'
   });
 
-  child.stdout.on('data', (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data.toString());
-  });
-
-  child.on('error', (err) => {
-    // eslint-disable-next-line no-console
-    console.log(`One of the sandbox components crashed: ${err}`);
-    process.exit(1);
+  child.on('exit', (code) => {
+    process.exit(code);
   });
 };
