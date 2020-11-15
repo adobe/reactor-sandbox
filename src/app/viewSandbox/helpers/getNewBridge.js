@@ -1,7 +1,7 @@
 import { loadIframe } from '@adobe/reactor-bridge';
-import openCodeEditor from '../extensionBridgeComponents/openCodeEditor';
-import openRegexTester from '../extensionBridgeComponents/openRegexTester';
-import openDataElementSelector from '../extensionBridgeComponents/openDataElementSelector';
+import defaultOpenCodeEditor from '../extensionBridgeComponents/openCodeEditor';
+import defaultOpenRegexTester from '../extensionBridgeComponents/openRegexTester';
+import defaultOpenDataElementSelector from '../extensionBridgeComponents/openDataElementSelector';
 
 const buildExtensionViewUrl = ({ extensionDescriptor, selectedDescriptor: { descriptor } }) => {
   let src;
@@ -19,7 +19,15 @@ const buildExtensionViewUrl = ({ extensionDescriptor, selectedDescriptor: { desc
 
 let id = 0;
 
-export default ({ selectedDescriptor, extensionDescriptor, parentContainerRef }) => {
+export default ({
+  selectedDescriptor,
+  extensionDescriptor,
+  parentContainerRef,
+  openCodeEditor = defaultOpenCodeEditor,
+  openRegexTester = defaultOpenRegexTester,
+  openDataElementSelector = defaultOpenDataElementSelector,
+  initInfo = {}
+}) => {
   if (!selectedDescriptor || !extensionDescriptor) {
     return null;
   }
@@ -36,6 +44,7 @@ export default ({ selectedDescriptor, extensionDescriptor, parentContainerRef })
 
   const newBridge = loadIframe({
     iframe,
+    extensionInitOptions: initInfo,
     openCodeEditor,
     openRegexTester,
     openDataElementSelector: openDataElementSelector(extensionDescriptor)

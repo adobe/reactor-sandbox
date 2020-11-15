@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /*
 Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -20,6 +19,7 @@ import ViewsSelector from './components/ViewsSelector';
 import ControlTabs from './components/ControlTabs';
 import getNewBridge from './helpers/getNewBridge';
 import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByValue';
+import setupGlobalLoadExtensionView from './helpers/setupGlobalLoadExtensionView';
 
 import './ViewSandbox.css';
 
@@ -61,6 +61,11 @@ export default () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDescriptor]);
+
+  setupGlobalLoadExtensionView({
+    state,
+    extensionViewPaneRef
+  });
 
   // render
   return (
