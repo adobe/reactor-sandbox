@@ -31,6 +31,7 @@ switch (task) {
     execute = require('./tasks/init');
     break;
   default:
+    // eslint-disable-next-line no-console
     console.log('IN RUN TASK ', path.join(__dirname));
     execute = require('./tasks/run');
     break;

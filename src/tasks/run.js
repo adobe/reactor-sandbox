@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable no-console */
+
 /**
  * Runs a webserver that provides the sandbox environment. Refreshing will load the latest content.
  */
-
-/* eslint-disable no-console */
 
 const path = require('path');
 const fs = require('fs');
@@ -66,18 +66,6 @@ const configureApp = (app) => {
   // // Serve the rule editor
   // app.use(express.static(path.resolve(`${__dirname}/../../build`)));
 
-  // app.get(`/${files.CONTAINER_FILENAME}`, (req, res) => {
-  //   const error = `/${files.CONTAINER_FILENAME} is no longer supported. See upgrade instructions.`;
-  //   res.statusMessage = error;
-  //   res.status(501).end();
-  // });
-
-  // app.get(`/${files.ENGINE_FILENAME}`, (req, res) => {
-  //   const error = `/${files.ENGINE_FILENAME} is no longer supported. See upgrade instructions.`;
-  //   res.statusMessage = error;
-  //   res.status(501).end();
-  // });
-
   const extensionDescriptor = getExtensionDescriptor();
   console.log('VALIDATING EXTENSION DESCRIPTOR ON STARTUP OF EXPRESS');
   validationError = validateExtensionDescriptor(extensionDescriptor);
@@ -126,6 +114,7 @@ const configureApp = (app) => {
     const extensionDescriptors = getExtensionDescriptors();
 
     // Get the descriptor that matches the extension name and the version from the request.
+    // eslint-disable-next-line no-shadow
     const extensionDescriptor = extensionDescriptors[extensionName];
     console.log('GETTING EXTENSION DESCRIPTION FOR ', extensionName);
 
@@ -174,37 +163,6 @@ const configureApp = (app) => {
     })
   );
 
-  // const libSandboxUpgradeCheck = (res, filePath) => {
-  //   console.log(filePath);
-  //   if (filePath.indexOf(files.LIB_SANDBOX_HTML_FILENAME) !== -1) {
-  //     console.log('file path match for libSandbox');
-  //     const contents = fs.readFileSync(filePath);
-  //     const hasOldContainer = contents.indexOf('container.js') !== -1;
-  //     const hasOldEngine = contents.indexOf('engine.js') !== -1;
-  //     const hasNewProdLibrary = contents.indexOf(files.LAUNCH_LIBRARY_FILENAME) !== -1;
-  //     console.log('hasOldContiner', hasOldContainer);
-  //     console.log('hasOldEngine', hasOldEngine);
-  //     console.log('hasNewProdLib', hasNewProdLibrary);
-  //
-  //     if ((hasOldContainer && !hasNewProdLibrary) || (hasOldEngine && !hasNewProdLibrary)) {
-  //       res.redirect(301, files.LIB_SANDBOX_ERROR_FILENAME);
-  //     }
-  //   }
-  // };
-  //
-  // // Give priority to consumer-provided files first and if they aren't provided we'll fall
-  // // back to the defaults.
-  // app.use(
-  //   express.static(files.CONSUMER_PROVIDED_FILES_PATH, {
-  //     setHeaders: libSandboxUpgradeCheck
-  //   })
-  // );
-  // app.use(
-  //   express.static(files.EXPRESS_CLIENT_DIST_PATH, {
-  //     setHeaders: libSandboxUpgradeCheck
-  //   })
-  // );
-
   // Serve /libSandbox.html
   app.get(`/${files.LIB_SANDBOX_HTML_FILENAME}`, (_, res) => {
     if (templateLocation() === 'extension') {
@@ -218,15 +176,6 @@ const configureApp = (app) => {
   // localStorage.html (local storage data element),
   // javascriptVariable.html (javascript variable data element).
   app.use(express.static(files.SANDBOX_EXTENSION_SRC_PATH));
-
-  // Give priority to consumer-provided files first and if they aren't provided we'll fall
-  // back to the defaults.
-  // app.use(express.static(files.CONSUMER_PROVIDED_FILES_PATH));
-  // app.use(express.static(files.EXPRESS_CLIENT_DIST_PATH));
-
-  // app.get('/', (req, res) => {
-  //   res.redirect(`/${files.VIEW_SANDBOX_HTML_FILENAME}`);
-  // });
 
   app.get('/editor-container.js', (req, res) => {
     try {
