@@ -63,8 +63,8 @@ const configureApp = (app) => {
     )
     .listen(SSL_PORT);
 
-  // // Serve the rule editor
-  // app.use(express.static(path.resolve(`${__dirname}/../../build`)));
+  // Serve the React App
+  app.use(express.static(path.resolve(`${__dirname}/../../build`)));
 
   const extensionDescriptor = getExtensionDescriptor();
   console.log('VALIDATING EXTENSION DESCRIPTOR ON STARTUP OF EXPRESS');
