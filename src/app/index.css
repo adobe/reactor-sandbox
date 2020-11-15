@@ -35,6 +35,7 @@ button {
 
 .pure-menu-link {
   cursor: pointer;
+  font-weight: normal;
 }
 
 .big-text {
