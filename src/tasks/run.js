@@ -172,6 +172,11 @@ const configureApp = (app) => {
     }
   });
 
+  // Redirect old /viewSandbox.html to the new path.
+  app.get(`/${files.VIEW_SANDBOX_HTML_FILENAME}`, (_, res) => {
+    res.redirect(301, '/#/viewSandbox');
+  });
+
   // Server Sandbox Extension Files: noConfigIframe.html,
   // localStorage.html (local storage data element),
   // javascriptVariable.html (javascript variable data element).
