@@ -25,12 +25,12 @@
   "scripts": {
     "reactor-bridge-update": "mkdir -p public/extensionbridge && cp node_modules/@adobe/reactor-bridge/dist/extensionbridge-child.js public/extensionbridge/extensionbridge-child.js",
     "reactor-bridge-check": "cmp --silent public/extensionbridge/extensionbridge-child.js node_modules/@adobe/reactor-bridge/dist/extensionbridge-child.js || (echo 'Extension bridge is out of date. Please go to the sandbox folder and run `npm run reactor-bridge-update`.' && exit 1)",
-    "prepare": "npm run reactor-bridge-update",
     "lint": "eslint 'src/**'",
     "build:reactApp": "npm run reactor-bridge-update && react-scripts build",
     "build": "rm -rf dist && npm run build:reactApp",
     "start:reactApp": "npm run reactor-bridge-update && react-scripts start --no-cache",
     "start": "rm -rf dist && npm run start:reactApp",
+    "prepack": "npm run build",
     "format": "pretty-quick",
     "test": "jest"
   },

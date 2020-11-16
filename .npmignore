@@ -1,11 +1,6 @@
-.idea
-.babelrc
-.editorconfig
-.eslintrc
-.travis.yml
-.env
+\.*
 adobe-reactor-sandbox-*.tgz
-
-src/rulesEditor
+src/app
 src/index.js
 public
+jest.config.js
