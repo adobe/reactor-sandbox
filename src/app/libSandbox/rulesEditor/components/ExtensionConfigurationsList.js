@@ -21,7 +21,7 @@ const ExtensionConfigurationsList = ({ extensionConfigurations, deleteExtensionC
     nameProperty="displayName"
     deleteFn={deleteExtensionConfiguration}
     linkPrefix="/extension_configurations"
-    className="extension-configurations-list"
+    heading="Extension Configurations"
   />
 );
 

@@ -32,33 +32,27 @@ export default function App() {
       <ErrorBoundary>
         <Router>
           <LastLocationProvider>
-            <Switch>
-              <Route exact path={NAMED_ROUTES.HOME}>
-                <div>
-                  <Menu />
+            <Flex direction="column" height="100%">
+              <Menu />
+              <Switch>
+                <Route exact path={NAMED_ROUTES.HOME}>
                   <Home />
-                </div>
-              </Route>
+                </Route>
 
-              <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
-                <div className="lib-sandbox-container">
-                  <Menu />
-                  <LibSandbox />
-                </div>
-              </Route>
+                <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
+                  <LibSandbox flex />
+                </Route>
 
-              <Route
-                path={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}
-                component={LibSandboxRulesEditor}
-              />
+                <Route
+                  path={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}
+                  component={LibSandboxRulesEditor}
+                />
 
-              <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
-                <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
-                  <Menu />
+                <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
                   <ViewSandbox flex />
-                </Flex>
-              </Route>
-            </Switch>
+                </Route>
+              </Switch>
+            </Flex>
           </LastLocationProvider>
         </Router>
       </ErrorBoundary>

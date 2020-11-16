@@ -10,54 +10,78 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from 'react';
-import { Link, withRouter, useHistory } from 'react-router-dom';
-import { Breadcrumbs, Item, Flex } from '@adobe/react-spectrum';
+import React, { useState, useEffect } from 'react';
+import { withRouter, useHistory } from 'react-router-dom';
+import {
+  Flex,
+  ActionButton,
+  Text,
+  Heading,
+  Divider,
+  ActionGroup,
+  Item
+} from '@adobe/react-spectrum';
+import LibrarySandboxIcon from '@spectrum-icons/workflow/Code';
+import LibraryEditorIcon from '@spectrum-icons/workflow/FileCode';
+import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
+
 import NAMED_ROUTES from '../constants';
 
 const Menu = ({ location }) => {
   const history = useHistory();
+  const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+
+  useEffect(() => {
+    if (location.pathname.includes(NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR)) {
+      setSelectedKeys(new Set([NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR]));
+    } else if (location.pathname.endsWith(NAMED_ROUTES.LIB_SANDBOX)) {
+      setSelectedKeys(new Set([NAMED_ROUTES.LIB_SANDBOX]));
+    } else if (location.pathname.includes(NAMED_ROUTES.VIEW_SANDBOX)) {
+      setSelectedKeys(new Set([NAMED_ROUTES.VIEW_SANDBOX]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div className="main-menu">
-      <div className="pure-menu pure-menu-horizontal">
-        <Flex direction="row">
-          <Breadcrumbs onAction={() => history.push(NAMED_ROUTES.HOME)}>
-            <Item key="reactorSandbox">Reactor Sandbox</Item>
-            {location.pathname === NAMED_ROUTES.VIEW_SANDBOX ? (
-              <Item key="viewEditor">View Sandbox</Item>
-            ) : null}{' '}
-            {location.pathname === NAMED_ROUTES.LIB_SANDBOX ? (
-              <Item key="libEditor">Library Sandbox</Item>
-            ) : null}
-          </Breadcrumbs>
+    <Flex direction="column">
+      <Flex direction="row" gap="size-200" margin="size-150">
+        <ActionButton
+          isQuiet
+          onPress={() => {
+            history.push(NAMED_ROUTES.HOME);
+            setSelectedKeys(new Set([]));
+          }}
+        >
+          <Heading>Reactor Sandbox</Heading>
+        </ActionButton>
 
-          <ul className="pure-menu-list">
-            <li className="pure-menu-item">
-              <Link
-                to={NAMED_ROUTES.VIEW_SANDBOX}
-                className={`pure-menu-link ${
-                  location.pathname === NAMED_ROUTES.VIEW_SANDBOX ? 'menu-selected' : ''
-                }`}
-              >
-                View Sandbox
-              </Link>
-            </li>
-
-            <li className="pure-menu-item">
-              <Link
-                to={NAMED_ROUTES.LIB_SANDBOX}
-                className={`pure-menu-link ${
-                  location.pathname.startsWith(NAMED_ROUTES.LIB_SANDBOX) ? 'menu-selected' : ''
-                }`}
-              >
-                Library Sandbox
-              </Link>
-            </li>
-          </ul>
-        </Flex>
-      </div>
-    </div>
+        <ActionGroup
+          isQuiet
+          orientation="horizontal"
+          selectionMode="single"
+          selectedKeys={selectedKeys}
+          onSelectionChange={(key) => {
+            const path = [...key][0];
+            setSelectedKeys(new Set([path]));
+            history.push(path);
+          }}
+        >
+          <Item key={NAMED_ROUTES.VIEW_SANDBOX} textValue="View Sandbox">
+            <ViewSandboxIcon />
+            <Text>View Sandbox</Text>
+          </Item>
+          <Item key={NAMED_ROUTES.LIB_SANDBOX} textValue="Library Sandbox">
+            <LibrarySandboxIcon />
+            <Text>Library Sandbox</Text>
+          </Item>
+          <Item key={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR} textValue="Library Editor">
+            <LibraryEditorIcon />
+            <Text>Library Editor</Text>
+          </Item>
+        </ActionGroup>
+      </Flex>
+      <Divider size="M" />
+    </Flex>
   );
 };
 

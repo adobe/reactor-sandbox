@@ -16,12 +16,16 @@ import { connect } from 'react-redux';
 import { Button, Flex } from '@adobe/react-spectrum';
 import OtherSettings from './OtherSettings';
 
+import './Settings.css';
+
 const Main = ({ brain, orgId, imsAccess, loadContainerData, clearContainerData }) => {
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       <OtherSettings key={`${orgId}${imsAccess}`} />
-      <div className="main-container">
-        <p>The data used inside this editor is loaded from `localStorage`.</p>
+      <div>
+        <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
+          <p>The data used inside this editor is loaded from `localStorage`.</p>
+        </Flex>
         <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
           <p>
             If you want to overwrite the current data with the one stored inside the{' '}

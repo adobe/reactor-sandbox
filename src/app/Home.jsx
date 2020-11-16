@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Text } from '@adobe/react-spectrum';
-import LibrarySandboxIcon from '@spectrum-icons/workflow/FileJson';
+import LibrarySandboxIcon from '@spectrum-icons/workflow/Code';
 import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
 
 import NAMED_ROUTES from './constants';

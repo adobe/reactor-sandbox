@@ -21,7 +21,7 @@ const DataElementsList = ({ dataElements, deleteDataElement }) => (
     nameProperty="name"
     deleteFn={deleteDataElement}
     linkPrefix="/data_elements"
-    className="data-elements-list"
+    heading="Data Elements"
   />
 );
 

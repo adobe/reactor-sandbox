@@ -20,7 +20,7 @@ export default ({ templateLocation, isLatestTemplate }) => {
   const history = useHistory();
 
   return (
-    <div className="description-container">
+    <div>
       <p>Welcome to the Library Sandbox. In this page you can test your library logic.</p>
 
       {templateLocation === 'sandbox' ? (

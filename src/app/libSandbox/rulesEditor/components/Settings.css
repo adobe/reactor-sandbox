@@ -1,0 +1,7 @@
+.status-success strong {
+  color: green;
+}
+
+.status-failed strong {
+  color: red;
+}

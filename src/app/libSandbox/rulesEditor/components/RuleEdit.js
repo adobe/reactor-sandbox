@@ -151,60 +151,58 @@ class RuleEdit extends Component {
     const { rule, errors } = this.state;
     const { history } = this.props;
     return (
-      <>
-        <View margin="size-300">
-          <Heading level={2}>{isNewRule(this.props) ? 'Create' : 'Edit'} Rule</Heading>
-          <Divider />
-          <TextField
-            label="Rule Name"
-            necessityIndicator="label"
-            isRequired
-            width="size-6000"
-            marginTop="size-150"
-            validationState={errors.name ? 'invalid' : ''}
-            value={rule.get('name') || ''}
-            onChange={this.handleNameChange}
-          />
+      <View margin="size-300" width="100%">
+        <Heading level={2}>{isNewRule(this.props) ? 'Create' : 'Edit'} Rule</Heading>
+        <Divider />
+        <TextField
+          label="Rule Name"
+          necessityIndicator="label"
+          isRequired
+          width="size-6000"
+          marginTop="size-150"
+          validationState={errors.name ? 'invalid' : ''}
+          value={rule.get('name') || ''}
+          onChange={this.handleNameChange}
+        />
 
-          <Heading level={3}>Events</Heading>
-          <RuleComponentsList
-            addLabel="Add new event"
-            handleDeleteClick={this.handleDeleteClick}
-            items={rule.get('events') || List()}
-            type="events"
-          />
-          <Heading level={3}>Conditions</Heading>
-          <RuleComponentsList
-            addLabel="Add new condition"
-            handleDeleteClick={this.handleDeleteClick}
-            items={rule.get('conditions') || List()}
-            type="conditions"
-          />
-          <Heading level={3}>Actions</Heading>
-          <RuleComponentsList
-            addLabel="Add new action"
-            handleDeleteClick={this.handleDeleteClick}
-            items={rule.get('actions') || List()}
-            type="actions"
-          />
-          <Divider marginTop="size-300" />
-          <ButtonGroup marginTop="size-150" marginBottom="size-150">
-            <Button variant="cta" onPress={this.handleSave}>
-              Save rule
-            </Button>
+        <Heading level={3}>Events</Heading>
+        <RuleComponentsList
+          addLabel="Add new event"
+          handleDeleteClick={this.handleDeleteClick}
+          items={rule.get('events') || List()}
+          type="events"
+        />
+        <Heading level={3}>Conditions</Heading>
+        <RuleComponentsList
+          addLabel="Add new condition"
+          handleDeleteClick={this.handleDeleteClick}
+          items={rule.get('conditions') || List()}
+          type="conditions"
+        />
+        <Heading level={3}>Actions</Heading>
+        <RuleComponentsList
+          addLabel="Add new action"
+          handleDeleteClick={this.handleDeleteClick}
+          items={rule.get('actions') || List()}
+          type="actions"
+        />
+        <Divider marginTop="size-300" />
+        <ButtonGroup marginTop="size-150" marginBottom="size-150">
+          <Button variant="cta" onPress={this.handleSave}>
+            Save rule
+          </Button>
 
-            <Button
-              variant="secondary"
-              onPress={() => {
-                this.handleCancelClick();
-                history.push(this.constructor.backLink());
-              }}
-            >
-              Cancel
-            </Button>
-          </ButtonGroup>
-        </View>
-      </>
+          <Button
+            variant="secondary"
+            onPress={() => {
+              this.handleCancelClick();
+              history.push(this.constructor.backLink());
+            }}
+          >
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </View>
     );
   }
 }

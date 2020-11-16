@@ -21,7 +21,7 @@ const RulesList = ({ rules, deleteRule }) => (
     nameProperty="name"
     deleteFn={deleteRule}
     linkPrefix="/rules"
-    className="rules-list"
+    heading="Rules"
   />
 );
 

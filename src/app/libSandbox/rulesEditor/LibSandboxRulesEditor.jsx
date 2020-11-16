@@ -11,11 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import React from 'react';
-import { Switch, useRouteMatch } from 'react-router-dom';
+import { Switch, useRouteMatch, Redirect } from 'react-router-dom';
 
 import { dispatch } from '../../store';
 import PreloaderRoute from './components/PreloaderRoute';
-import Main from './components/Main';
+
 import Settings from './components/Settings';
 import PropertySettings from './components/PropertySettings';
 import RulesList from './components/RulesList';
@@ -26,15 +26,13 @@ import DataElementEdit from './components/DataElementEdit';
 import ExtensionConfigurationsList from './components/ExtensionConfigurationsList';
 import ExtensionConfigurationEdit from './components/ExtensionConfigurationEdit';
 
-import './index.css';
-
 export default () => {
   dispatch({ type: 'brain/initialize' });
   const { path } = useRouteMatch();
 
   return (
     <Switch>
-      <PreloaderRoute exact path={path} component={Main} />
+      <Redirect exact from={path} to={`${path}/extension_configurations`} />
       <PreloaderRoute exact path={`${path}/settings`} component={Settings} />
       <PreloaderRoute exact path={`${path}/property_settings`} component={PropertySettings} />
       <PreloaderRoute exact path={`${path}/rules`} component={RulesList} />

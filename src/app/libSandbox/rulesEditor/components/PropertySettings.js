@@ -80,7 +80,7 @@ class PropertySettings extends Component {
   render() {
     const { errors, propertySettings } = this.state;
     return (
-      <View margin="size-300" width="size-6000" alignSelf="center">
+      <View margin="2rem auto" width="size-6000">
         <Heading level={2}>Property Settings</Heading>
         <Divider />
         <TextField

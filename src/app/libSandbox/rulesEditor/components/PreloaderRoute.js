@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import { withRouter, Route } from 'react-router-dom';
 import { Flex, Heading, ProgressCircle } from '@adobe/react-spectrum';
 import Menu from './Menu';
+
 import ModalCodeEditor from './ModalCodeEditor';
 import ModalDataElementSelector from './ModalDataElementSelector';
 
@@ -28,7 +29,7 @@ const PreloaderRoute = ({ component: Component, brain, ...rest }) => (
         <>
           <ModalCodeEditor />
           <ModalDataElementSelector />
-          <Flex direction="column" height="100%">
+          <Flex direction="row" flex>
             <Menu />
             <Component {...props} />
           </Flex>

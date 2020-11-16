@@ -11,13 +11,12 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useEffect } from 'react';
+import { Flex, View } from '@adobe/react-spectrum';
 
 import RightColumn from './components/RightColumn';
 import ShowUpgradeWarning from './components/ShowUpgradeWarning';
 import ErrorMessage from '../components/ErrorMessage';
 import { getStatus } from '../api/index';
-
-import './LibSandbox.css';
 
 export default () => {
   const [error, setError] = useState();
@@ -48,8 +47,8 @@ export default () => {
   return error ? (
     <ErrorMessage message={error.message} />
   ) : (
-    <div className="lib-sandbox-content-container">
-      <div className="iframe-container">
+    <Flex direction="row" width="100%" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
+      <View flex backgroundColor="static-white">
         {isInitialized && isLatestTemplate ? (
           <iframe
             src={`${window.EXPRESS_PUBLIC_URL}/libSandbox.html`}
@@ -59,8 +58,15 @@ export default () => {
         ) : null}
 
         {isInitialized && !isLatestTemplate ? <ShowUpgradeWarning /> : null}
-      </div>
-      <RightColumn templateLocation={templateLocation} isLatestTemplate={isLatestTemplate} />
-    </div>
+      </View>
+      <View
+        width="size-6000"
+        borderStartWidth="thin"
+        borderStartColor="gray-400"
+        padding="size-200"
+      >
+        <RightColumn templateLocation={templateLocation} isLatestTemplate={isLatestTemplate} />
+      </View>
+    </Flex>
   );
 };
