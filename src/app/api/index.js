@@ -13,13 +13,17 @@ governing permissions and limitations under the License.
 /* eslint-disable import/prefer-default-export */
 
 const fetchJson = (endpoint) =>
-  fetch(endpoint).then((response) => {
-    if (!response.ok) {
-      throw new Error(`An error occured when fetching ${endpoint}`);
-    }
+  fetch(endpoint)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Request response was not ok.');
+      }
 
-    return response.json();
-  });
+      return response.json();
+    })
+    .catch(() => {
+      throw new Error(`An error occured when fetching ${endpoint}.`);
+    });
 
 export const getExtensionDescriptorFromApi = () =>
   fetchJson(`${window.EXPRESS_PUBLIC_URL}/extensionDescriptor`);
