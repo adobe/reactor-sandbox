@@ -22,40 +22,46 @@ import Home from './Home';
 import ViewSandbox from './viewSandbox';
 import LibSandbox from './libSandbox';
 import Menu from './components/Menu';
+import ErrorBoundary from './components/ErrorBoundary';
 import LibSandboxRulesEditor from './libSandbox/rulesEditor';
 import store from './store';
 
 export default function App() {
   return (
     <Provider store={store}>
-      <Router>
-        <LastLocationProvider>
-          <Switch>
-            <Route exact path={NAMED_ROUTES.HOME}>
-              <div>
-                <Menu />
-                <Home />
-              </div>
-            </Route>
+      <ErrorBoundary>
+        <Router>
+          <LastLocationProvider>
+            <Switch>
+              <Route exact path={NAMED_ROUTES.HOME}>
+                <div>
+                  <Menu />
+                  <Home />
+                </div>
+              </Route>
 
-            <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
-              <div className="lib-sandbox-container">
-                <Menu />
-                <LibSandbox />
-              </div>
-            </Route>
+              <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
+                <div className="lib-sandbox-container">
+                  <Menu />
+                  <LibSandbox />
+                </div>
+              </Route>
 
-            <Route path={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR} component={LibSandboxRulesEditor} />
+              <Route
+                path={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}
+                component={LibSandboxRulesEditor}
+              />
 
-            <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
-              <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
-                <Menu />
-                <ViewSandbox flex />
-              </Flex>
-            </Route>
-          </Switch>
-        </LastLocationProvider>
-      </Router>
+              <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
+                <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
+                  <Menu />
+                  <ViewSandbox flex />
+                </Flex>
+              </Route>
+            </Switch>
+          </LastLocationProvider>
+        </Router>
+      </ErrorBoundary>
     </Provider>
   );
 }

@@ -10,18 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable import/prefer-default-export */
+import React from 'react';
+import { IllustratedMessage, Heading, Content } from '@adobe/react-spectrum';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
 
-const fetchJson = (endpoint) =>
-  fetch(endpoint).then((response) => {
-    if (!response.ok) {
-      throw new Error(`An error occured when fetching ${endpoint}`);
-    }
-
-    return response.json();
-  });
-
-export const getExtensionDescriptorFromApi = () =>
-  fetchJson(`${window.EXPRESS_PUBLIC_URL}/extensionDescriptor`);
-
-export const getStatus = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/status`);
+export default ({ message = 'There was an error!' }) => (
+  <IllustratedMessage>
+    <NotFound />
+    <Heading>An error has occured</Heading>
+    <Content>{message}</Content>
+  </IllustratedMessage>
+);

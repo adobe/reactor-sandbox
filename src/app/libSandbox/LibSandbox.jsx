@@ -14,10 +14,14 @@ import React, { useState, useEffect } from 'react';
 
 import RightColumn from './components/RightColumn';
 import ShowUpgradeWarning from './components/ShowUpgradeWarning';
+import ErrorMessage from '../components/ErrorMessage';
+import { getStatus } from '../api/index';
 
 import './LibSandbox.css';
 
 export default () => {
+  const [error, setError] = useState();
+
   const [{ isInitialized, isLatestTemplate, templateLocation }, setStatus] = useState({
     isInitialized: false,
     isLatestTemplate: null,
@@ -25,19 +29,25 @@ export default () => {
   });
 
   useEffect(() => {
-    fetch(`${window.EXPRESS_PUBLIC_URL}/status`)
-      .then((data) => data.json())
+    getStatus()
       // eslint-disable-next-line no-shadow
-      .then(({ librarySandbox: { isLatestTemplate, templateLocation } }) =>
+      .then(({ librarySandbox }) => {
+        // eslint-disable-next-line no-shadow
+        const { isLatestTemplate, templateLocation } = librarySandbox;
         setStatus({
           isInitialized: true,
           isLatestTemplate,
           templateLocation
-        })
-      );
+        });
+      })
+      .catch((e) => {
+        setError(new Error(e));
+      });
   }, []);
 
-  return (
+  return error ? (
+    <ErrorMessage message={error.message} />
+  ) : (
     <div className="lib-sandbox-content-container">
       <div className="iframe-container">
         {isInitialized && isLatestTemplate ? (

@@ -22,8 +22,10 @@ import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByV
 import setupGlobalLoadExtensionView from './helpers/setupGlobalLoadExtensionView';
 
 import './ViewSandbox.css';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default () => {
+  const [error, setError] = useState();
   const [state, setState] = useState({
     extensionDescriptor: null,
     extensionViewDescriptorsByValue: null
@@ -35,17 +37,21 @@ export default () => {
   const extensionViewPaneRef = useRef();
 
   useEffect(() => {
-    getExtensionDescriptorFromApi().then((extensionDescriptorResult) => {
-      setState({
-        extensionDescriptor: extensionDescriptorResult,
-        extensionViewDescriptorsByValue: getExtensionDescriptorsByValue(extensionDescriptorResult)
-      });
+    getExtensionDescriptorFromApi()
+      .then((extensionDescriptorResult) => {
+        setState({
+          extensionDescriptor: extensionDescriptorResult,
+          extensionViewDescriptorsByValue: getExtensionDescriptorsByValue(extensionDescriptorResult)
+        });
 
-      Split(['#extensionViewPane', '#controlPane'], {
-        minSize: 0,
-        sizes: [65, 35]
+        Split(['#extensionViewPane', '#controlPane'], {
+          minSize: 0,
+          sizes: [65, 35]
+        });
+      })
+      .catch((e) => {
+        setError(new Error(e));
       });
-    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -68,7 +74,9 @@ export default () => {
   });
 
   // render
-  return (
+  return error ? (
+    <ErrorMessage message={error.message} />
+  ) : (
     <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
       <View borderBottomWidth="thin" borderBottomColor="gray-400">
         <ViewsSelector state={state} setSelectedDescriptor={setSelectedDescriptor} />
