@@ -12,30 +12,41 @@ governing permissions and limitations under the License.
 
 import React from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { Button, Text, ActionGroup, Item } from '@adobe/react-spectrum';
+import {
+  Button,
+  Text,
+  ActionGroup,
+  Item,
+  Flex,
+  View,
+  Heading,
+  Divider
+} from '@adobe/react-spectrum';
+import { Cell, Column, Row, Table, TableBody, TableHeader } from '@react-spectrum/table';
 import Add from '@spectrum-icons/workflow/Add';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
-import './List.css';
 
-const List = ({ items, nameProperty, deleteFn, className }) => {
+const List = ({ items, nameProperty, deleteFn, heading = 'Unknows' }) => {
   const { url } = useRouteMatch();
   const history = useHistory();
 
   return (
-    <div className={`list-container ${className}`}>
-      <table className="pure-table list-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th className="list-item-actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+    <Flex direction="column" width="50rem" margin="0 auto">
+      <Heading size="3">{heading}</Heading>
+      <Divider />
+      <Table aria-label="table" overflowMode="wrap" marginTop="size-200">
+        <TableHeader>
+          <Column key="name">Name</Column>
+          <Column key="actions" width="24%">
+            Actions
+          </Column>
+        </TableHeader>
+        <TableBody>
           {items.map((item, i) => (
-            <tr key={item}>
-              <td className="list-item-name">{item.get(nameProperty)}</td>
-              <td className="list-item-actions">
+            <Row key={item}>
+              <Cell className="list-item-name">{item.get(nameProperty)}</Cell>
+              <Cell className="list-item-actions">
                 <ActionGroup
                   onAction={(key) =>
                     key === 'delete'
@@ -52,26 +63,29 @@ const List = ({ items, nameProperty, deleteFn, className }) => {
                     <Text>Delete</Text>
                   </Item>
                 </ActionGroup>
-              </td>
-            </tr>
+              </Cell>
+            </Row>
           ))}
           {items.size === 0 ? (
-            <tr>
-              <td colSpan="2">No items found.</td>
-            </tr>
+            <Row>
+              <Cell>No items found.</Cell>
+              <Cell>&nbsp;</Cell>
+            </Row>
           ) : null}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
 
-      <Button
-        variant="cta"
-        marginTop="size-150"
-        onPress={() => history.push(`${url}${url.endsWith('/') ? '' : '/'}new`)}
-      >
-        <Add />
-        <Text>Add</Text>
-      </Button>
-    </div>
+      <View>
+        <Button
+          variant="cta"
+          marginTop="size-150"
+          onPress={() => history.push(`${url}${url.endsWith('/') ? '' : '/'}new`)}
+        >
+          <Add />
+          <Text>Add</Text>
+        </Button>
+      </View>
+    </Flex>
   );
 };
 
