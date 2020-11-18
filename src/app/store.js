@@ -16,9 +16,10 @@ import currentIframe from './libSandbox/rulesEditor/models/currentIframe';
 import currentRule from './libSandbox/rulesEditor/models/currentRule';
 import rules from './libSandbox/rulesEditor/models/rules';
 import dataElements from './libSandbox/rulesEditor/models/dataElements';
-import propertySettings from './libSandbox/rulesEditor/models/propertySettings';
+import property from './libSandbox/rulesEditor/models/property';
+import company from './libSandbox/rulesEditor/models/company';
 import otherSettings from './libSandbox/rulesEditor/models/otherSettings';
-import extensionConfigurations from './libSandbox/rulesEditor/models/extensionConfigurations';
+import extensions from './libSandbox/rulesEditor/models/extensions';
 // eslint-disable-next-line import/no-cycle
 import brain from './libSandbox/rulesEditor/models/brain';
 import modals from './libSandbox/rulesEditor/models/modals';
@@ -28,11 +29,12 @@ const store = init({
     brain,
     rules,
     dataElements,
-    extensionConfigurations,
+    extensions,
     registry,
     currentIframe,
     currentRule,
-    propertySettings,
+    property,
+    company,
     otherSettings,
     modals
   }

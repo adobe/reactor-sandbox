@@ -18,53 +18,43 @@ import OtherSettings from './OtherSettings';
 
 import './Settings.css';
 
-const Main = ({ brain, orgId, imsAccess, loadContainerData, clearContainerData }) => {
-  return (
-    <div style={{ width: '100%' }}>
-      <OtherSettings key={`${orgId}${imsAccess}`} />
-      <div>
-        <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-          <p>The data used inside this editor is loaded from `localStorage`.</p>
-        </Flex>
-        <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-          <p>
-            If you want to overwrite the current data with the one stored inside the{' '}
-            <strong>`.sandbox/container.js`</strong> file click on the `Import data` button.
-          </p>
-          <Button onPress={loadContainerData}>Import data</Button>
-        </Flex>
-        {brain.get('containerDataLoaded') != null ? (
-          <div className={`status-${brain.get('containerDataLoaded')}`}>
-            Last import status: <strong>{brain.get('containerDataLoaded')}</strong>.
-          </div>
-        ) : null}
+const Main = ({ brain, orgId, imsAccess, clearContainerData, clearLocalStorage }) => (
+  <div style={{ width: '100%' }}>
+    <OtherSettings key={`${orgId}${imsAccess}`} />
+    <div>
+      <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
+        <p>If you want to reset current data click on the `Reset data` button.</p>
+        <Button
+          onPress={() => {
+            clearContainerData();
+            clearLocalStorage();
+          }}
+          marginStart="size-100"
+        >
+          Reset data
+        </Button>
+      </Flex>
 
+      {brain.get('containerDataReseted') != null ? (
         <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-          <p>If you want to reset current data click on the `Reset data` button.</p>
-          <Button onPress={clearContainerData} marginStart="size-100">
-            Reset data
-          </Button>
-        </Flex>
-
-        {brain.get('containerDataReseted') != null ? (
           <div className={`status-${brain.get('containerDataReseted')}`}>
             Last reset status: <strong>{brain.get('containerDataReseted')}</strong>.
           </div>
-        ) : null}
-      </div>
+        </Flex>
+      ) : null}
     </div>
-  );
-};
+  </div>
+);
 
 const mapState = (state) => ({
   brain: state.brain,
-  orgId: state.otherSettings.getIn(['company', 'orgId']),
+  orgId: state.company.get('orgId'),
   imsAccess: state.otherSettings.getIn(['tokens', 'imsAccess'])
 });
 
-const mapDispatch = ({ brain: { loadContainerData, clearContainerData } }) => ({
-  loadContainerData: () => loadContainerData(),
-  clearContainerData: () => clearContainerData()
+const mapDispatch = ({ brain: { clearContainerData, clearLocalStorage } }) => ({
+  clearContainerData: () => clearContainerData(),
+  clearLocalStorage: () => clearLocalStorage()
 });
 
 export default withRouter(connect(mapState, mapDispatch)(Main));

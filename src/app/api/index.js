@@ -29,3 +29,18 @@ export const getExtensionDescriptorFromApi = () =>
   fetchJson(`${window.EXPRESS_PUBLIC_URL}/extensionDescriptor`);
 
 export const getStatus = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/status`);
+
+export const getEditorRegistry = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/editor-registry.js`);
+export const getContainerData = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`);
+
+export const saveContainerData = (containerData) =>
+  fetch(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`, {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(containerData)
+  }).catch((e) => {
+    throw new Error(`An error occured when saving the container: ${e.message}.`);
+  });

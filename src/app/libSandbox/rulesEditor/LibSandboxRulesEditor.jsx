@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, useRouteMatch, Redirect } from 'react-router-dom';
 
 import { dispatch } from '../../store';
@@ -27,7 +27,10 @@ import ExtensionConfigurationsList from './components/ExtensionConfigurationsLis
 import ExtensionConfigurationEdit from './components/ExtensionConfigurationEdit';
 
 export default () => {
-  dispatch({ type: 'brain/initialize' });
+  useEffect(() => {
+    dispatch({ type: 'brain/initialize' });
+  }, []);
+
   const { path } = useRouteMatch();
 
   return (

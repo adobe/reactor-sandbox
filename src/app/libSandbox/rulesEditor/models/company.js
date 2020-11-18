@@ -10,9 +10,27 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-unused-vars */
+
+import { Map } from 'immutable';
+import saveContainer from '../helpers/saveContainer';
+
 export default {
-  server: {
-    host: 'http://localhost',
-    port: 3000
+  state: Map(), // initial state
+  reducers: {
+    setCompanySettings(state, payload) {
+      return payload;
+    }
+  },
+  effects: {
+    async saveCompanySettings(payload, rootState) {
+      let clonedState = Map(rootState);
+      clonedState = clonedState.set('company', payload);
+
+      return saveContainer(clonedState.toJS()).then(() => {
+        this.setCompanySettings(payload);
+      });
+    }
   }
 };

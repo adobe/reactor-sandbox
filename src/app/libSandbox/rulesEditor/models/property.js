@@ -11,14 +11,28 @@ governing permissions and limitations under the License.
 */
 
 import { Map } from 'immutable';
-import localStorage from './localStorage';
+import saveContainer from '../helpers/saveContainer';
 
 export default {
   state: Map(), // initial state
   reducers: {
     setPropertySettings(state, payload) {
-      localStorage.update('property', Map().set('settings', payload));
       return payload;
+    }
+  },
+  effects: {
+    async savePropertySettings(payload, rootState) {
+      const settings = payload
+        .setIn(['settings', 'linkDelay'], 100)
+        .setIn(['settings', 'trackingCookieName'], 'sat_track')
+        .setIn(['settings', 'undefinedVarsReturnEmpty'], false);
+
+      let clonedState = Map(rootState);
+      clonedState = clonedState.set('property', settings);
+
+      return saveContainer(clonedState.toJS()).then(() => {
+        this.setPropertySettings(payload);
+      });
     }
   }
 };

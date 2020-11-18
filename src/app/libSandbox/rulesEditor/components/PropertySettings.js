@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 /* eslint-disable react/jsx-no-bind */
 
 import React, { Component } from 'react';
-import { List } from 'immutable';
+import { fromJS, Map } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { View, Heading, Divider, TextField, Button } from '@adobe/react-spectrum';
@@ -24,10 +24,9 @@ class PropertySettings extends Component {
     super(props);
 
     this.state = {
-      propertySettings: props.propertySettings.set(
-        'domains',
-        props.propertySettings.get('domains').toJS().join(', ')
-      ),
+      propertySettings: Map({
+        domains: props.propertySettings.getIn(['settings', 'domains']).toJS().join(', ')
+      }),
       errors: {}
     };
   }
@@ -46,18 +45,17 @@ class PropertySettings extends Component {
     }
 
     const { propertySettings } = this.state;
-    const { setPropertySettings, history } = this.props;
+    const { savePropertySettings, history } = this.props;
 
-    setPropertySettings(
-      propertySettings.set(
-        'domains',
-        List(
-          propertySettings
+    savePropertySettings(
+      fromJS({
+        settings: {
+          domains: propertySettings
             .get('domains')
             .split(',')
             .map((s) => s.trim())
-        )
-      )
+        }
+      })
     );
 
     history.push(basePath);
@@ -105,11 +103,11 @@ class PropertySettings extends Component {
 }
 
 const mapState = (state) => ({
-  propertySettings: state.propertySettings
+  propertySettings: state.property
 });
 
-const mapDispatch = ({ propertySettings: { setPropertySettings } }) => ({
-  setPropertySettings: (payload) => setPropertySettings(payload)
+const mapDispatch = ({ property: { savePropertySettings } }) => ({
+  savePropertySettings: (payload) => savePropertySettings(payload)
 });
 
 export default withRouter(connect(mapState, mapDispatch)(PropertySettings));

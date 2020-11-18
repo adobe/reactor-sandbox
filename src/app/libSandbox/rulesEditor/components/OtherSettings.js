@@ -23,16 +23,17 @@ class OtherSettings extends Component {
     super(props);
 
     this.state = {
+      companySettings: props.companySettings,
       otherSettings: props.otherSettings,
       errors: {}
     };
   }
 
   handleOrgIdChange = (orgId) => {
-    const { otherSettings } = this.state;
+    const { companySettings } = this.state;
 
     this.setState({
-      otherSettings: otherSettings.setIn(['company', 'orgId'], orgId)
+      companySettings: companySettings.set('orgId', orgId)
     });
   };
 
@@ -45,14 +46,15 @@ class OtherSettings extends Component {
   };
 
   handleSave = () => {
-    const { history, setOtherSettings } = this.props;
-    const { otherSettings } = this.state;
+    const { history, saveCompanySettings, saveOtherSettings } = this.props;
+    const { otherSettings, companySettings } = this.state;
 
     if (!this.isValid()) {
       return false;
     }
 
-    setOtherSettings(otherSettings);
+    saveCompanySettings(companySettings);
+    saveOtherSettings(otherSettings);
     history.push(basePath);
 
     return true;
@@ -60,9 +62,9 @@ class OtherSettings extends Component {
 
   isValid() {
     const errors = {};
-    const { otherSettings } = this.state;
+    const { companySettings, otherSettings } = this.state;
 
-    if (!otherSettings.getIn(['company', 'orgId'])) {
+    if (!companySettings.get('orgId')) {
       errors.orgId = true;
     }
 
@@ -75,7 +77,7 @@ class OtherSettings extends Component {
   }
 
   render() {
-    const { errors, otherSettings } = this.state;
+    const { errors, otherSettings, companySettings } = this.state;
 
     return (
       <Flex direction="column">
@@ -89,7 +91,7 @@ class OtherSettings extends Component {
             width="size-6000"
             marginTop="size-150"
             validationState={errors.orgId ? 'invalid' : ''}
-            value={otherSettings.getIn(['company', 'orgId'])}
+            value={companySettings.get('orgId')}
             onChange={this.handleOrgIdChange}
           />
 
@@ -118,11 +120,16 @@ class OtherSettings extends Component {
 }
 
 const mapState = (state) => ({
+  companySettings: state.company,
   otherSettings: state.otherSettings
 });
 
-const mapDispatch = ({ otherSettings: { setOtherSettings } }) => ({
-  setOtherSettings: (payload) => setOtherSettings(payload)
+const mapDispatch = ({
+  otherSettings: { saveOtherSettings },
+  company: { saveCompanySettings }
+}) => ({
+  saveCompanySettings: (payload) => saveCompanySettings(payload),
+  saveOtherSettings: (payload) => saveOtherSettings(payload)
 });
 
 export default withRouter(connect(mapState, mapDispatch)(OtherSettings));

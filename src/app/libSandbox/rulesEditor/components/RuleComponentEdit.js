@@ -289,7 +289,7 @@ const mapState = (state) => {
     currentRule: state.currentRule,
     currentIframe: state.currentIframe,
     registry: state.registry,
-    extensionConfigurations: state.extensionConfigurations
+    extensionConfigurations: state.extensions
   };
 };
 

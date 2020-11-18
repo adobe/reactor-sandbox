@@ -26,10 +26,10 @@ const ExtensionConfigurationsList = ({ extensionConfigurations, deleteExtensionC
 );
 
 const mapState = (state) => ({
-  extensionConfigurations: state.extensionConfigurations
+  extensionConfigurations: state.extensions
 });
 
-const mapDispatch = ({ extensionConfigurations: { deleteExtensionConfiguration } }) => ({
+const mapDispatch = ({ extensions: { deleteExtensionConfiguration } }) => ({
   deleteExtensionConfiguration: (i) => deleteExtensionConfiguration(i)
 });
 

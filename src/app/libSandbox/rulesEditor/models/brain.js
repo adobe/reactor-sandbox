@@ -11,112 +11,110 @@ governing permissions and limitations under the License.
 */
 
 import { fromJS, Map } from 'immutable';
-import environment from './environment';
+import { getEditorRegistry, getContainerData } from '../../../api/index';
 import localStorage from './localStorage';
+import saveContainer from '../helpers/saveContainer';
+
 // eslint-disable-next-line import/no-cycle
 import { dispatch } from '../../../store';
 
-const host = `${environment.server.host}:${environment.server.port}`;
+const loadOtherSettings = (extensionName) => {
+  localStorage.loadStateFor(extensionName);
+
+  if (!localStorage.get('otherSettings')) {
+    localStorage.update(
+      'otherSettings',
+      fromJS({
+        tokens: {
+          imsAccess: 'fake-ims-access-token'
+        }
+      })
+    );
+  }
+
+  dispatch.otherSettings.setOtherSettings(localStorage.get('otherSettings'));
+};
 
 export default {
   state: Map(), // initial state
   reducers: {
-    setContainerDataLoaded(state, payload) {
-      return state.set('containerDataLoaded', payload);
+    setError(state, error) {
+      return state.set('error', error);
     },
     setContainerDataReseted(state, payload) {
       return state.set('containerDataReseted', payload);
     },
     setInitialized(state, payload) {
       return state.set('initialized', payload);
+    },
+    setExtensionName(state, payload) {
+      return state.set('extensionName', payload);
     }
   },
   effects: {
-    async initialize() {
-      const response = await fetch(`${host}/editor-registry.js`);
-
-      if (response.ok) {
-        const data = await response.json();
-        const jsData = fromJS(data);
-
-        dispatch.registry.setRegistry(jsData.delete('currentExtensionName'));
-        localStorage.loadStateFor(jsData.get('currentExtensionName'));
-
-        this.pushDataDown(localStorage.get());
-
-        setTimeout(() => {
+    initialize() {
+      Promise.all([
+        this.loadRegistryData(),
+        this.loadContainerData().catch(() => {
+          this.clearContainerData();
+        })
+      ])
+        .then(() => {
           this.setInitialized(true);
-        }, 0);
-      }
+        })
+        .catch((e) => this.setError(e));
+    },
+
+    async loadRegistryData() {
+      const data = await getEditorRegistry();
+      const jsData = fromJS(data);
+
+      dispatch.registry.setRegistry(jsData.delete('currentExtensionName'));
+      this.setExtensionName(jsData.get('currentExtensionName'));
+      loadOtherSettings(jsData.get('currentExtensionName'));
     },
 
     async loadContainerData() {
-      const response = await fetch(`${host}/editor-container.js`);
-
-      if (response.ok) {
-        const containerData = await response.json();
-        this.pushDataDown(Map(containerData));
-        this.setContainerDataLoaded('success');
-      } else {
-        this.setContainerDataLoaded('failed');
-      }
+      const containerData = await getContainerData();
+      this.pushDataDown(fromJS(containerData));
     },
 
-    clearContainerData() {
-      this.pushDataDown(
-        Map({
-          extensions: [],
-          rules: [],
-          dataElements: [],
-          property: { settings: {} }
-        })
-      );
+    async clearContainerData() {
+      const emptyContainerData = fromJS({
+        extensions: [],
+        rules: [],
+        dataElements: [],
+        property: {
+          settings: {
+            domains: ['example.com'],
+            linkDelay: 100,
+            trackingCookieName: 'sat_track',
+            undefinedVarsReturnEmpty: false
+          }
+        },
+        company: {
+          orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+        }
+      });
+
+      await this.pushDataDown(emptyContainerData);
+      await saveContainer(emptyContainerData.toJS());
 
       this.setContainerDataReseted('success');
     },
 
-    pushDataDown(payload) {
-      dispatch.extensionConfigurations.setExtensionConfigurations(
-        fromJS(payload.get('extensions'))
-      );
-      dispatch.rules.setRules(fromJS(payload.get('rules')));
-      dispatch.dataElements.setDataElements(fromJS(payload.get('dataElements')));
-
-      dispatch.propertySettings.setPropertySettings(
-        fromJS(
-          payload.getIn(['property', 'settings']) || {
-            domains: ['example.com']
-          }
-        )
-      );
-      dispatch.otherSettings.setOtherSettings(
-        fromJS(
-          payload.get('otherSettings') || {
-            company: {
-              orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
-            },
-            tokens: {
-              imsAccess: 'fake-ims-access-token'
-            }
-          }
-        )
-      );
+    async clearLocalStorage(_, rootState) {
+      localStorage.delete();
+      loadOtherSettings(rootState.brain.get('extensionName'));
     },
 
-    save() {
-      const localStorageData = localStorage.get();
-      const containerData = localStorageData
-        .setIn(['company', 'orgId'], localStorageData.get('otherSettings').company.orgId)
-        .delete('otherSettings');
+    async pushDataDown(payload) {
+      dispatch.extensions.setExtensionConfigurations(payload.get('extensions'));
+      dispatch.rules.setRules(payload.get('rules'));
+      dispatch.dataElements.setDataElements(payload.get('dataElements'));
 
-      return fetch(`${host}/editor-container.js`, {
-        method: 'POST',
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(containerData)
-      });
+      dispatch.property.setPropertySettings(payload.get('property'));
+      dispatch.company.setCompanySettings(payload.get('company'));
     }
   }
 };

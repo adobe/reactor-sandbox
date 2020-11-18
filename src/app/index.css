@@ -16,6 +16,10 @@ a {
   font-weight: bold;
 }
 
+button {
+  cursor: pointer !important;
+}
+
 .gutter {
   background-color: #eee;
 

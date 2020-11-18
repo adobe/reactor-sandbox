@@ -62,8 +62,10 @@ const Menu = ({ location }) => {
           selectedKeys={selectedKeys}
           onSelectionChange={(key) => {
             const path = [...key][0];
-            setSelectedKeys(new Set([path]));
-            history.push(path);
+            if (path) {
+              setSelectedKeys(new Set([path]));
+              history.push(path);
+            }
           }}
         >
           <Item key={NAMED_ROUTES.VIEW_SANDBOX} textValue="View Sandbox">

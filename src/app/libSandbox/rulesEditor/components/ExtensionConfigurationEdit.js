@@ -203,14 +203,14 @@ class ExtensionConfigurationEdit extends Component {
 
 const mapState = (state) => {
   return {
-    extensionConfigurations: state.extensionConfigurations,
+    extensionConfigurations: state.extensions,
     currentIframe: state.currentIframe,
     registry: state.registry
   };
 };
 
 const mapDispatch = ({
-  extensionConfigurations: { saveExtensionConfiguration, addExtensionConfiguration }
+  extensions: { saveExtensionConfiguration, addExtensionConfiguration }
 }) => ({
   saveExtensionConfiguration: (payload) => saveExtensionConfiguration(payload),
   addExtensionConfiguration: (payload) => addExtensionConfiguration(payload)

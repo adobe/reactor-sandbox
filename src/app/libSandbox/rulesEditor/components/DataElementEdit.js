@@ -307,7 +307,7 @@ const mapState = (state) => {
     dataElements: state.dataElements,
     currentIframe: state.currentIframe,
     registry: state.registry,
-    extensionConfigurations: state.extensionConfigurations
+    extensionConfigurations: state.extensions
   };
 };
 

@@ -10,21 +10,27 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Map } from 'immutable';
-import localStorage from './localStorage';
+/* eslint-disable no-param-reassign */
 
-export default {
-  state: Map(), // initial state
-  reducers: {
-    setOtherSettings(state, payload) {
-      return payload;
-    }
-  },
-  effects: {
-    async saveOtherSettings(payload) {
-      localStorage.update('otherSettings', payload);
-      localStorage.save();
-      this.setOtherSettings(payload);
-    }
-  }
+import { saveContainerData } from '../../../api/index';
+
+const arrayToObj = (result, item) => {
+  // eslint-disable-next-line no-debugger
+  const itemName = item.name;
+  delete item.name;
+
+  result[itemName] = item;
+  return result;
+};
+
+export default ({ dataElements, extensions, rules, property, company }) => {
+  const containerData = {
+    extensions: extensions.reduce(arrayToObj, {}),
+    dataElements: dataElements.reduce(arrayToObj, {}),
+    rules,
+    property,
+    company
+  };
+
+  return saveContainerData(containerData);
 };

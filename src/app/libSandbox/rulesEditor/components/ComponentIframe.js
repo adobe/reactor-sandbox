@@ -50,6 +50,7 @@ class ComponentIframe extends Component {
       openDataElementSelectorModal,
       settings,
       otherSettings,
+      companySettings,
       propertySettings,
       extensionConfiguration,
       setCurrentIframe
@@ -61,7 +62,7 @@ class ComponentIframe extends Component {
 
     const extensionInitOptions = {
       settings: settings && settings.toJS(),
-      company: otherSettings.get('company').toJS(),
+      company: companySettings.toJS(),
       propertySettings: propertySettings.toJS(),
       tokens: otherSettings.get('tokens').toJS()
     };
@@ -124,8 +125,9 @@ class ComponentIframe extends Component {
 }
 
 const mapState = (state) => ({
-  propertySettings: state.propertySettings,
-  otherSettings: state.otherSettings
+  propertySettings: state.property,
+  otherSettings: state.otherSettings,
+  companySettings: state.company
 });
 const mapDispatch = ({
   currentIframe: { setCurrentIframe },

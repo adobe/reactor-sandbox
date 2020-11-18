@@ -189,6 +189,7 @@ const configureApp = (app) => {
         fs
           .readFileSync(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME))
           .toString('utf8')
+          .replace("use strict';", '')
           .replace('module.exports = ', 'var container =')
           .replace('};', '}')
           .trim()
@@ -201,6 +202,7 @@ const configureApp = (app) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(containerContent);
     } catch (error) {
+      console.log(error);
       res.status(404);
       res.send('File not found.');
     }
