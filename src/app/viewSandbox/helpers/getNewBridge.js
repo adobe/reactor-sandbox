@@ -48,6 +48,7 @@ export default ({
   parentContainerRef.current.innerHTML = '';
 
   const iframe = document.createElement('iframe');
+  iframe.id = 'extensionViewIframe';
   iframe.src = buildExtensionViewUrl({ selectedDescriptor, extensionDescriptor });
   iframe.setAttribute(
     'sandbox',

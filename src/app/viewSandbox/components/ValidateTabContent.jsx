@@ -46,7 +46,7 @@ const onValidatePress = ({ extensionBridge, setValidationState, descriptor }) =>
                 setValidationState(true);
               } else {
                 setValidationState(
-                  'Settings object does not match schema.' +
+                  'Settings object does not match schema. ' +
                     'Ensure result of getSettings() is correct.'
                 );
               }

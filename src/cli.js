@@ -13,7 +13,6 @@ governing permissions and limitations under the License.
 
 /* eslint-disable global-require */
 
-const path = require('path');
 const chalk = require('chalk');
 const validateSandboxVersion = require('./helpers/validateSandboxVersion');
 const validateExtensionBridge = require('./helpers/validateExtensionBridge');
@@ -31,7 +30,6 @@ switch (task) {
     break;
   default:
     // eslint-disable-next-line no-console
-    console.log('IN RUN TASK ', path.join(__dirname));
     execute = require('./tasks/run');
     break;
 }
