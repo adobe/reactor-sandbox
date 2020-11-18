@@ -67,7 +67,6 @@ const configureApp = (app) => {
   app.use(express.static(path.resolve(`${__dirname}/../../build`)));
 
   const extensionDescriptor = getExtensionDescriptor();
-  console.log('VALIDATING EXTENSION DESCRIPTOR ON STARTUP OF EXPRESS');
   validationError = validateExtensionDescriptor(extensionDescriptor);
 
   // If there is a validation error, we're going to let express still run. This gives the
@@ -105,9 +104,7 @@ const configureApp = (app) => {
   // Serve hosted lib files from inside extensions.
   app.get('/hostedLibFiles/:extensionName/:extensionVersion/:file', (req, res) => {
     const { params } = req;
-    const { extensionName } = params;
-    const { extensionVersion } = params;
-    const { file } = params;
+    const { extensionName, extensionVersion, file } = params;
 
     // In case someone edited `extension.json` we want always to get the latest
     // data everytime a new request arrives.

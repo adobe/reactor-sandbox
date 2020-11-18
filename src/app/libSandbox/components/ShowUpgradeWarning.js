@@ -26,10 +26,11 @@ export default () => (
       <Flex direction="row" gap="size-50">
         <Alert color="notice" minWidth="size-500" />
         <p style={{ marginTop: '0.3rem' }}>
-          <strong>Warning!</strong> We have detected that the file `.sandbox/libSandbox.html`,
-          contains an older template that is no longer supported. In order to use the latest
-          template you need to run <strong>`npx @adobe/reactor-sandbox init`</strong> inside your
-          extension folder. For more informations you can check the{' '}
+          <strong>Warning!</strong> We have detected that the file{' '}
+          <code>.sandbox/libSandbox.html</code>, contains an older template that is no longer
+          supported. In order to use the latest template you need to run{' '}
+          <code>npx @adobe/reactor-sandbox init</code> inside your extension folder. For more
+          informations you can check the{' '}
           <a
             href="https://www.npmjs.com/package/@adobe/reactor-sandbox#configuring-the-sandbox"
             rel="noreferrer"

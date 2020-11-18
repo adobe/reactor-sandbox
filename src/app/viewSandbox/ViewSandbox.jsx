@@ -19,7 +19,7 @@ import ViewsSelector from './components/ViewsSelector';
 import ControlTabs from './components/ControlTabs';
 import getNewBridge from './helpers/getNewBridge';
 import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByValue';
-import setupGlobalLoadExtensionView from './helpers/setupGlobalLoadExtensionView';
+// import setUpGlobalLoadExtensionView from './helpers/setUpGlobalLoadExtensionView';
 
 import './ViewSandbox.css';
 import ErrorMessage from '../components/ErrorMessage';
@@ -68,10 +68,10 @@ export default () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDescriptor]);
 
-  setupGlobalLoadExtensionView({
-    state,
-    extensionViewPaneRef
-  });
+  // setUpGlobalLoadExtensionView({
+  //   state,
+  //   extensionViewPaneRef
+  // });
 
   // render
   return error ? (

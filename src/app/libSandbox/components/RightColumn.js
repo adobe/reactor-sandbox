@@ -26,19 +26,22 @@ export default ({ templateLocation, isLatestTemplate }) => {
       {templateLocation === 'sandbox' ? (
         <>
           <p>
-            In the left pane of the page you can see a default template that is loaded inside an
-            IFRAME element. The template represents a simple page that loads an empty Launch
-            library.
+            In the left pane of the page you can see a default template loaded inside an IFRAME
+            element. The template represents a simple page that loads an empty Launch library.
           </p>
           <p>
             You can customize the template to support your use cases if needed. You can run the
-            command <strong>`npx @adobe/reactor-sandbox init`</strong> inside your extension folder.
-            You can then edit the file created at the following location:
-            `.sandbox/libSandbox.html`. Next time when you refresh the sandbox page iniside the
-            browser, the new content will be shown inside the IFRAME.
+            command <code>npx @adobe/reactor-sandbox init</code> inside your extension folder. You
+            can customize the template to support your unique use cases by first running{' '}
+            <code>npx @adobe/reactor-sandbox init</code> inside your extension directory. This will
+            produce a file at
+            <code>.sandbox/libSandbox.html</code>, which you can then modify as necessary to
+            simulate a Launch customer&lsquo;s website. For example, you can add buttons and other
+            elements to simulate a specific scenario. The next time you refresh the Library Sandbox
+            in the browser, the new content will be shown inside the IFRAME.
           </p>
           <p>
-            For more informations about the `init` command you can check the{' '}
+            For more informations about the <code>init</code> command you can check the{' '}
             <a
               href="https://www.npmjs.com/package/@adobe/reactor-sandbox#configuring-the-sandbox"
               rel="noreferrer"
@@ -48,7 +51,10 @@ export default ({ templateLocation, isLatestTemplate }) => {
             </a>{' '}
             .
           </p>
-          <p>You can configure extensions, data elements or rules by using the Library Editor.</p>
+          <p>
+            You can configure the extensions, data elements, and rules emitted in the sandbox Launch
+            library by using the Library Editor.
+          </p>
 
           <Button
             variant="cta"
@@ -73,12 +79,17 @@ export default ({ templateLocation, isLatestTemplate }) => {
         <>
           <p>
             You can customize the template that is loaded in the left pane of the page by editing
-            the file found at the following location: `.sandbox/libSandbox.html`.
+            the file found at the following location: <code>.sandbox/libSandbox.html</code>.
           </p>
 
           <p>
-            You can edit the information about saved rules, data elements, and extension
-            configuration by using the Library Editor.
+            In the left pane of the page you can see an HTML page loaded inside an IFRAME element.
+            The HTML page loads a Launch library. You can customize the HTML page to simulate a
+            Launch customer&lsquo;s website by modifying the file located at
+            <code>.sandbox/libSandbox.html</code> within your extension directory. For example, you
+            can add buttons and other elements to simulate a specific scenario. The next time you
+            refresh the Library Sandbox in the browser, the new content will be shown inside the
+            IFRAME.
           </p>
 
           <Button

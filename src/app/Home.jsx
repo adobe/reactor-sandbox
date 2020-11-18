@@ -31,8 +31,9 @@ export default () => {
         <h1>Reactor Extension Sandbox v{packageJson.version}</h1>
         <p>
           Launch, by Adobe, is a next-generation tag management solution enabling simplified
-          deployment of marketing technologies.This project provides a sandbox in which you can
-          manually test your views and your library logic.
+          deployment of marketing technologies. This project provides a sandbox in which you can
+          manually test your views that will be displayed within Launch and your logic that will run
+          within a Launch library on a Launch customer&lsquo;s website.
         </p>
 
         <Button
