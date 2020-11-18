@@ -46,7 +46,7 @@ export default () => {
 
         Split(['#extensionViewPane', '#controlPane'], {
           minSize: 0,
-          sizes: [65, 35]
+          sizes: [72, 28]
         });
       })
       .catch((e) => {
@@ -82,14 +82,20 @@ export default () => {
         <ViewsSelector state={state} setSelectedDescriptor={setSelectedDescriptor} />
       </View>
       <Flex direction="row" flex UNSAFE_style={{ overflow: 'hidden' }}>
-        <div id="extensionViewPane" ref={extensionViewPaneRef} style={{ background: 'white' }} />
-        <div id="controlPane">
+        <div
+          id="extensionViewPane"
+          ref={extensionViewPaneRef}
+          style={{ background: 'white', flexGrow: 1 }}
+        >
+          &nbsp;
+        </div>
+        <View id="controlPane" minWidth="size-6000">
           <ControlTabs
             currentExtensionBridge={currentExtensionBridge}
             selectedDescriptor={selectedDescriptor}
             extensionDescriptor={state.extensionDescriptor}
           />
-        </div>
+        </View>
       </Flex>
     </Flex>
   );
