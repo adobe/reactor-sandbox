@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useEffect, useRef } from 'react';
-import Split from 'split.js';
+import Split from 'react-split';
 import { Flex, View } from '@adobe/react-spectrum';
 
 import { getExtensionDescriptorFromApi } from '../api';
@@ -31,6 +31,7 @@ export default () => {
   });
 
   const [selectedDescriptor, setSelectedDescriptor] = useState(null);
+  const [splitSizes] = useState(JSON.parse(localStorage.getItem('sandbox/splitSizes')) || [72, 28]);
 
   const extensionViewPaneRef = useRef();
 
@@ -40,11 +41,6 @@ export default () => {
         setState({
           extensionDescriptor: extensionDescriptorResult,
           extensionViewDescriptorsByValue: getExtensionDescriptorsByValue(extensionDescriptorResult)
-        });
-
-        Split(['#extensionViewPane', '#controlPane'], {
-          minSize: 0,
-          sizes: [72, 28]
         });
       })
       .catch((e) => {
@@ -66,20 +62,28 @@ export default () => {
         <ViewsSelector state={state} setSelectedDescriptor={setSelectedDescriptor} />
       </View>
       <Flex direction="row" flex UNSAFE_style={{ overflow: 'hidden' }}>
-        <div
-          id="extensionViewPane"
-          ref={extensionViewPaneRef}
-          style={{ background: 'white', flexGrow: 1 }}
+        <Split
+          sizes={splitSizes}
+          style={{ display: 'flex', width: '100%' }}
+          onDragEnd={(sizes) => {
+            localStorage.setItem('sandbox/splitSizes', JSON.stringify(sizes));
+          }}
         >
-          &nbsp;
-        </div>
-        <View id="controlPane" minWidth="size-6000">
-          <ControlTabs
-            extensionViewPaneRef={extensionViewPaneRef}
-            selectedDescriptor={selectedDescriptor}
-            extensionDescriptor={state.extensionDescriptor}
-          />
-        </View>
+          <div
+            id="extensionViewPane"
+            ref={extensionViewPaneRef}
+            style={{ background: 'white', flexGrow: 1 }}
+          >
+            &nbsp;
+          </div>
+          <View id="controlPane" minWidth="size-6000">
+            <ControlTabs
+              extensionViewPaneRef={extensionViewPaneRef}
+              selectedDescriptor={selectedDescriptor}
+              extensionDescriptor={state.extensionDescriptor}
+            />
+          </View>
+        </Split>
       </Flex>
     </Flex>
   );

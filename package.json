@@ -52,8 +52,8 @@
     "@adobe/reactor-validator": "^2.0.8",
     "@ramda/indexby": "^0.26.1",
     "@react-spectrum/icon": "^3.3.0",
-    "@react-spectrum/tabs": "^3.0.0-alpha.2",
     "@react-spectrum/table": "^3.0.0-alpha.8",
+    "@react-spectrum/tabs": "^3.0.0-alpha.2",
     "@rematch/core": "^1.4.0",
     "@spectrum-icons/illustrations": "^3.2.0",
     "@spectrum-icons/workflow": "^3.2.0",
@@ -77,8 +77,8 @@
     "react-router-dom": "^5.2.0",
     "react-router-last-location": "^2.0.1",
     "react-scripts": "^4.0.0",
-    "semver-diff": "^3.1.1",
-    "split.js": "^1.6.2"
+    "react-split": "^2.0.9",
+    "semver-diff": "^3.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
