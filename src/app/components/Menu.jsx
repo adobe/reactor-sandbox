@@ -32,8 +32,8 @@ const Menu = ({ location }) => {
   const [selectedKeys, setSelectedKeys] = useState(new Set([]));
 
   useEffect(() => {
-    if (location.pathname.includes(NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR)) {
-      setSelectedKeys(new Set([NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR]));
+    if (location.pathname.includes(NAMED_ROUTES.LIBRARY_EDITOR)) {
+      setSelectedKeys(new Set([NAMED_ROUTES.LIBRARY_EDITOR]));
     } else if (location.pathname.endsWith(NAMED_ROUTES.LIB_SANDBOX)) {
       setSelectedKeys(new Set([NAMED_ROUTES.LIB_SANDBOX]));
     } else if (location.pathname.includes(NAMED_ROUTES.VIEW_SANDBOX)) {
@@ -76,7 +76,7 @@ const Menu = ({ location }) => {
             <LibrarySandboxIcon />
             <Text>Library Sandbox</Text>
           </Item>
-          <Item key={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR} textValue="Library Editor">
+          <Item key={NAMED_ROUTES.LIBRARY_EDITOR} textValue="Library Editor">
             <LibraryEditorIcon />
             <Text>Library Editor</Text>
           </Item>

@@ -190,7 +190,7 @@ class RuleComponentEdit extends Component {
       }
     } = this.props;
 
-    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/rules/${ruleId}`;
+    return `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${ruleId}`;
   }
 
   render() {

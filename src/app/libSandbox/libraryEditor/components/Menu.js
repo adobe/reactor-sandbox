@@ -30,8 +30,8 @@ const Menu = ({ location }) => {
   useEffect(() => {
     ['extension_configurations', 'data_elements', 'rules', 'property_settings', 'settings'].forEach(
       (k) => {
-        if (location.pathname.includes(`${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/${k}`)) {
-          setSelectedKeys(new Set([`${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/${k}`]));
+        if (location.pathname.includes(`${NAMED_ROUTES.LIBRARY_EDITOR}/${k}`)) {
+          setSelectedKeys(new Set([`${NAMED_ROUTES.LIBRARY_EDITOR}/${k}`]));
         }
       }
     );
@@ -57,31 +57,28 @@ const Menu = ({ location }) => {
           }}
         >
           <Item
-            key={`${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/extension_configurations`}
+            key={`${NAMED_ROUTES.LIBRARY_EDITOR}/extension_configurations`}
             textValue="Extension Configuration"
           >
             <ExtenionConfigurationIcon />
             <Text>Extension Configurations</Text>
           </Item>
-          <Item
-            key={`${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/data_elements`}
-            textValue="Data Elements"
-          >
+          <Item key={`${NAMED_ROUTES.LIBRARY_EDITOR}/data_elements`} textValue="Data Elements">
             <DataElementsIcon />
             <Text>Data Elements</Text>
           </Item>
-          <Item key={`${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/rules`} textValue="Rules">
+          <Item key={`${NAMED_ROUTES.LIBRARY_EDITOR}/rules`} textValue="Rules">
             <RuleIcon />
             <Text>Rules</Text>
           </Item>
           <Item
-            key={`${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/property_settings`}
+            key={`${NAMED_ROUTES.LIBRARY_EDITOR}/property_settings`}
             textValue="Property Settings"
           >
             <PropertySettingsIcon />
             <Text>Property Settings</Text>
           </Item>
-          <Item key={`${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/settings`} textValue="Settings">
+          <Item key={`${NAMED_ROUTES.LIBRARY_EDITOR}/settings`} textValue="Settings">
             <SettingsIcon />
             <Text>Settings</Text>
           </Item>

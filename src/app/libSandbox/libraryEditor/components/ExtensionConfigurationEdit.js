@@ -42,7 +42,7 @@ const getExtensionConfiguration = ({
 
 class ExtensionConfigurationEdit extends Component {
   static backLink() {
-    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/extension_configurations/`;
+    return `${NAMED_ROUTES.LIBRARY_EDITOR}/extension_configurations/`;
   }
 
   constructor(props) {

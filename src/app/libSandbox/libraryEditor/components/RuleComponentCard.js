@@ -36,7 +36,7 @@ const cardDetails = (item, type, registry) => {
 
 const RuleComponentCard = ({ item, match, type, index, registry, handleDeleteClick }) => {
   const history = useHistory();
-  const basePath = NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR;
+  const basePath = NAMED_ROUTES.LIBRARY_EDITOR;
 
   return (
     <Flex direction="column" alignItems="center">

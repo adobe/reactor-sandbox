@@ -43,7 +43,7 @@ export default function App() {
                   <LibSandbox flex />
                 </Route>
 
-                <Route path={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR} component={LibraryEditor} />
+                <Route path={NAMED_ROUTES.LIBRARY_EDITOR} component={LibraryEditor} />
 
                 <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
                   <ViewSandbox flex />

@@ -55,7 +55,7 @@ class OtherSettings extends Component {
 
     saveCompanySettings(companySettings);
     saveOtherSettings(otherSettings);
-    history.push(NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR);
+    history.push(NAMED_ROUTES.LIBRARY_EDITOR);
 
     return true;
   };

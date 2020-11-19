@@ -67,7 +67,7 @@ const getCurrentRule = (props) => {
 
 class RuleEdit extends Component {
   static backLink() {
-    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/rules/`;
+    return `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/`;
   }
 
   constructor(props) {

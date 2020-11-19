@@ -59,7 +59,7 @@ export default ({ templateLocation, isLatestTemplate }) => {
           <Button
             variant="cta"
             onPress={() => {
-              history.push(NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR);
+              history.push(NAMED_ROUTES.LIBRARY_EDITOR);
             }}
           >
             <Draw />
@@ -95,7 +95,7 @@ export default ({ templateLocation, isLatestTemplate }) => {
           <Button
             variant="cta"
             onPress={() => {
-              history.push(NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR);
+              history.push(NAMED_ROUTES.LIBRARY_EDITOR);
             }}
           >
             <Draw />

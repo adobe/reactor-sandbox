@@ -59,7 +59,7 @@ const getDataElement = ({
 
 class DataElementEdit extends Component {
   static backLink() {
-    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/data_elements/`;
+    return `${NAMED_ROUTES.LIBRARY_EDITOR}/data_elements/`;
   }
 
   constructor(props) {

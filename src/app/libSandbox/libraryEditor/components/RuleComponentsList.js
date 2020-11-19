@@ -20,9 +20,7 @@ import RuleComponentCard from './RuleComponentCard';
 import NAMED_ROUTES from '../../../constants';
 
 const handleOnClick = (type, match, history) => {
-  history.push(
-    `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/rules/${match.params.rule_id}/${type}/new`
-  );
+  history.push(`${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${match.params.rule_id}/${type}/new`);
 };
 
 const RuleComponentsList = ({
