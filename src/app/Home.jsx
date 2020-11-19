@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Text } from '@adobe/react-spectrum';
+import { Button, Text, Flex, View } from '@adobe/react-spectrum';
 import LibrarySandboxIcon from '@spectrum-icons/workflow/Code';
 import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
 
@@ -26,8 +26,8 @@ export default () => {
   const history = useHistory();
 
   return (
-    <div>
-      <div className="intro">
+    <Flex direction="column" alignItems="center">
+      <View width="30%">
         <h1>Reactor Extension Sandbox v{packageJson.version}</h1>
         <p>
           Launch, by Adobe, is a next-generation tag management solution enabling simplified
@@ -58,7 +58,7 @@ export default () => {
           <LibrarySandboxIcon size="L" />
           <Text>Go to Library Sandbox</Text>
         </Button>
-      </div>
-    </div>
+      </View>
+    </Flex>
   );
 };

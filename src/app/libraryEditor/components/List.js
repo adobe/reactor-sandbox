@@ -38,15 +38,15 @@ const List = ({ items, nameProperty, deleteFn, heading = 'Unknows' }) => {
       <Table aria-label="table" overflowMode="wrap" marginTop="size-200">
         <TableHeader>
           <Column key="name">Name</Column>
-          <Column key="actions" width="24%">
+          <Column key="actions" width="30%">
             Actions
           </Column>
         </TableHeader>
         <TableBody>
           {items.map((item, i) => (
             <Row key={item}>
-              <Cell className="list-item-name">{item.get(nameProperty)}</Cell>
-              <Cell className="list-item-actions">
+              <Cell>{item.get(nameProperty)}</Cell>
+              <Cell>
                 <ActionGroup
                   onAction={(key) =>
                     key === 'delete'
