@@ -17,7 +17,7 @@ import { Map, List } from 'immutable';
 import { Flex, View, Heading, Picker, Item, ButtonGroup, Button } from '@adobe/react-spectrum';
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
 const isNewExtensionConfiguration = ({
   extensionConfigurations,
@@ -42,7 +42,7 @@ const getExtensionConfiguration = ({
 
 class ExtensionConfigurationEdit extends Component {
   static backLink() {
-    return `${basePath}/extension_configurations/`;
+    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/extension_configurations/`;
   }
 
   constructor(props) {

@@ -17,10 +17,12 @@ import { withRouter } from 'react-router-dom';
 import { Flex, View, ActionButton, Text } from '@adobe/react-spectrum';
 import Add from '@spectrum-icons/workflow/Add';
 import RuleComponentCard from './RuleComponentCard';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
 const handleOnClick = (type, match, history) => {
-  history.push(`${basePath}/rules/${match.params.rule_id}/${type}/new`);
+  history.push(
+    `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/rules/${match.params.rule_id}/${type}/new`
+  );
 };
 
 const RuleComponentsList = ({

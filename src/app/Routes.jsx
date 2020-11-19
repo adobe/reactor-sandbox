@@ -23,7 +23,7 @@ import ViewSandbox from './viewSandbox';
 import LibSandbox from './libSandbox';
 import Menu from './components/Menu';
 import ErrorBoundary from './components/ErrorBoundary';
-import LibSandboxRulesEditor from './libSandbox/rulesEditor';
+import LibraryEditor from './libSandbox/libraryEditor';
 import store from './store';
 
 export default function App() {
@@ -43,10 +43,7 @@ export default function App() {
                   <LibSandbox flex />
                 </Route>
 
-                <Route
-                  path={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}
-                  component={LibSandboxRulesEditor}
-                />
+                <Route path={NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR} component={LibraryEditor} />
 
                 <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
                   <ViewSandbox flex />

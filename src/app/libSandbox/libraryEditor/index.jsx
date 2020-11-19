@@ -10,6 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import LibSandboxRulesEditor from './LibSandboxRulesEditor';
+import LibraryEditor from './LibraryEditor';
 
-export default LibSandboxRulesEditor;
+export default LibraryEditor;

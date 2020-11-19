@@ -18,7 +18,7 @@ import { withRouter, useHistory } from 'react-router-dom';
 import { Heading, ActionGroup, Item, Flex, TooltipTrigger, Tooltip } from '@adobe/react-spectrum';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
 const cardDetails = (item, type, registry) => {
   const component = registry.getIn(['components', type, item.get('modulePath')]);
@@ -36,6 +36,7 @@ const cardDetails = (item, type, registry) => {
 
 const RuleComponentCard = ({ item, match, type, index, registry, handleDeleteClick }) => {
   const history = useHistory();
+  const basePath = NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR;
 
   return (
     <Flex direction="column" alignItems="center">

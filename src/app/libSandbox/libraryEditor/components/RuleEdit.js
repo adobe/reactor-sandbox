@@ -17,7 +17,7 @@ import { List, Map } from 'immutable';
 import { View, Heading, Divider, TextField, Button, ButtonGroup } from '@adobe/react-spectrum';
 import { withLastLocation } from 'react-router-last-location';
 import RuleComponentsList from './RuleComponentsList';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
 const isNewRule = ({
   match: {
@@ -67,7 +67,7 @@ const getCurrentRule = (props) => {
 
 class RuleEdit extends Component {
   static backLink() {
-    return `${basePath}/rules/`;
+    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/rules/`;
   }
 
   constructor(props) {

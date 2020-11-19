@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable react/jsx-no-bind */
-
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -24,32 +22,38 @@ import {
   Picker,
   Section,
   Item,
-  Checkbox,
   Button,
   ButtonGroup
 } from '@adobe/react-spectrum';
-
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
-const isNewComponent = ({
-  match: {
-    params: { data_element_id: dataElementId }
-  },
-  dataElements
-}) => {
-  return dataElementId === 'new' || dataElementId >= (dataElements || List()).size;
+const isNewComponent = (componentId, type, currentRule) =>
+  componentId === 'new' || componentId >= (currentRule.get(type) || List()).size;
+
+const getCurrentRule = (currentRule, rules, ruleId) => {
+  let rule;
+
+  if (currentRule && currentRule.get('id') === ruleId) {
+    rule = currentRule;
+  } else {
+    rule = (rules || List()).get(ruleId) || Map();
+  }
+  rule = rule.set('id', ruleId);
+  return rule;
 };
 
-const getDataElement = ({
+const getComponent = ({
   match: {
-    params: { data_element_id: dataElementId }
+    params: { type, component_id: componentId, rule_id: ruleId }
   },
-  dataElements
+  rules,
+  currentRule
 }) => {
+  const rule = getCurrentRule(currentRule, rules, ruleId);
   return (
-    (dataElements || List()).get(dataElementId) ||
+    rule.getIn([type, componentId]) ||
     Map({
       modulePath: '',
       settings: null
@@ -57,58 +61,60 @@ const getDataElement = ({
   );
 };
 
-class DataElementEdit extends Component {
-  static backLink() {
-    return `${basePath}/data_elements/`;
-  }
-
+class RuleComponentEdit extends Component {
   constructor(props) {
     super(props);
 
+    const currentRule = getCurrentRule(props.currentRule, props.rules, props.match.params.rule_id);
+
     this.state = {
+      errors: {},
       waitingForExtensionResponse: false,
-      dataElement: getDataElement(props),
-      errors: {}
+      component: getComponent(props),
+      currentRule
     };
+
+    props.setCurrentRule(currentRule);
   }
 
-  handleComponentTypeChange(modulePath) {
-    const { dataElement } = this.state;
+  handleComponentTypeChange = (modulePath) => {
+    const { component } = this.state;
 
     this.setState({
-      dataElement: dataElement.merge({
+      component: component.merge({
         settings: null,
         modulePath
       })
     });
-  }
+  };
 
-  handleInputChange(fieldName, newValue) {
-    const { dataElement } = this.state;
+  handleOrderChange = (value) => {
+    const { component } = this.state;
 
-    const newDataElement = dataElement.set(fieldName, newValue);
+    const newComponent = component.set('order', value);
+    this.setState({ component: newComponent });
+  };
 
-    this.setState({
-      dataElement: newDataElement
-    });
-  }
-
-  handleSave() {
+  handleSave = () => {
     if (!this.isValid()) {
       return false;
     }
 
+    const { component } = this.state;
+
     const {
-      addDataElement,
-      saveDataElement,
+      addComponent,
+      saveComponent,
+      match: {
+        params: { component_id: componentId, type }
+      },
       currentIframe,
-      history,
-      match: { params }
+      history
     } = this.props;
 
-    const { dataElement } = this.state;
+    const { currentRule } = this.state;
 
-    const method = isNewComponent(this.props) ? addDataElement : saveDataElement;
+    const method = isNewComponent(componentId, type, currentRule) ? addComponent : saveComponent;
 
     this.setState({
       waitingForExtensionResponse: true
@@ -119,11 +125,12 @@ class DataElementEdit extends Component {
       .then(([isValid, settings]) => {
         if (isValid) {
           method({
-            id: params.data_element_id,
-            dataElement: dataElement.merge({ settings })
+            id: componentId,
+            type,
+            component: component.merge({ settings })
           });
 
-          history.push(this.constructor.backLink());
+          history.push(this.backLink());
         } else {
           this.setState({
             waitingForExtensionResponse: false
@@ -132,14 +139,19 @@ class DataElementEdit extends Component {
       });
 
     return true;
-  }
+  };
 
-  dataElementsList() {
+  componentList() {
+    const {
+      match: {
+        params: { type }
+      },
+      registry
+    } = this.props;
     const componentList = {};
     const groupList = [];
-    const { registry } = this.props;
 
-    (registry.getIn(['components', 'dataElements']) || List()).valueSeq().forEach((v) => {
+    (registry.getIn(['components', type]) || List()).valueSeq().forEach((v) => {
       if (!componentList[v.get('extensionDisplayName')]) {
         componentList[v.get('extensionDisplayName')] = [];
       }
@@ -161,14 +173,9 @@ class DataElementEdit extends Component {
 
   isValid() {
     const errors = {};
-    const { dataElement } = this.state;
-    const { currentIframe } = this.props;
+    const { component } = this.state;
 
-    if (!dataElement.get('name')) {
-      errors.name = true;
-    }
-
-    if (!dataElement.get('modulePath') || !currentIframe.promise) {
+    if (!component.get('modulePath')) {
       errors.modulePath = true;
     }
 
@@ -176,18 +183,34 @@ class DataElementEdit extends Component {
     return Object.keys(errors).length === 0;
   }
 
-  render() {
-    const { registry, extensionConfigurations, history } = this.props;
+  backLink() {
+    const {
+      match: {
+        params: { rule_id: ruleId }
+      }
+    } = this.props;
 
-    const { waitingForExtensionResponse, errors, dataElement } = this.state;
+    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/rules/${ruleId}`;
+  }
+
+  render() {
+    const { waitingForExtensionResponse, component, errors } = this.state;
+    const {
+      match: {
+        params: { type }
+      },
+      history,
+      registry,
+      extensionConfigurations
+    } = this.props;
 
     const componentIframeDetails = registry.getIn([
       'components',
-      'dataElements',
-      dataElement.get('modulePath')
+      type,
+      component.get('modulePath')
     ]);
 
-    const extensionName = dataElement.get('modulePath').split('/')[0];
+    const extensionName = component.get('modulePath').split('/')[0];
 
     return (
       <>
@@ -202,16 +225,7 @@ class DataElementEdit extends Component {
             borderEndColor="gray-400"
             marginStart="size-150"
           >
-            <Heading level={4}>Data Element Details</Heading>
-            <TextField
-              label="Name"
-              isRequired
-              width="size-3400"
-              necessityIndicator="label"
-              validationState={errors.name ? 'invalid' : ''}
-              value={dataElement.get('name') || ''}
-              onChange={this.handleInputChange.bind(this, 'name')}
-            />
+            <Heading level={4}>Component Details</Heading>
 
             <Picker
               marginTop="size-150"
@@ -219,10 +233,10 @@ class DataElementEdit extends Component {
               necessityIndicator="label"
               validationState={errors.modulePath ? 'invalid' : ''}
               label="Type"
-              selectedKey={dataElement.get('modulePath')}
-              onSelectionChange={this.handleComponentTypeChange.bind(this)}
+              selectedKey={component.get('modulePath')}
+              onSelectionChange={this.handleComponentTypeChange}
               width="size-3400"
-              items={this.dataElementsList()}
+              items={this.componentList()}
             >
               {(item) => (
                 <Section key={item.name} items={item.children} title={item.name}>
@@ -233,54 +247,21 @@ class DataElementEdit extends Component {
 
             <TextField
               marginTop="size-150"
-              label="Default Value"
+              label="Order"
               width="size-3400"
-              value={dataElement.get('defaultValue') || ''}
-              onChange={this.handleInputChange.bind(this, 'defaultValue')}
+              value={component.get('order') || '50'}
+              onChange={this.handleOrderChange}
             />
 
-            <Checkbox
-              marginTop="size-150"
-              isSelected={dataElement.get('forceLowerCase') || false}
-              onChange={this.handleInputChange.bind(this, 'forceLowerCase')}
-            >
-              Force lower case
-            </Checkbox>
-
-            <br />
-
-            <Checkbox
-              isSelected={dataElement.get('cleanText') || false}
-              onChange={this.handleInputChange.bind(this, 'cleanText')}
-            >
-              Clean Text
-            </Checkbox>
-
-            <Picker
-              marginTop="size-150"
-              label="Storage duration"
-              selectedKey={dataElement.get('storageDuration') || ''}
-              onSelectionChange={this.handleInputChange.bind(this, 'storageDuration')}
-              width="size-3400"
-              items={[
-                { id: '', name: 'None' },
-                { id: 'pageview', name: 'Pageview' },
-                { id: 'session', name: 'Session' },
-                { id: 'visitor', name: 'Visitor' }
-              ]}
-            >
-              {(item) => <Item>{item.name}</Item>}
-            </Picker>
-
             <ButtonGroup marginTop="size-150" marginBottom="size-150">
-              <Button variant="cta" onPress={this.handleSave.bind(this)}>
+              <Button variant="cta" onPress={this.handleSave}>
                 Save
               </Button>
 
               <Button
                 variant="secondary"
                 onPress={() => {
-                  history.push(this.constructor.backLink());
+                  history.push(this.backLink());
                 }}
               >
                 Cancel
@@ -293,7 +274,7 @@ class DataElementEdit extends Component {
             extensionConfiguration={extensionConfigurations
               .filter((i) => i.get('name') === extensionName)
               .first()}
-            settings={dataElement.get('settings')}
+            settings={component.get('settings')}
             server={registry.getIn(['environment', 'server'])}
           />
         </Flex>
@@ -304,16 +285,22 @@ class DataElementEdit extends Component {
 
 const mapState = (state) => {
   return {
-    dataElements: state.dataElements,
+    rules: state.rules,
+    currentRule: state.currentRule,
     currentIframe: state.currentIframe,
     registry: state.registry,
     extensionConfigurations: state.extensions
   };
 };
 
-const mapDispatch = ({ dataElements: { saveDataElement, addDataElement } }) => ({
-  saveDataElement: (payload) => saveDataElement(payload),
-  addDataElement: (payload) => addDataElement(payload)
+const mapDispatch = ({
+  rules: { saveRule },
+  currentRule: { setCurrentRule, saveComponent, addComponent }
+}) => ({
+  saveRule: (payload) => saveRule(payload),
+  setCurrentRule: (payload) => setCurrentRule(payload),
+  saveComponent: (payload) => saveComponent(payload),
+  addComponent: (payload) => addComponent(payload)
 });
 
-export default withRouter(connect(mapState, mapDispatch)(DataElementEdit));
+export default withRouter(connect(mapState, mapDispatch)(RuleComponentEdit));

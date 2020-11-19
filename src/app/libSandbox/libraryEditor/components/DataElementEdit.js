@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable react/jsx-no-bind */
+
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -22,38 +24,32 @@ import {
   Picker,
   Section,
   Item,
+  Checkbox,
   Button,
   ButtonGroup
 } from '@adobe/react-spectrum';
+
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
-const isNewComponent = (componentId, type, currentRule) =>
-  componentId === 'new' || componentId >= (currentRule.get(type) || List()).size;
-
-const getCurrentRule = (currentRule, rules, ruleId) => {
-  let rule;
-
-  if (currentRule && currentRule.get('id') === ruleId) {
-    rule = currentRule;
-  } else {
-    rule = (rules || List()).get(ruleId) || Map();
-  }
-  rule = rule.set('id', ruleId);
-  return rule;
+const isNewComponent = ({
+  match: {
+    params: { data_element_id: dataElementId }
+  },
+  dataElements
+}) => {
+  return dataElementId === 'new' || dataElementId >= (dataElements || List()).size;
 };
 
-const getComponent = ({
+const getDataElement = ({
   match: {
-    params: { type, component_id: componentId, rule_id: ruleId }
+    params: { data_element_id: dataElementId }
   },
-  rules,
-  currentRule
+  dataElements
 }) => {
-  const rule = getCurrentRule(currentRule, rules, ruleId);
   return (
-    rule.getIn([type, componentId]) ||
+    (dataElements || List()).get(dataElementId) ||
     Map({
       modulePath: '',
       settings: null
@@ -61,60 +57,58 @@ const getComponent = ({
   );
 };
 
-class RuleComponentEdit extends Component {
+class DataElementEdit extends Component {
+  static backLink() {
+    return `${NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR}/data_elements/`;
+  }
+
   constructor(props) {
     super(props);
 
-    const currentRule = getCurrentRule(props.currentRule, props.rules, props.match.params.rule_id);
-
     this.state = {
-      errors: {},
       waitingForExtensionResponse: false,
-      component: getComponent(props),
-      currentRule
+      dataElement: getDataElement(props),
+      errors: {}
     };
-
-    props.setCurrentRule(currentRule);
   }
 
-  handleComponentTypeChange = (modulePath) => {
-    const { component } = this.state;
+  handleComponentTypeChange(modulePath) {
+    const { dataElement } = this.state;
 
     this.setState({
-      component: component.merge({
+      dataElement: dataElement.merge({
         settings: null,
         modulePath
       })
     });
-  };
+  }
 
-  handleOrderChange = (value) => {
-    const { component } = this.state;
+  handleInputChange(fieldName, newValue) {
+    const { dataElement } = this.state;
 
-    const newComponent = component.set('order', value);
-    this.setState({ component: newComponent });
-  };
+    const newDataElement = dataElement.set(fieldName, newValue);
 
-  handleSave = () => {
+    this.setState({
+      dataElement: newDataElement
+    });
+  }
+
+  handleSave() {
     if (!this.isValid()) {
       return false;
     }
 
-    const { component } = this.state;
-
     const {
-      addComponent,
-      saveComponent,
-      match: {
-        params: { component_id: componentId, type }
-      },
+      addDataElement,
+      saveDataElement,
       currentIframe,
-      history
+      history,
+      match: { params }
     } = this.props;
 
-    const { currentRule } = this.state;
+    const { dataElement } = this.state;
 
-    const method = isNewComponent(componentId, type, currentRule) ? addComponent : saveComponent;
+    const method = isNewComponent(this.props) ? addDataElement : saveDataElement;
 
     this.setState({
       waitingForExtensionResponse: true
@@ -125,12 +119,11 @@ class RuleComponentEdit extends Component {
       .then(([isValid, settings]) => {
         if (isValid) {
           method({
-            id: componentId,
-            type,
-            component: component.merge({ settings })
+            id: params.data_element_id,
+            dataElement: dataElement.merge({ settings })
           });
 
-          history.push(this.backLink());
+          history.push(this.constructor.backLink());
         } else {
           this.setState({
             waitingForExtensionResponse: false
@@ -139,19 +132,14 @@ class RuleComponentEdit extends Component {
       });
 
     return true;
-  };
+  }
 
-  componentList() {
-    const {
-      match: {
-        params: { type }
-      },
-      registry
-    } = this.props;
+  dataElementsList() {
     const componentList = {};
     const groupList = [];
+    const { registry } = this.props;
 
-    (registry.getIn(['components', type]) || List()).valueSeq().forEach((v) => {
+    (registry.getIn(['components', 'dataElements']) || List()).valueSeq().forEach((v) => {
       if (!componentList[v.get('extensionDisplayName')]) {
         componentList[v.get('extensionDisplayName')] = [];
       }
@@ -173,9 +161,14 @@ class RuleComponentEdit extends Component {
 
   isValid() {
     const errors = {};
-    const { component } = this.state;
+    const { dataElement } = this.state;
+    const { currentIframe } = this.props;
 
-    if (!component.get('modulePath')) {
+    if (!dataElement.get('name')) {
+      errors.name = true;
+    }
+
+    if (!dataElement.get('modulePath') || !currentIframe.promise) {
       errors.modulePath = true;
     }
 
@@ -183,34 +176,18 @@ class RuleComponentEdit extends Component {
     return Object.keys(errors).length === 0;
   }
 
-  backLink() {
-    const {
-      match: {
-        params: { rule_id: ruleId }
-      }
-    } = this.props;
-
-    return `${basePath}/rules/${ruleId}`;
-  }
-
   render() {
-    const { waitingForExtensionResponse, component, errors } = this.state;
-    const {
-      match: {
-        params: { type }
-      },
-      history,
-      registry,
-      extensionConfigurations
-    } = this.props;
+    const { registry, extensionConfigurations, history } = this.props;
+
+    const { waitingForExtensionResponse, errors, dataElement } = this.state;
 
     const componentIframeDetails = registry.getIn([
       'components',
-      type,
-      component.get('modulePath')
+      'dataElements',
+      dataElement.get('modulePath')
     ]);
 
-    const extensionName = component.get('modulePath').split('/')[0];
+    const extensionName = dataElement.get('modulePath').split('/')[0];
 
     return (
       <>
@@ -225,7 +202,16 @@ class RuleComponentEdit extends Component {
             borderEndColor="gray-400"
             marginStart="size-150"
           >
-            <Heading level={4}>Component Details</Heading>
+            <Heading level={4}>Data Element Details</Heading>
+            <TextField
+              label="Name"
+              isRequired
+              width="size-3400"
+              necessityIndicator="label"
+              validationState={errors.name ? 'invalid' : ''}
+              value={dataElement.get('name') || ''}
+              onChange={this.handleInputChange.bind(this, 'name')}
+            />
 
             <Picker
               marginTop="size-150"
@@ -233,10 +219,10 @@ class RuleComponentEdit extends Component {
               necessityIndicator="label"
               validationState={errors.modulePath ? 'invalid' : ''}
               label="Type"
-              selectedKey={component.get('modulePath')}
-              onSelectionChange={this.handleComponentTypeChange}
+              selectedKey={dataElement.get('modulePath')}
+              onSelectionChange={this.handleComponentTypeChange.bind(this)}
               width="size-3400"
-              items={this.componentList()}
+              items={this.dataElementsList()}
             >
               {(item) => (
                 <Section key={item.name} items={item.children} title={item.name}>
@@ -247,21 +233,54 @@ class RuleComponentEdit extends Component {
 
             <TextField
               marginTop="size-150"
-              label="Order"
+              label="Default Value"
               width="size-3400"
-              value={component.get('order') || '50'}
-              onChange={this.handleOrderChange}
+              value={dataElement.get('defaultValue') || ''}
+              onChange={this.handleInputChange.bind(this, 'defaultValue')}
             />
 
+            <Checkbox
+              marginTop="size-150"
+              isSelected={dataElement.get('forceLowerCase') || false}
+              onChange={this.handleInputChange.bind(this, 'forceLowerCase')}
+            >
+              Force lower case
+            </Checkbox>
+
+            <br />
+
+            <Checkbox
+              isSelected={dataElement.get('cleanText') || false}
+              onChange={this.handleInputChange.bind(this, 'cleanText')}
+            >
+              Clean Text
+            </Checkbox>
+
+            <Picker
+              marginTop="size-150"
+              label="Storage duration"
+              selectedKey={dataElement.get('storageDuration') || ''}
+              onSelectionChange={this.handleInputChange.bind(this, 'storageDuration')}
+              width="size-3400"
+              items={[
+                { id: '', name: 'None' },
+                { id: 'pageview', name: 'Pageview' },
+                { id: 'session', name: 'Session' },
+                { id: 'visitor', name: 'Visitor' }
+              ]}
+            >
+              {(item) => <Item>{item.name}</Item>}
+            </Picker>
+
             <ButtonGroup marginTop="size-150" marginBottom="size-150">
-              <Button variant="cta" onPress={this.handleSave}>
+              <Button variant="cta" onPress={this.handleSave.bind(this)}>
                 Save
               </Button>
 
               <Button
                 variant="secondary"
                 onPress={() => {
-                  history.push(this.backLink());
+                  history.push(this.constructor.backLink());
                 }}
               >
                 Cancel
@@ -274,7 +293,7 @@ class RuleComponentEdit extends Component {
             extensionConfiguration={extensionConfigurations
               .filter((i) => i.get('name') === extensionName)
               .first()}
-            settings={component.get('settings')}
+            settings={dataElement.get('settings')}
             server={registry.getIn(['environment', 'server'])}
           />
         </Flex>
@@ -285,22 +304,16 @@ class RuleComponentEdit extends Component {
 
 const mapState = (state) => {
   return {
-    rules: state.rules,
-    currentRule: state.currentRule,
+    dataElements: state.dataElements,
     currentIframe: state.currentIframe,
     registry: state.registry,
     extensionConfigurations: state.extensions
   };
 };
 
-const mapDispatch = ({
-  rules: { saveRule },
-  currentRule: { setCurrentRule, saveComponent, addComponent }
-}) => ({
-  saveRule: (payload) => saveRule(payload),
-  setCurrentRule: (payload) => setCurrentRule(payload),
-  saveComponent: (payload) => saveComponent(payload),
-  addComponent: (payload) => addComponent(payload)
+const mapDispatch = ({ dataElements: { saveDataElement, addDataElement } }) => ({
+  saveDataElement: (payload) => saveDataElement(payload),
+  addDataElement: (payload) => addDataElement(payload)
 });
 
-export default withRouter(connect(mapState, mapDispatch)(RuleComponentEdit));
+export default withRouter(connect(mapState, mapDispatch)(DataElementEdit));

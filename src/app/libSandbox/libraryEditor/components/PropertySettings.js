@@ -17,7 +17,7 @@ import { fromJS, Map } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
 class PropertySettings extends Component {
   constructor(props) {
@@ -58,7 +58,7 @@ class PropertySettings extends Component {
       })
     );
 
-    history.push(basePath);
+    history.push(NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR);
 
     return true;
   }

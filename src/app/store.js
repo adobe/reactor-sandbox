@@ -11,18 +11,18 @@ governing permissions and limitations under the License.
 */
 
 import { init } from '@rematch/core';
-import registry from './libSandbox/rulesEditor/models/registry';
-import currentIframe from './libSandbox/rulesEditor/models/currentIframe';
-import currentRule from './libSandbox/rulesEditor/models/currentRule';
-import rules from './libSandbox/rulesEditor/models/rules';
-import dataElements from './libSandbox/rulesEditor/models/dataElements';
-import property from './libSandbox/rulesEditor/models/property';
-import company from './libSandbox/rulesEditor/models/company';
-import otherSettings from './libSandbox/rulesEditor/models/otherSettings';
-import extensions from './libSandbox/rulesEditor/models/extensions';
+import registry from './libSandbox/libraryEditor/models/registry';
+import currentIframe from './libSandbox/libraryEditor/models/currentIframe';
+import currentRule from './libSandbox/libraryEditor/models/currentRule';
+import rules from './libSandbox/libraryEditor/models/rules';
+import dataElements from './libSandbox/libraryEditor/models/dataElements';
+import property from './libSandbox/libraryEditor/models/property';
+import company from './libSandbox/libraryEditor/models/company';
+import otherSettings from './libSandbox/libraryEditor/models/otherSettings';
+import extensions from './libSandbox/libraryEditor/models/extensions';
 // eslint-disable-next-line import/no-cycle
-import brain from './libSandbox/rulesEditor/models/brain';
-import modals from './libSandbox/rulesEditor/models/modals';
+import brain from './libSandbox/libraryEditor/models/brain';
+import modals from './libSandbox/libraryEditor/models/modals';
 
 const store = init({
   models: {

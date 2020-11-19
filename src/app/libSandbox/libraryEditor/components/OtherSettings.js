@@ -16,7 +16,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
-import basePath from '../helpers/basePath';
+import NAMED_ROUTES from '../../../constants';
 
 class OtherSettings extends Component {
   constructor(props) {
@@ -55,7 +55,7 @@ class OtherSettings extends Component {
 
     saveCompanySettings(companySettings);
     saveOtherSettings(otherSettings);
-    history.push(basePath);
+    history.push(NAMED_ROUTES.LIB_SANDBOX_RULES_EDITOR);
 
     return true;
   };
