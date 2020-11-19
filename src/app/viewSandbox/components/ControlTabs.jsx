@@ -22,6 +22,7 @@ import extensionViewInit from './helpers/extensionViewInit';
 import reportFatalError from './helpers/reportFatalError';
 import getDefaultInitInfo from './helpers/getDefaultInitInfo';
 import getNewBridge from '../helpers/getNewBridge';
+import { LOG_PREFIX } from './helpers/constants';
 
 const mergeSettingsOnTopOfIniContent = ({ initContent, settings }) => {
   try {
@@ -54,25 +55,20 @@ export default ({ selectedDescriptor, extensionDescriptor, extensionViewPaneRef 
     }
 
     const newInitContent = getInitContent({ extensionDescriptor, selectedDescriptor });
-
     setInitContent(newInitContent);
+    const parsedContent = JSON.parse(newInitContent);
 
     const newBrige = getNewBridge({
       parentContainerRef: extensionViewPaneRef,
       extensionDescriptor,
       selectedDescriptor,
-      initInfo: newInitContent
+      initInfo: parsedContent
     });
 
-    extensionViewInit({
-      extensionDescriptor,
-      selectedDescriptor,
-      extensionBridge: newBrige,
-      content: newInitContent
-    });
+    // eslint-disable-next-line no-console
+    console.log(`${LOG_PREFIX} init() with`, parsedContent);
 
     setCurrentExtensionBridge(newBrige);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDescriptor, extensionDescriptor]);
 
