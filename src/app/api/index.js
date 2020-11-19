@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 /* eslint-disable import/prefer-default-export */
 
+const activePromises = {};
+
 const fetchJson = (endpoint) =>
   fetch(endpoint)
     .then((response) => {
@@ -28,7 +30,16 @@ const fetchJson = (endpoint) =>
 export const getExtensionDescriptorFromApi = () =>
   fetchJson(`${window.EXPRESS_PUBLIC_URL}/extensionDescriptor`);
 
-export const getStatus = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/status`);
+export const getStatus = () => {
+  activePromises.getStatus =
+    activePromises.getStatus ||
+    fetchJson(`${window.EXPRESS_PUBLIC_URL}/status`).then((data) => {
+      delete activePromises.getStatus;
+      return data;
+    });
+
+  return activePromises.getStatus;
+};
 
 export const getEditorRegistry = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/editor-registry.js`);
 export const getContainerData = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`);
