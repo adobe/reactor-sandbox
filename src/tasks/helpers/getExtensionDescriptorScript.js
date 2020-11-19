@@ -12,6 +12,4 @@ governing permissions and limitations under the License.
 
 const getExtensionDescriptor = require('./getExtensionDescriptor');
 
-module.exports = () => {
-  return 'window.extensionDescriptor = ' +  JSON.stringify(getExtensionDescriptor()) + ';';
-};
+module.exports = () => `window.extensionDescriptor = ${JSON.stringify(getExtensionDescriptor())};`;

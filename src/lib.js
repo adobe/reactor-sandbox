@@ -13,8 +13,10 @@ governing permissions and limitations under the License.
 const init = require('./tasks/init');
 const run = require('./tasks/run');
 const validateSandboxVersion = require('./helpers/validateSandboxVersion');
+const validateExtensionBridge = require('./helpers/validateExtensionBridge');
 
 validateSandboxVersion();
+validateExtensionBridge();
 
 module.exports = {
   init,

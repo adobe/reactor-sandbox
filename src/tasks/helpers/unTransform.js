@@ -11,19 +11,20 @@ governing permissions and limitations under the License.
 */
 
 const beautify = require('js-beautify').js_beautify;
-const files = require('../constants/files');
 const fs = require('fs');
-const readFileContent = fileName => {
+const files = require('../constants/files');
+
+const readFileContent = (fileName) => {
   let code = fs
     .readFileSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files/${fileName}`)
     .toString('utf8');
 
   const customCodeMatch = code.match(
-    /_satellite.__registerScript\(\"\/files\/file[0-9]+\.js\", \"(.*)\"/
+    /_satellite.__registerScript\("\/files\/file[0-9]+\.js", "(.*)"/
   );
 
   if (customCodeMatch) {
-    code = customCodeMatch[1];
+    [, code] = customCodeMatch;
   }
 
   return beautify(code);
@@ -38,7 +39,7 @@ module.exports = (k, v) => {
   }
 
   if (k === 'isExternal') {
-    return;
+    return null;
   }
 
   if (typeof v === 'string') {

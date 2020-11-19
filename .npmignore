@@ -1,5 +1,6 @@
-.idea
-.babelrc
-.editorconfig
-.eslintrc
-.travis.yml
+\.*
+adobe-reactor-sandbox-*.tgz
+src/app
+src/index.js
+public
+jest.config.js

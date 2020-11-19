@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 /*
 Copyright 2019 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -12,10 +11,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable global-require */
+
 const chalk = require('chalk');
 const validateSandboxVersion = require('./helpers/validateSandboxVersion');
+const validateExtensionBridge = require('./helpers/validateExtensionBridge');
 
 validateSandboxVersion();
+validateExtensionBridge();
 
 const task = process.argv.slice(2)[0];
 
@@ -26,11 +29,13 @@ switch (task) {
     execute = require('./tasks/init');
     break;
   default:
+    // eslint-disable-next-line no-console
     execute = require('./tasks/run');
     break;
 }
 
-execute().catch(error => {
+execute().catch((error) => {
+  // eslint-disable-next-line no-console
   console.error(chalk.red(error));
   process.exit(1);
 });
