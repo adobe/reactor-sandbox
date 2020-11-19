@@ -38,10 +38,15 @@ export default ({
   openCodeEditor = defaultOpenCodeEditor,
   openRegexTester = defaultOpenRegexTester,
   openDataElementSelector = defaultOpenDataElementSelector,
-  initInfo = {}
+  initInfo
 }) => {
-  if (!selectedDescriptor || !extensionDescriptor) {
-    return null;
+  if (
+    !selectedDescriptor ||
+    !extensionDescriptor ||
+    !initInfo ||
+    Object.keys(initInfo).length === 0
+  ) {
+    throw new Error('There was an error initializing the view.');
   }
 
   // eslint-disable-next-line no-param-reassign

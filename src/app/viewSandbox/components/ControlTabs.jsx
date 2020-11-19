@@ -14,12 +14,14 @@ import React, { useState, useEffect } from 'react';
 import { Tabs } from '@react-spectrum/tabs';
 import { Item } from '@adobe/react-spectrum';
 import InitTabContent from './InitTabContent';
+
 import GetSettingsTabContent from './GetSettingsTabContent';
 import ValidateTabContent from './ValidateTabContent';
 import getInitContent from './helpers/getInitContent';
 import extensionViewInit from './helpers/extensionViewInit';
 import reportFatalError from './helpers/reportFatalError';
 import getDefaultInitInfo from './helpers/getDefaultInitInfo';
+import getNewBridge from '../helpers/getNewBridge';
 
 const mergeSettingsOnTopOfIniContent = ({ initContent, settings }) => {
   try {
@@ -41,25 +43,38 @@ const mergeSettingsOnTopOfIniContent = ({ initContent, settings }) => {
   return null;
 };
 
-export default ({ selectedDescriptor, extensionDescriptor, currentExtensionBridge }) => {
+export default ({ selectedDescriptor, extensionDescriptor, extensionViewPaneRef }) => {
   const [selectedTab, setSelectedTab] = useState('init');
   const [initContent, setInitContent] = useState();
+  const [currentExtensionBridge, setCurrentExtensionBridge] = useState({});
 
   useEffect(() => {
-    if (!selectedDescriptor || !currentExtensionBridge || !extensionDescriptor) {
+    if (!selectedDescriptor || !extensionDescriptor) {
       return;
     }
 
     const newInitContent = getInitContent({ extensionDescriptor, selectedDescriptor });
+
     setInitContent(newInitContent);
+
+    const newBrige = getNewBridge({
+      parentContainerRef: extensionViewPaneRef,
+      extensionDescriptor,
+      selectedDescriptor,
+      initInfo: newInitContent
+    });
+
     extensionViewInit({
       extensionDescriptor,
       selectedDescriptor,
-      extensionBridge: currentExtensionBridge,
+      extensionBridge: newBrige,
       content: newInitContent
     });
+
+    setCurrentExtensionBridge(newBrige);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDescriptor, extensionDescriptor, currentExtensionBridge]);
+  }, [selectedDescriptor, extensionDescriptor]);
 
   return (
     <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>

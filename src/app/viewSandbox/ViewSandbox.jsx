@@ -17,7 +17,6 @@ import { Flex, View } from '@adobe/react-spectrum';
 import { getExtensionDescriptorFromApi } from '../api';
 import ViewsSelector from './components/ViewsSelector';
 import ControlTabs from './components/ControlTabs';
-import getNewBridge from './helpers/getNewBridge';
 import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByValue';
 import setUpGlobalLoadExtensionView from './helpers/setUpGlobalLoadExtensionView';
 
@@ -32,7 +31,6 @@ export default () => {
   });
 
   const [selectedDescriptor, setSelectedDescriptor] = useState(null);
-  const [currentExtensionBridge, setCurrentExtensionBridge] = useState(null);
 
   const extensionViewPaneRef = useRef();
 
@@ -55,25 +53,11 @@ export default () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const newBrige = getNewBridge({
-      parentContainerRef: extensionViewPaneRef,
-      extensionDescriptor: state.extensionDescriptor,
-      selectedDescriptor
-    });
-
-    if (newBrige) {
-      setCurrentExtensionBridge(newBrige);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDescriptor]);
-
   setUpGlobalLoadExtensionView({
     state,
     extensionViewPaneRef
   });
 
-  // render
   return error ? (
     <ErrorMessage message={error.message} />
   ) : (
@@ -91,7 +75,7 @@ export default () => {
         </div>
         <View id="controlPane" minWidth="size-6000">
           <ControlTabs
-            currentExtensionBridge={currentExtensionBridge}
+            extensionViewPaneRef={extensionViewPaneRef}
             selectedDescriptor={selectedDescriptor}
             extensionDescriptor={state.extensionDescriptor}
           />
