@@ -20,8 +20,6 @@ import NAMED_ROUTES from './constants';
 
 import packageJson from '../../package.json';
 
-import './Home.css';
-
 export default () => {
   const history = useHistory();
 
@@ -44,7 +42,7 @@ export default () => {
             history.push(NAMED_ROUTES.VIEW_SANDBOX);
           }}
         >
-          <ViewSandboxIcon size="L" />
+          <ViewSandboxIcon />
           <Text>Go to View Sandbox</Text>
         </Button>
 
@@ -55,7 +53,7 @@ export default () => {
             history.push(NAMED_ROUTES.LIB_SANDBOX);
           }}
         >
-          <LibrarySandboxIcon size="L" />
+          <LibrarySandboxIcon />
           <Text>Go to Library Sandbox</Text>
         </Button>
       </View>
