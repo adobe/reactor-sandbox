@@ -27,7 +27,7 @@ import {
 } from '@adobe/react-spectrum';
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
-import NAMED_ROUTES from '../../../constants';
+import NAMED_ROUTES from '../../constants';
 
 const isNewComponent = (componentId, type, currentRule) =>
   componentId === 'new' || componentId >= (currentRule.get(type) || List()).size;

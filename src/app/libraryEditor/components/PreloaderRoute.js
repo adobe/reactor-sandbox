@@ -20,7 +20,7 @@ import Menu from './Menu';
 
 import ModalCodeEditor from './ModalCodeEditor';
 import ModalDataElementSelector from './ModalDataElementSelector';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const PreloaderRoute = ({ component: Component, brain, ...rest }) => (
   <Route

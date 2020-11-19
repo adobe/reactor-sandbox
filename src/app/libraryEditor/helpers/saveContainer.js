@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 /* eslint-disable no-param-reassign */
 
-import { saveContainerData } from '../../../api/index';
+import { saveContainerData } from '../../api/index';
 
 const arrayToObj = (result, item) => {
   // eslint-disable-next-line no-debugger

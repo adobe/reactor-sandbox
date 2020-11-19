@@ -17,7 +17,7 @@ import { withRouter } from 'react-router-dom';
 import { Flex, View, ActionButton, Text } from '@adobe/react-spectrum';
 import Add from '@spectrum-icons/workflow/Add';
 import RuleComponentCard from './RuleComponentCard';
-import NAMED_ROUTES from '../../../constants';
+import NAMED_ROUTES from '../../constants';
 
 const handleOnClick = (type, match, history) => {
   history.push(`${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${match.params.rule_id}/${type}/new`);

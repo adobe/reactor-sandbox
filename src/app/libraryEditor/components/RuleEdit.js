@@ -17,7 +17,7 @@ import { List, Map } from 'immutable';
 import { View, Heading, Divider, TextField, Button, ButtonGroup } from '@adobe/react-spectrum';
 import { withLastLocation } from 'react-router-last-location';
 import RuleComponentsList from './RuleComponentsList';
-import NAMED_ROUTES from '../../../constants';
+import NAMED_ROUTES from '../../constants';
 
 const isNewRule = ({
   match: {

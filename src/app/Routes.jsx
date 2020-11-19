@@ -23,7 +23,7 @@ import ViewSandbox from './viewSandbox';
 import LibSandbox from './libSandbox';
 import Menu from './components/Menu';
 import ErrorBoundary from './components/ErrorBoundary';
-import LibraryEditor from './libSandbox/libraryEditor';
+import LibraryEditor from './libraryEditor';
 import store from './store';
 
 export default function App() {

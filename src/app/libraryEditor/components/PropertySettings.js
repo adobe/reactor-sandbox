@@ -17,7 +17,7 @@ import { fromJS, Map } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
-import NAMED_ROUTES from '../../../constants';
+import NAMED_ROUTES from '../../constants';
 
 class PropertySettings extends Component {
   constructor(props) {

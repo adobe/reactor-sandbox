@@ -18,7 +18,7 @@ import { withRouter, useHistory } from 'react-router-dom';
 import { Heading, ActionGroup, Item, Flex, TooltipTrigger, Tooltip } from '@adobe/react-spectrum';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
-import NAMED_ROUTES from '../../../constants';
+import NAMED_ROUTES from '../../constants';
 
 const cardDetails = (item, type, registry) => {
   const component = registry.getIn(['components', type, item.get('modulePath')]);

@@ -11,18 +11,18 @@ governing permissions and limitations under the License.
 */
 
 import { init } from '@rematch/core';
-import registry from './libSandbox/libraryEditor/models/registry';
-import currentIframe from './libSandbox/libraryEditor/models/currentIframe';
-import currentRule from './libSandbox/libraryEditor/models/currentRule';
-import rules from './libSandbox/libraryEditor/models/rules';
-import dataElements from './libSandbox/libraryEditor/models/dataElements';
-import property from './libSandbox/libraryEditor/models/property';
-import company from './libSandbox/libraryEditor/models/company';
-import otherSettings from './libSandbox/libraryEditor/models/otherSettings';
-import extensions from './libSandbox/libraryEditor/models/extensions';
+import registry from './libraryEditor/models/registry';
+import currentIframe from './libraryEditor/models/currentIframe';
+import currentRule from './libraryEditor/models/currentRule';
+import rules from './libraryEditor/models/rules';
+import dataElements from './libraryEditor/models/dataElements';
+import property from './libraryEditor/models/property';
+import company from './libraryEditor/models/company';
+import otherSettings from './libraryEditor/models/otherSettings';
+import extensions from './libraryEditor/models/extensions';
 // eslint-disable-next-line import/no-cycle
-import brain from './libSandbox/libraryEditor/models/brain';
-import modals from './libSandbox/libraryEditor/models/modals';
+import brain from './libraryEditor/models/brain';
+import modals from './libraryEditor/models/modals';
 
 const store = init({
   models: {

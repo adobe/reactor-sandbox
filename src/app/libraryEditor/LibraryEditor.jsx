@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React, { useEffect } from 'react';
 import { Switch, useRouteMatch, Redirect } from 'react-router-dom';
 
-import { dispatch } from '../../store';
+import { dispatch } from '../store';
 import PreloaderRoute from './components/PreloaderRoute';
 
 import Settings from './components/Settings';

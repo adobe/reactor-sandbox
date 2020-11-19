@@ -14,5 +14,5 @@ export default {
   HOME: '/',
   LIB_SANDBOX: '/libSandbox',
   VIEW_SANDBOX: '/viewSandbox',
-  LIBRARY_EDITOR: '/libSandbox/libraryEditor'
+  LIBRARY_EDITOR: '/libraryEditor'
 };

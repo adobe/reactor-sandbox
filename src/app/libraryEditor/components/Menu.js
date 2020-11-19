@@ -19,7 +19,7 @@ import ExtenionConfigurationIcon from '@spectrum-icons/workflow/Box';
 import PropertySettingsIcon from '@spectrum-icons/workflow/Properties';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 
-import NAMED_ROUTES from '../../../constants';
+import NAMED_ROUTES from '../../constants';
 
 import './Menu.css';
 

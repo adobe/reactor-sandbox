@@ -11,12 +11,12 @@ governing permissions and limitations under the License.
 */
 
 import { fromJS, Map } from 'immutable';
-import { getEditorRegistry, getContainerData } from '../../../api/index';
+import { getEditorRegistry, getContainerData } from '../../api/index';
 import localStorage from './localStorage';
 import saveContainer from '../helpers/saveContainer';
 
 // eslint-disable-next-line import/no-cycle
-import { dispatch } from '../../../store';
+import { dispatch } from '../../store';
 
 const loadOtherSettings = (extensionName) => {
   localStorage.loadStateFor(extensionName);
