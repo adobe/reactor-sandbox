@@ -16,7 +16,7 @@ import React, { Component } from 'react';
 import { fromJS, Map } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { View, Heading, Divider, TextField, Button } from '@adobe/react-spectrum';
+import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import basePath from '../helpers/basePath';
 
 class PropertySettings extends Component {
@@ -78,25 +78,29 @@ class PropertySettings extends Component {
   render() {
     const { errors, propertySettings } = this.state;
     return (
-      <View margin="2rem auto" width="size-6000">
+      <View margin="2rem auto" width="50rem">
         <Heading level={2}>Property Settings</Heading>
         <Divider />
-        <TextField
-          label="Domains List"
-          necessityIndicator="label"
-          isRequired
-          width="size-6000"
-          marginTop="size-150"
-          validationState={errors.domains ? 'invalid' : ''}
-          value={propertySettings.get('domains')}
-          onChange={this.handleDomainsChange.bind(this)}
-        />
-        <Heading level={6} margin="size-100">
-          Comma separated values are accepted.
-        </Heading>
-        <Button variant="cta" marginTop="size-100" onPress={this.handleSave.bind(this)}>
-          Save
-        </Button>
+        <Flex direction="column" alignItems="center">
+          <View>
+            <TextField
+              label="Domains List"
+              necessityIndicator="label"
+              isRequired
+              width="size-6000"
+              marginTop="size-150"
+              validationState={errors.domains ? 'invalid' : ''}
+              value={propertySettings.get('domains')}
+              onChange={this.handleDomainsChange.bind(this)}
+            />
+            <Heading level={6} margin="size-100">
+              Comma separated values are accepted.
+            </Heading>
+            <Button variant="cta" marginTop="size-100" onPress={this.handleSave.bind(this)}>
+              Save
+            </Button>
+          </View>
+        </Flex>
       </View>
     );
   }

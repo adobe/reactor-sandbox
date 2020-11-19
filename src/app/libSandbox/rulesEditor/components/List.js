@@ -32,8 +32,8 @@ const List = ({ items, nameProperty, deleteFn, heading = 'Unknows' }) => {
   const history = useHistory();
 
   return (
-    <Flex direction="column" width="50rem" margin="0 auto">
-      <Heading size="3">{heading}</Heading>
+    <Flex direction="column" width="50rem" margin="2rem auto">
+      <Heading level="2">{heading}</Heading>
       <Divider />
       <Table aria-label="table" overflowMode="wrap" marginTop="size-200">
         <TableHeader>

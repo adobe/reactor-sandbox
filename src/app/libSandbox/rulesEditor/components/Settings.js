@@ -13,13 +13,13 @@ governing permissions and limitations under the License.
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Button, Flex } from '@adobe/react-spectrum';
+import { Button, Flex, View } from '@adobe/react-spectrum';
 import OtherSettings from './OtherSettings';
 
 import './Settings.css';
 
 const Main = ({ brain, orgId, imsAccess, clearContainerData, clearLocalStorage }) => (
-  <div style={{ width: '100%' }}>
+  <View margin="2rem auto" width="50rem">
     <OtherSettings key={`${orgId}${imsAccess}`} />
     <div>
       <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
@@ -43,7 +43,7 @@ const Main = ({ brain, orgId, imsAccess, clearContainerData, clearLocalStorage }
         </Flex>
       ) : null}
     </div>
-  </div>
+  </View>
 );
 
 const mapState = (state) => ({

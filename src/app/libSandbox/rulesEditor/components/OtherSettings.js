@@ -81,38 +81,45 @@ class OtherSettings extends Component {
 
     return (
       <Flex direction="column">
-        <View margin="size-300" width="size-6000" alignSelf="center">
+        <View width="100%" alignSelf="center">
           <Heading level={2}>Company Settings</Heading>
           <Divider />
-          <TextField
-            label="Organization ID"
-            necessityIndicator="label"
-            isRequired
-            width="size-6000"
-            marginTop="size-150"
-            validationState={errors.orgId ? 'invalid' : ''}
-            value={companySettings.get('orgId')}
-            onChange={this.handleOrgIdChange}
-          />
+          <Flex direction="column" alignItems="center">
+            <TextField
+              label="Organization ID"
+              necessityIndicator="label"
+              isRequired
+              width="size-6000"
+              marginTop="size-150"
+              validationState={errors.orgId ? 'invalid' : ''}
+              value={companySettings.get('orgId')}
+              onChange={this.handleOrgIdChange}
+            />
+          </Flex>
 
           <Heading level={2} marginTop="size-400">
             IMS Token Settings
           </Heading>
           <Divider />
-          <TextField
-            label="IMS Token"
-            necessityIndicator="label"
-            isRequired
-            width="size-6000"
-            marginTop="size-150"
-            validationState={errors.imsAccess ? 'invalid' : ''}
-            value={otherSettings.getIn(['tokens', 'imsAccess'])}
-            onChange={this.handleImsChange}
-          />
+          <Flex direction="column" alignItems="center">
+            <View>
+              <TextField
+                label="IMS Token"
+                necessityIndicator="label"
+                isRequired
+                width="size-6000"
+                marginTop="size-150"
+                validationState={errors.imsAccess ? 'invalid' : ''}
+                value={otherSettings.getIn(['tokens', 'imsAccess'])}
+                onChange={this.handleImsChange}
+              />
+              <br />
 
-          <Button variant="cta" marginTop="size-400" onPress={this.handleSave}>
-            Save
-          </Button>
+              <Button variant="cta" marginTop="size-400" onPress={this.handleSave}>
+                Save
+              </Button>
+            </View>
+          </Flex>
         </View>
       </Flex>
     );
