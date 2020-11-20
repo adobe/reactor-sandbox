@@ -10,20 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { execSync } = require('child_process');
 const chalk = require('chalk');
 const semverDiff = require('semver-diff');
 const sandboxPkg = require('../../package.json');
-
-const getLatestVersion = (packageName) => {
-  return execSync(`npm view ${packageName} version`).toString('utf8').replace(/\n$/, '');
-};
+const getSandboxLatestVersion = require('./getLatestVersion');
 
 module.exports = () => {
-  const sandboxOutdated = semverDiff(
-    sandboxPkg.version,
-    getLatestVersion('@adobe/reactor-sandbox')
-  );
+  const sandboxOutdated = semverDiff(sandboxPkg.version, getSandboxLatestVersion());
 
   if (sandboxOutdated) {
     // eslint-disable-next-line no-console

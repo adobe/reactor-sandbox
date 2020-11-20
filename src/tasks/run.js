@@ -33,6 +33,7 @@ const unTransform = require('./helpers/unTransform');
 const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
 const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
+const getLatestVersion = require('../helpers/getLatestVersion');
 
 const PORT = 3000;
 const SSL_PORT = 4000;
@@ -156,7 +157,8 @@ const configureApp = (app) => {
       librarySandbox: {
         templateLocation: templateLocation(),
         isLatestTemplate: isLatestTemplate()
-      }
+      },
+      latestVersion: getLatestVersion()
     })
   );
 
