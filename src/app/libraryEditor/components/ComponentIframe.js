@@ -14,6 +14,8 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadIframe } from '@adobe/reactor-bridge';
 
+import './ComponentIframe.css';
+
 const getUrl = ({ component, server }) => {
   if (!component) {
     return '';
