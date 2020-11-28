@@ -105,6 +105,7 @@ export default ({ component, extensionConfiguration, settings, server }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    iframeRef.current.innerHTML = '';
     renderIframe({
       settings,
       otherSettings,
@@ -117,7 +118,7 @@ export default ({ component, extensionConfiguration, settings, server }) => {
       dispatch
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [component]);
 
   return <div ref={iframeRef} className="component-iframe" />;
 };
