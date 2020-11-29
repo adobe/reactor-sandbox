@@ -13,8 +13,8 @@ governing permissions and limitations under the License.
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter, useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { Heading, ActionGroup, Item, Flex, TooltipTrigger, Tooltip } from '@adobe/react-spectrum';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -34,8 +34,9 @@ const cardDetails = (item, type, registry) => {
   );
 };
 
-const RuleComponentCard = ({ item, match, type, index, registry, handleDeleteClick }) => {
+export default ({ item, match, type, index, handleDeleteClick }) => {
   const history = useHistory();
+  const registry = useSelector((state) => state.registry);
   const basePath = NAMED_ROUTES.LIBRARY_EDITOR;
 
   return (
@@ -67,13 +68,3 @@ const RuleComponentCard = ({ item, match, type, index, registry, handleDeleteCli
     </Flex>
   );
 };
-
-const mapState = (state) => {
-  return {
-    registry: state.registry
-  };
-};
-
-const mapDispatch = () => ({});
-
-export default withRouter(connect(mapState, mapDispatch)(RuleComponentCard));
