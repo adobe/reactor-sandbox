@@ -77,17 +77,14 @@ const renderIframe = ({
     extensionInitOptions,
     openCodeEditor(options = {}) {
       return new Promise((resolve, reject) => {
-        openCodeEditorModal({
-          code: options.code,
-          onSave: resolve,
-          onClose: reject
-        });
+        openCodeEditorModal({ options, code: options.code, onSave: resolve, onClose: reject });
       }).catch(() => {});
     },
     openRegexTester() {},
-    openDataElementSelector() {
+    openDataElementSelector(options = {}) {
       return new Promise((resolve, reject) => {
         openDataElementSelectorModal({
+          options,
           onSave: resolve,
           onClose: reject
         });

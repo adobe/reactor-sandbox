@@ -10,10 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { Map, List } from 'immutable';
+import React, { useState } from 'react';
+import { List } from 'immutable';
 import {
   Dialog,
   DialogContainer,
@@ -25,106 +23,95 @@ import {
   Divider,
   Item
 } from '@adobe/react-spectrum';
+import { useDispatch, useSelector } from 'react-redux';
 
-class ModalDataElementSelectorEditor extends Component {
-  constructor(props) {
-    super(props);
+const handleOnSave = ({
+  dataElement,
+  dataElementSelectorModal,
+  setDataElement,
+  closeDataElementSelectorModal
+}) => {
+  let newDataElement = '';
+  const tokenize = dataElementSelectorModal.getIn(['options', 'tokenize']);
 
-    this.state = {
-      dataElementSelectorModal: Map(),
-      prevModalSize: props.modals.size
-    };
+  if (dataElement) {
+    newDataElement = tokenize ? `%${dataElement}%` : dataElement;
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.modals.size !== prevState.prevModalSize) {
-      return {
-        prevModalSize: nextProps.modals.size,
-        dataElementSelectorModal: nextProps.modals.getIn(['dataElementSelectorModal'])
-      };
-    }
+  dataElementSelectorModal.get('onSave')(newDataElement);
+  setDataElement('');
+  closeDataElementSelectorModal();
+};
 
-    return null;
-  }
+const handleOnClose = ({
+  dataElementSelectorModal,
+  setDataElement,
+  closeDataElementSelectorModal
+}) => {
+  dataElementSelectorModal.get('onClose')();
+  setDataElement('');
+  closeDataElementSelectorModal();
+};
 
-  handleOnSave = () => {
-    const { dataElementSelectorModal } = this.state;
-    const { closeDataElementSelectorModal } = this.props;
+const dataElementList = ({ dataElements }) =>
+  (dataElements || List()).valueSeq().map((v) => ({
+    id: v.get('name'),
+    name: v.get('name')
+  }));
 
-    let newDataElement = '';
-    if (dataElementSelectorModal.get('dataElement')) {
-      newDataElement = `%${dataElementSelectorModal.get('dataElement')}%`;
-    }
+export default () => {
+  const dispatch = useDispatch();
+  const dataElements = useSelector((state) => state.dataElements);
+  const dataElementSelectorModal = useSelector((state) =>
+    state.modals.getIn(['dataElementSelectorModal'])
+  );
+  const [dataElement, setDataElement] = useState('');
 
-    dataElementSelectorModal.get('onSave')(newDataElement);
-    closeDataElementSelectorModal();
-  };
-
-  handleOnClose = () => {
-    const { dataElementSelectorModal } = this.state;
-    const { closeDataElementSelectorModal } = this.props;
-
-    dataElementSelectorModal.get('onClose')();
-    closeDataElementSelectorModal();
-  };
-
-  handleDataElementChange = (dataElement) => {
-    const { dataElementSelectorModal } = this.state;
-
-    this.setState({
-      dataElementSelectorModal: dataElementSelectorModal.set('dataElement', dataElement)
-    });
-  };
-
-  dataElementList() {
-    const { dataElements } = this.props;
-    return (dataElements || List()).valueSeq().map((v) => ({
-      id: v.get('name'),
-      name: v.get('name')
-    }));
-  }
-
-  render() {
-    const { dataElementSelectorModal } = this.state;
-
-    return dataElementSelectorModal && dataElementSelectorModal.get('open') ? (
-      <DialogContainer>
-        <Dialog>
-          <Heading>Data Element Selector</Heading>
-          <Divider />
-          <Content>
-            <Picker
-              marginTop="size-150"
-              label="Data Element"
-              selectedKey={dataElementSelectorModal.get('dataElement') || ''}
-              onSelectionChange={this.handleDataElementChange}
-              width="100%"
-              items={this.dataElementList()}
-            >
-              {(item) => <Item>{item.name}</Item>}
-            </Picker>
-          </Content>
-          <ButtonGroup>
-            <Button variant="secondary" onPress={this.handleOnClose}>
-              Cancel
-            </Button>
-            <Button variant="cta" onPress={this.handleOnSave}>
-              Save
-            </Button>
-          </ButtonGroup>
-        </Dialog>
-      </DialogContainer>
-    ) : null;
-  }
-}
-
-const mapState = (state) => ({
-  modals: state.modals,
-  dataElements: state.dataElements
-});
-
-const mapDispatch = ({ modals: { closeDataElementSelectorModal } }) => ({
-  closeDataElementSelectorModal: (payload) => closeDataElementSelectorModal(payload)
-});
-
-export default withRouter(connect(mapState, mapDispatch)(ModalDataElementSelectorEditor));
+  return dataElementSelectorModal && dataElementSelectorModal.get('open') ? (
+    <DialogContainer>
+      <Dialog>
+        <Heading>Datas Element Selector</Heading>
+        <Divider />
+        <Content>
+          <Picker
+            marginTop="size-150"
+            label="Data Element"
+            selectedKey={dataElement}
+            onSelectionChange={setDataElement}
+            width="100%"
+            items={dataElementList({ dataElements })}
+          >
+            {(item) => <Item>{item.name}</Item>}
+          </Picker>
+        </Content>
+        <ButtonGroup>
+          <Button
+            variant="secondary"
+            onPress={() => {
+              handleOnClose({
+                dataElementSelectorModal,
+                setDataElement,
+                closeDataElementSelectorModal: dispatch.modals.closeDataElementSelectorModal
+              });
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="cta"
+            onPress={() => {
+              handleOnSave({
+                dataElementSelectorModal,
+                dataElement,
+                setDataElement,
+                closeDataElementSelectorModal: dispatch.modals.closeDataElementSelectorModal
+              });
+            }}
+          >
+            Save
+          </Button>
+        </ButtonGroup>
+      </Dialog>
+    </DialogContainer>
+  ) : null;
+};
