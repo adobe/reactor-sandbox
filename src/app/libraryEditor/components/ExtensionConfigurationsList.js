@@ -11,26 +11,20 @@ governing permissions and limitations under the License.
 */
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import List from './List';
 
-const ExtensionConfigurationsList = ({ extensionConfigurations, deleteExtensionConfiguration }) => (
-  <List
-    items={extensionConfigurations}
-    nameProperty="displayName"
-    deleteFn={deleteExtensionConfiguration}
-    linkPrefix="/extension_configurations"
-    heading="Extension Configurations"
-  />
-);
+export default () => {
+  const dispatch = useDispatch();
+  const extensionConfigurations = useSelector((state) => state.extensions);
 
-const mapState = (state) => ({
-  extensionConfigurations: state.extensions
-});
-
-const mapDispatch = ({ extensions: { deleteExtensionConfiguration } }) => ({
-  deleteExtensionConfiguration: (i) => deleteExtensionConfiguration(i)
-});
-
-export default withRouter(connect(mapState, mapDispatch)(ExtensionConfigurationsList));
+  return (
+    <List
+      items={extensionConfigurations}
+      nameProperty="displayName"
+      deleteFn={dispatch.extensions.deleteExtensionConfiguration}
+      linkPrefix="/extension_configurations"
+      heading="Extension Configurations"
+    />
+  );
+};
