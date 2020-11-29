@@ -52,6 +52,14 @@ export const saveContainerData = (containerData) =>
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(containerData)
-  }).catch((e) => {
-    throw new Error(`An error occured when saving the container: ${e.message}.`);
-  });
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      return response;
+    })
+    .catch((e) => {
+      throw new Error(`An error occured when saving the container: ${e.message}.`);
+    });
