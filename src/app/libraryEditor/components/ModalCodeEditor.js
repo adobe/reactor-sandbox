@@ -36,11 +36,6 @@ const handleOnClose = ({ codeEditorModal, closeCodeEditorModal }) => {
   closeCodeEditorModal();
 };
 
-const handleCodeChange = ({ codeEditorModal, code, setCodeEditorModalContent }) => {
-  codeEditorModal.set('code', code);
-  setCodeEditorModalContent(code);
-};
-
 export default () => {
   const dispatch = useDispatch();
   const codeEditorModal = useSelector((state) => state.modals.getIn(['codeEditorModal']));
@@ -53,50 +48,46 @@ export default () => {
   }, [codeEditorModal]);
 
   return codeEditorModal && codeEditorModal.get('open') ? (
-    <>
-      <DialogContainer>
-        <Dialog>
-          <Heading>Code Editor</Heading>
-          <Divider />
-          <Content>
-            <TextArea
-              UNSAFE_className="codeEditorTextArea"
-              label="Code"
-              width="100%"
-              autoComplete="off"
-              value={codeEditorModalContent}
-              onChange={(code) =>
-                handleCodeChange({ codeEditorModal, code, setCodeEditorModalContent })
-              }
-            />
-          </Content>
-          <ButtonGroup>
-            <Button
-              variant="secondary"
-              onPress={() =>
-                handleOnClose({
-                  codeEditorModal,
-                  closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
-                })
-              }
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="cta"
-              onPress={() =>
-                handleOnSave({
-                  codeEditorModal,
-                  codeEditorModalContent,
-                  closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
-                })
-              }
-            >
-              Save
-            </Button>
-          </ButtonGroup>
-        </Dialog>
-      </DialogContainer>
-    </>
+    <DialogContainer>
+      <Dialog>
+        <Heading>Code Editor</Heading>
+        <Divider />
+        <Content>
+          <TextArea
+            UNSAFE_className="codeEditorTextArea"
+            label="Code"
+            width="100%"
+            autoComplete="off"
+            value={codeEditorModalContent}
+            onChange={setCodeEditorModalContent}
+          />
+        </Content>
+        <ButtonGroup>
+          <Button
+            variant="secondary"
+            onPress={() =>
+              handleOnClose({
+                codeEditorModal,
+                closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
+              })
+            }
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="cta"
+            onPress={() =>
+              handleOnSave({
+                codeEditorModal,
+                codeEditorModalContent,
+                closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
+              })
+            }
+          >
+            Save
+          </Button>
+        </ButtonGroup>
+      </Dialog>
+    </DialogContainer>
   ) : null;
 };
