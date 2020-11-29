@@ -163,7 +163,7 @@ const generateCustomTransformReplacements = (
   const rulePropertyPath = propertyPath.slice(0, 2);
   const rule = getValueFromObject(containerConfig, rulePropertyPath);
   const isExternalRule =
-    rule.events.filter(
+    (rule.events || []).filter(
       (e) => [LIBRARY_LOADED_LIB_PATH, PAGE_BOTTOM_LIB_PATH].indexOf(e.modulePath) === -1
     ).length > 0;
 
