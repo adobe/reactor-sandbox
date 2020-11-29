@@ -12,106 +12,84 @@ governing permissions and limitations under the License.
 
 /* eslint-disable react/jsx-no-bind */
 
-import React, { Component } from 'react';
-import { fromJS, Map } from 'immutable';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { fromJS } from 'immutable';
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import NAMED_ROUTES from '../../constants';
 
-class PropertySettings extends Component {
-  constructor(props) {
-    super(props);
+const isValid = ({ domains, setErrors }) => {
+  const errors = {};
 
-    this.state = {
-      propertySettings: Map({
-        domains: props.propertySettings.getIn(['settings', 'domains']).toJS().join(', ')
-      }),
-      errors: {}
-    };
+  if (!domains) {
+    errors.domains = true;
   }
 
-  handleDomainsChange(domains) {
-    const { propertySettings } = this.state;
+  setErrors(errors);
+  return Object.keys(errors).length === 0;
+};
 
-    this.setState({
-      propertySettings: propertySettings.set('domains', domains)
-    });
+const handleSave = ({ domains, setErrors, history, propertySettings, savePropertySettings }) => {
+  if (!isValid({ domains, setErrors })) {
+    return false;
   }
 
-  handleSave() {
-    if (!this.isValid()) {
-      return false;
-    }
+  savePropertySettings(
+    propertySettings.setIn(['settings', 'domains'], fromJS(domains.split(',').map((s) => s.trim())))
+  );
 
-    const { propertySettings } = this.state;
-    const { savePropertySettings, history } = this.props;
+  history.push(NAMED_ROUTES.LIBRARY_EDITOR);
 
-    savePropertySettings(
-      fromJS({
-        settings: {
-          domains: propertySettings
-            .get('domains')
-            .split(',')
-            .map((s) => s.trim())
-        }
-      })
-    );
+  return true;
+};
 
-    history.push(NAMED_ROUTES.LIBRARY_EDITOR);
+export default () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-    return true;
-  }
+  const propertySettings = useSelector((state) => state.property);
+  const [errors, setErrors] = useState({});
+  const [domains, setDomains] = useState(
+    propertySettings.getIn(['settings', 'domains']).toJS().join(', ')
+  );
 
-  isValid() {
-    const errors = {};
-    const { propertySettings } = this.state;
-
-    if (!propertySettings.get('domains')) {
-      errors.domains = true;
-    }
-
-    this.setState({ errors });
-    return Object.keys(errors).length === 0;
-  }
-
-  render() {
-    const { errors, propertySettings } = this.state;
-    return (
-      <View margin="2rem auto" width="50rem">
-        <Heading level={2}>Property Settings</Heading>
-        <Divider />
-        <Flex direction="column" alignItems="center">
-          <View>
-            <TextField
-              label="Domains List"
-              necessityIndicator="label"
-              isRequired
-              width="size-6000"
-              marginTop="size-150"
-              validationState={errors.domains ? 'invalid' : ''}
-              value={propertySettings.get('domains')}
-              onChange={this.handleDomainsChange.bind(this)}
-            />
-            <Heading level={6} margin="size-100">
-              Comma separated values are accepted.
-            </Heading>
-            <Button variant="cta" marginTop="size-100" onPress={this.handleSave.bind(this)}>
-              Save
-            </Button>
-          </View>
-        </Flex>
-      </View>
-    );
-  }
-}
-
-const mapState = (state) => ({
-  propertySettings: state.property
-});
-
-const mapDispatch = ({ property: { savePropertySettings } }) => ({
-  savePropertySettings: (payload) => savePropertySettings(payload)
-});
-
-export default withRouter(connect(mapState, mapDispatch)(PropertySettings));
+  return (
+    <View margin="2rem auto" width="50rem">
+      <Heading level={2}>Property Settings</Heading>
+      <Divider />
+      <Flex direction="column" alignItems="center">
+        <View>
+          <TextField
+            label="Domains List"
+            necessityIndicator="label"
+            isRequired
+            width="size-6000"
+            marginTop="size-150"
+            validationState={errors.domains ? 'invalid' : ''}
+            value={domains}
+            onChange={setDomains}
+          />
+          <Heading level={6} margin="size-100">
+            Comma separated values are accepted.
+          </Heading>
+          <Button
+            variant="cta"
+            marginTop="size-100"
+            onPress={() => {
+              handleSave({
+                domains,
+                setErrors,
+                history,
+                propertySettings,
+                savePropertySettings: dispatch.property.savePropertySettings
+              });
+            }}
+          >
+            Save
+          </Button>
+        </View>
+      </Flex>
+    </View>
+  );
+};
