@@ -13,8 +13,8 @@ governing permissions and limitations under the License.
 /* eslint-disable react/jsx-props-no-spreading */
 
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Route } from 'react-router-dom';
 import { Flex, Heading, ProgressCircle } from '@adobe/react-spectrum';
 import Menu from './Menu';
 
@@ -22,41 +22,41 @@ import ModalCodeEditor from './ModalCodeEditor';
 import ModalDataElementSelector from './ModalDataElementSelector';
 import ErrorMessage from '../../components/ErrorMessage';
 
-const PreloaderRoute = ({ component: Component, brain, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) => {
-      return (
-        <>
-          {brain.get('initialized') && (
-            <>
-              <ModalCodeEditor />
-              <ModalDataElementSelector />
-              <Flex direction="row" flex>
-                <Menu />
-                <Component {...props} />
+export default ({ component: Component, ...rest }) => {
+  const brain = useSelector((state) => state.brain);
+  return (
+    <Route
+      {...rest}
+      render={(props) => {
+        return (
+          <>
+            {brain.get('initialized') && (
+              <>
+                <ModalCodeEditor />
+                <ModalDataElementSelector />
+                <Flex direction="row" flex>
+                  <Menu />
+                  <Component {...props} />
+                </Flex>
+              </>
+            )}
+
+            {brain.get('error') && <ErrorMessage message={brain.get('error').message} />}
+
+            {!brain.get('initialized') && !brain.get('error') && (
+              <Flex
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                marginTop="size-2000"
+              >
+                <ProgressCircle aria-label="Loading…" isIndeterminate />
+                <Heading marginStart="size-150">Fetching data...</Heading>
               </Flex>
-            </>
-          )}
-
-          {brain.get('error') && <ErrorMessage message={brain.get('error').message} />}
-
-          {!brain.get('initialized') && !brain.get('error') && (
-            <Flex direction="row" justifyContent="center" alignItems="center" marginTop="size-2000">
-              <ProgressCircle aria-label="Loading…" isIndeterminate />
-              <Heading marginStart="size-150">Fetching data...</Heading>
-            </Flex>
-          )}
-        </>
-      );
-    }}
-  />
-);
-
-const mapState = (state) => ({
-  brain: state.brain
-});
-
-const mapDispatch = () => ({});
-
-export default withRouter(connect(mapState, mapDispatch)(PreloaderRoute));
+            )}
+          </>
+        );
+      }}
+    />
+  );
+};
