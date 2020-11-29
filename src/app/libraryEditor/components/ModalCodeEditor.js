@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import {
   Dialog,
   DialogContainer,
@@ -23,95 +23,80 @@ import {
   TextArea,
   Divider
 } from '@adobe/react-spectrum';
-import { Map } from 'immutable';
 
 import './ModalCodeEditor.css';
 
-class ModalCodeEditor extends Component {
-  constructor(props) {
-    super(props);
+const handleOnSave = ({ codeEditorModal, codeEditorModalContent, closeCodeEditorModal }) => {
+  codeEditorModal.get('onSave')(codeEditorModalContent);
+  closeCodeEditorModal();
+};
 
-    this.state = {
-      codeEditorModal: Map(),
-      prevModalSize: props.modals.size
-    };
-  }
+const handleOnClose = ({ codeEditorModal, closeCodeEditorModal }) => {
+  codeEditorModal.get('onClose')();
+  closeCodeEditorModal();
+};
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.modals.size !== prevState.prevModalSize) {
-      return {
-        prevModalSize: nextProps.modals.size,
-        codeEditorModal: nextProps.modals.getIn(['codeEditorModal'])
-      };
+const handleCodeChange = ({ codeEditorModal, code, setCodeEditorModalContent }) => {
+  codeEditorModal.set('code', code);
+  setCodeEditorModalContent(code);
+};
+
+export default () => {
+  const dispatch = useDispatch();
+  const codeEditorModal = useSelector((state) => state.modals.getIn(['codeEditorModal']));
+  const [codeEditorModalContent, setCodeEditorModalContent] = useState('');
+
+  useEffect(() => {
+    if (codeEditorModal) {
+      setCodeEditorModalContent(codeEditorModal.get('code'));
     }
+  }, [codeEditorModal]);
 
-    return null;
-  }
-
-  handleOnSave = () => {
-    const { codeEditorModal } = this.state;
-    const { closeCodeEditorModal } = this.props;
-
-    codeEditorModal.get('onSave')(codeEditorModal.get('code'));
-    closeCodeEditorModal();
-  };
-
-  handleOnClose = () => {
-    const { codeEditorModal } = this.state;
-    const { closeCodeEditorModal } = this.props;
-
-    codeEditorModal.get('onClose')();
-    closeCodeEditorModal();
-  };
-
-  handleCodeChange = (code) => {
-    const { codeEditorModal } = this.state;
-
-    this.setState({
-      codeEditorModal: codeEditorModal.set('code', code)
-    });
-  };
-
-  render() {
-    const { codeEditorModal } = this.state;
-
-    return codeEditorModal && codeEditorModal.get('open') ? (
-      <>
-        <DialogContainer>
-          <Dialog>
-            <Heading>Code Editor</Heading>
-            <Divider />
-            <Content>
-              <TextArea
-                UNSAFE_className="codeEditorTextArea"
-                label="Code"
-                width="100%"
-                autoComplete="off"
-                value={codeEditorModal.get('code')}
-                onChange={this.handleCodeChange}
-              />
-            </Content>
-            <ButtonGroup>
-              <Button variant="secondary" onPress={this.handleOnClose}>
-                Cancel
-              </Button>
-              <Button variant="cta" onPress={this.handleOnSave}>
-                Save
-              </Button>
-            </ButtonGroup>
-          </Dialog>
-        </DialogContainer>
-      </>
-    ) : null;
-  }
-}
-
-const mapState = (state) => ({
-  modals: state.modals
-});
-
-const mapDispatch = ({ modals: { closeCodeEditorModal } }) => ({
-  closeCodeEditorModal: (payload) => closeCodeEditorModal(payload)
-});
-
-export default withRouter(connect(mapState, mapDispatch)(ModalCodeEditor));
+  return codeEditorModal && codeEditorModal.get('open') ? (
+    <>
+      <DialogContainer>
+        <Dialog>
+          <Heading>Code Editor</Heading>
+          <Divider />
+          <Content>
+            <TextArea
+              UNSAFE_className="codeEditorTextArea"
+              label="Code"
+              width="100%"
+              autoComplete="off"
+              value={codeEditorModalContent}
+              onChange={(code) =>
+                handleCodeChange({ codeEditorModal, code, setCodeEditorModalContent })
+              }
+            />
+          </Content>
+          <ButtonGroup>
+            <Button
+              variant="secondary"
+              onPress={() =>
+                handleOnClose({
+                  codeEditorModal,
+                  closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
+                })
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="cta"
+              onPress={() =>
+                handleOnSave({
+                  codeEditorModal,
+                  codeEditorModalContent,
+                  closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
+                })
+              }
+            >
+              Save
+            </Button>
+          </ButtonGroup>
+        </Dialog>
+      </DialogContainer>
+    </>
+  ) : null;
+};
