@@ -13,7 +13,6 @@ governing permissions and limitations under the License.
 /* eslint-disable react/jsx-no-bind */
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import { Flex, View, ActionButton, Text } from '@adobe/react-spectrum';
 import Add from '@spectrum-icons/workflow/Add';
 import RuleComponentCard from './RuleComponentCard';
@@ -23,14 +22,7 @@ const handleOnClick = (type, match, history) => {
   history.push(`${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${match.params.rule_id}/${type}/new`);
 };
 
-const RuleComponentsList = ({
-  items,
-  type,
-  match,
-  history,
-  handleDeleteClick,
-  addLabel = 'Add'
-}) => (
+export default ({ items, type, match, history, handleDeleteClick, addLabel = 'Add' }) => (
   <>
     <Flex direction="row" gap="size-300" wrap>
       {items.map((item, i) => (
@@ -58,5 +50,3 @@ const RuleComponentsList = ({
     </ActionButton>
   </>
 );
-
-export default withRouter(RuleComponentsList);
