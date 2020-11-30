@@ -14,8 +14,16 @@ governing permissions and limitations under the License.
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { Heading, ActionGroup, Item, Flex, TooltipTrigger, Tooltip } from '@adobe/react-spectrum';
+import { useHistory, useParams } from 'react-router-dom';
+import {
+  Heading,
+  ActionGroup,
+  Item,
+  Flex,
+  TooltipTrigger,
+  Tooltip,
+  View
+} from '@adobe/react-spectrum';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
 import NAMED_ROUTES from '../../constants';
@@ -23,30 +31,31 @@ import NAMED_ROUTES from '../../constants';
 const cardDetails = (item, type, registry) => {
   const component = registry.getIn(['components', type, item.get('modulePath')]);
   return (
-    <>
+    <View flex>
       <Heading level={4} margin="0" marginBottom="size-150" UNSAFE_style={{ textAlign: 'center' }}>
         {component.get('displayName')}
       </Heading>
-      <Heading level={5} margin="0" marginBottom="size-400">
+      <Heading level={5} margin="0" marginBottom="size-400" UNSAFE_style={{ textAlign: 'center' }}>
         {component.get('extensionDisplayName')}
       </Heading>
-    </>
+    </View>
   );
 };
 
-export default ({ item, match, type, index, handleDeleteClick }) => {
+export default ({ item, type, index, handleDeleteClick }) => {
   const history = useHistory();
+  const { rule_id: ruleId } = useParams();
   const registry = useSelector((state) => state.registry);
   const basePath = NAMED_ROUTES.LIBRARY_EDITOR;
 
   return (
-    <Flex direction="column" alignItems="center">
+    <Flex direction="column" alignItems="center" height="100%">
       {cardDetails(item, type, registry)}
 
       <ActionGroup
         onAction={(key) => {
           if (key === '.$edit') {
-            history.push(`${basePath}/rules/${match.params.rule_id}/${type}/${index}`);
+            history.push(`${basePath}/rules/${ruleId}/${type}/${index}`);
           } else {
             handleDeleteClick(type, index);
           }

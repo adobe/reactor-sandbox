@@ -106,7 +106,9 @@ export default () => {
   const [rule, setRule] = useState(Map());
 
   useEffect(() => {
-    setRule(getCurrentRule({ ruleId, rules, lastLocation, currentRule }));
+    const c = getCurrentRule({ ruleId, rules, lastLocation, currentRule });
+    dispatch.currentRule.setCurrentRule(c);
+    setRule(c);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

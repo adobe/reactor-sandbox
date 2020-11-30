@@ -33,7 +33,8 @@ export default ({ items, type, handleDeleteClick, addLabel = 'Add' }) => {
       <Flex direction="row" gap="size-300" wrap>
         {items.map((item, i) => (
           <View
-            key={item}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${item}${i}`}
             width="size-2400"
             borderWidth="thin"
             borderColor="dark"
@@ -41,7 +42,6 @@ export default ({ items, type, handleDeleteClick, addLabel = 'Add' }) => {
             padding="size-250"
           >
             <RuleComponentCard
-              key={item}
               item={item}
               type={type}
               index={i}
