@@ -20,6 +20,7 @@ export default {
         fromJS({
           codeEditorModal: {
             open: true,
+            options: payload.options,
             code: payload.code,
             onSave: payload.onSave,
             onClose: payload.onClose
@@ -37,6 +38,7 @@ export default {
         fromJS({
           dataElementSelectorModal: {
             open: true,
+            options: payload.options,
             onSave: payload.onSave,
             onClose: payload.onClose
           }

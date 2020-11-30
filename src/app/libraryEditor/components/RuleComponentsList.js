@@ -13,50 +13,52 @@ governing permissions and limitations under the License.
 /* eslint-disable react/jsx-no-bind */
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import { Flex, View, ActionButton, Text } from '@adobe/react-spectrum';
 import Add from '@spectrum-icons/workflow/Add';
+import { useHistory, useParams } from 'react-router-dom';
+
 import RuleComponentCard from './RuleComponentCard';
 import NAMED_ROUTES from '../../constants';
 
-const handleOnClick = (type, match, history) => {
-  history.push(`${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${match.params.rule_id}/${type}/new`);
+const handleOnClick = ({ type, ruleId, history }) => {
+  history.push(`${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${ruleId}/${type}/new`);
 };
 
-const RuleComponentsList = ({
-  items,
-  type,
-  match,
-  history,
-  handleDeleteClick,
-  addLabel = 'Add'
-}) => (
-  <>
-    <Flex direction="row" gap="size-300" wrap>
-      {items.map((item, i) => (
-        <View
-          key={item}
-          width="size-2400"
-          borderWidth="thin"
-          borderColor="dark"
-          borderRadius="medium"
-          padding="size-250"
-        >
-          <RuleComponentCard
-            key={item}
-            item={item}
-            type={type}
-            index={i}
-            handleDeleteClick={handleDeleteClick}
-          />
-        </View>
-      ))}
-    </Flex>
-    <ActionButton onPress={handleOnClick.bind(this, type, match, history)} marginTop="size-150">
-      <Add />
-      <Text>{addLabel}</Text>
-    </ActionButton>
-  </>
-);
+export default ({ items, type, handleDeleteClick, addLabel = 'Add' }) => {
+  const history = useHistory();
+  const { rule_id: ruleId } = useParams();
 
-export default withRouter(RuleComponentsList);
+  return (
+    <>
+      <Flex direction="row" gap="size-300" wrap>
+        {items.map((item, i) => (
+          <View
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${item}${i}`}
+            width="size-2400"
+            borderWidth="thin"
+            borderColor="dark"
+            borderRadius="medium"
+            padding="size-250"
+          >
+            <RuleComponentCard
+              item={item}
+              type={type}
+              index={i}
+              handleDeleteClick={handleDeleteClick}
+            />
+          </View>
+        ))}
+      </Flex>
+      <ActionButton
+        onPress={() => {
+          handleOnClick({ type, ruleId, history });
+        }}
+        marginTop="size-150"
+      >
+        <Add />
+        <Text>{addLabel}</Text>
+      </ActionButton>
+    </>
+  );
+};

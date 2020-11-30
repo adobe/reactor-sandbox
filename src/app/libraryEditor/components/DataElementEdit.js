@@ -10,12 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable react/jsx-no-bind */
-
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { Map, List } from 'immutable';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   Flex,
   View,
@@ -32,288 +30,297 @@ import {
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
-const isNewComponent = ({
-  match: {
-    params: { data_element_id: dataElementId }
-  },
-  dataElements
-}) => {
+const isNewComponent = ({ dataElementId, dataElements }) => {
   return dataElementId === 'new' || dataElementId >= (dataElements || List()).size;
 };
 
-const getDataElement = ({
-  match: {
-    params: { data_element_id: dataElementId }
-  },
-  dataElements
-}) => {
-  return (
-    (dataElements || List()).get(dataElementId) ||
-    Map({
-      modulePath: '',
-      settings: null
+const getDataElement = ({ dataElementId, dataElements }) =>
+  (dataElements || List()).get(dataElementId) ||
+  Map({
+    modulePath: '',
+    settings: null
+  });
+
+const backLink = `${NAMED_ROUTES.LIBRARY_EDITOR}/data_elements/`;
+
+const handleComponentTypeChange = ({ modulePath, dataElement, setDataElement }) => {
+  setDataElement(
+    dataElement.merge({
+      settings: null,
+      modulePath
     })
   );
 };
 
-class DataElementEdit extends Component {
-  static backLink() {
-    return `${NAMED_ROUTES.LIBRARY_EDITOR}/data_elements/`;
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      waitingForExtensionResponse: false,
-      dataElement: getDataElement(props),
-      errors: {}
-    };
-  }
-
-  handleComponentTypeChange(modulePath) {
-    const { dataElement } = this.state;
-
-    this.setState({
-      dataElement: dataElement.merge({
-        settings: null,
-        modulePath
-      })
-    });
-  }
-
-  handleInputChange(fieldName, newValue) {
-    const { dataElement } = this.state;
-
-    const newDataElement = dataElement.set(fieldName, newValue);
-
-    this.setState({
-      dataElement: newDataElement
-    });
-  }
-
-  handleSave() {
-    if (!this.isValid()) {
-      return false;
-    }
-
-    const {
-      addDataElement,
-      saveDataElement,
-      currentIframe,
-      history,
-      match: { params }
-    } = this.props;
-
-    const { dataElement } = this.state;
-
-    const method = isNewComponent(this.props) ? addDataElement : saveDataElement;
-
-    this.setState({
-      waitingForExtensionResponse: true
-    });
-
-    currentIframe.promise
-      .then((api) => Promise.all([api.validate(), api.getSettings()]))
-      .then(([isValid, settings]) => {
-        if (isValid) {
-          method({
-            id: params.data_element_id,
-            dataElement: dataElement.merge({ settings })
-          });
-
-          history.push(this.constructor.backLink());
-        } else {
-          this.setState({
-            waitingForExtensionResponse: false
-          });
-        }
-      });
-
-    return true;
-  }
-
-  dataElementsList() {
-    const componentList = {};
-    const groupList = [];
-    const { registry } = this.props;
-
-    (registry.getIn(['components', 'dataElements']) || List()).valueSeq().forEach((v) => {
-      if (!componentList[v.get('extensionDisplayName')]) {
-        componentList[v.get('extensionDisplayName')] = [];
-      }
-      componentList[v.get('extensionDisplayName')].push({
-        id: `${v.get('extensionName')}/${v.get('libPath')}`,
-        name: v.get('displayName')
-      });
-    });
-
-    Object.keys(componentList).forEach((extenisonDisplayName) => {
-      groupList.push({
-        name: extenisonDisplayName,
-        children: componentList[extenisonDisplayName]
-      });
-    });
-
-    return groupList;
-  }
-
-  isValid() {
-    const errors = {};
-    const { dataElement } = this.state;
-    const { currentIframe } = this.props;
-
-    if (!dataElement.get('name')) {
-      errors.name = true;
-    }
-
-    if (!dataElement.get('modulePath') || !currentIframe.promise) {
-      errors.modulePath = true;
-    }
-
-    this.setState({ errors });
-    return Object.keys(errors).length === 0;
-  }
-
-  render() {
-    const { registry, extensionConfigurations, history } = this.props;
-
-    const { waitingForExtensionResponse, errors, dataElement } = this.state;
-
-    const componentIframeDetails = registry.getIn([
-      'components',
-      'dataElements',
-      dataElement.get('modulePath')
-    ]);
-
-    const extensionName = dataElement.get('modulePath').split('/')[0];
-
-    return (
-      <>
-        {waitingForExtensionResponse ? (
-          <Backdrop message="Waiting for the extension response..." />
-        ) : null}
-        <Flex direction="row" flex>
-          <View
-            minWidth="size-3600"
-            width="size-3600"
-            borderEndWidth="thin"
-            borderEndColor="gray-400"
-            marginStart="size-150"
-          >
-            <Heading level={4}>Data Element Details</Heading>
-            <TextField
-              label="Name"
-              isRequired
-              width="size-3400"
-              necessityIndicator="label"
-              validationState={errors.name ? 'invalid' : ''}
-              value={dataElement.get('name') || ''}
-              onChange={this.handleInputChange.bind(this, 'name')}
-            />
-
-            <Picker
-              marginTop="size-150"
-              isRequired
-              necessityIndicator="label"
-              validationState={errors.modulePath ? 'invalid' : ''}
-              label="Type"
-              selectedKey={dataElement.get('modulePath')}
-              onSelectionChange={this.handleComponentTypeChange.bind(this)}
-              width="size-3400"
-              items={this.dataElementsList()}
-            >
-              {(item) => (
-                <Section key={item.name} items={item.children} title={item.name}>
-                  {(subitem) => <Item>{subitem.name}</Item>}
-                </Section>
-              )}
-            </Picker>
-
-            <TextField
-              marginTop="size-150"
-              label="Default Value"
-              width="size-3400"
-              value={dataElement.get('defaultValue') || ''}
-              onChange={this.handleInputChange.bind(this, 'defaultValue')}
-            />
-
-            <Checkbox
-              marginTop="size-150"
-              isSelected={dataElement.get('forceLowerCase') || false}
-              onChange={this.handleInputChange.bind(this, 'forceLowerCase')}
-            >
-              Force lower case
-            </Checkbox>
-
-            <br />
-
-            <Checkbox
-              isSelected={dataElement.get('cleanText') || false}
-              onChange={this.handleInputChange.bind(this, 'cleanText')}
-            >
-              Clean Text
-            </Checkbox>
-
-            <Picker
-              marginTop="size-150"
-              label="Storage duration"
-              selectedKey={dataElement.get('storageDuration') || ''}
-              onSelectionChange={this.handleInputChange.bind(this, 'storageDuration')}
-              width="size-3400"
-              items={[
-                { id: '', name: 'None' },
-                { id: 'pageview', name: 'Pageview' },
-                { id: 'session', name: 'Session' },
-                { id: 'visitor', name: 'Visitor' }
-              ]}
-            >
-              {(item) => <Item>{item.name}</Item>}
-            </Picker>
-
-            <ButtonGroup marginTop="size-150" marginBottom="size-150">
-              <Button variant="cta" onPress={this.handleSave.bind(this)}>
-                Save
-              </Button>
-
-              <Button
-                variant="secondary"
-                onPress={() => {
-                  history.push(this.constructor.backLink());
-                }}
-              >
-                Cancel
-              </Button>
-            </ButtonGroup>
-          </View>
-
-          <ComponentIframe
-            component={componentIframeDetails}
-            extensionConfiguration={extensionConfigurations
-              .filter((i) => i.get('name') === extensionName)
-              .first()}
-            settings={dataElement.get('settings')}
-            server={registry.getIn(['environment', 'server'])}
-          />
-        </Flex>
-      </>
-    );
-  }
-}
-
-const mapState = (state) => {
-  return {
-    dataElements: state.dataElements,
-    currentIframe: state.currentIframe,
-    registry: state.registry,
-    extensionConfigurations: state.extensions
-  };
+const handleInputChange = ({ fieldName, newValue, dataElement, setDataElement }) => {
+  const newDataElement = dataElement.set(fieldName, newValue);
+  setDataElement(newDataElement);
 };
 
-const mapDispatch = ({ dataElements: { saveDataElement, addDataElement } }) => ({
-  saveDataElement: (payload) => saveDataElement(payload),
-  addDataElement: (payload) => addDataElement(payload)
-});
+const isComponentValid = ({ dataElement, currentIframe, setErrors }) => {
+  const errors = {};
 
-export default withRouter(connect(mapState, mapDispatch)(DataElementEdit));
+  if (!dataElement.get('name')) {
+    errors.name = true;
+  }
+
+  if (!dataElement.get('modulePath') || !currentIframe.promise) {
+    errors.modulePath = true;
+  }
+
+  setErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+
+const handleSave = async ({
+  dispatch: {
+    dataElements: { saveDataElement, addDataElement }
+  },
+  currentIframe,
+  history,
+  dataElementId,
+  dataElement,
+  dataElements,
+  setWaitingForExtensionResponse,
+  setErrors
+}) => {
+  if (!isComponentValid({ dataElement, currentIframe, setErrors })) {
+    return false;
+  }
+
+  const method = isNewComponent({ dataElementId, dataElements }) ? addDataElement : saveDataElement;
+
+  setWaitingForExtensionResponse(true);
+
+  try {
+    const api = await currentIframe.promise;
+    const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
+
+    if (isValid) {
+      await method({
+        id: dataElementId,
+        dataElement: dataElement.merge({ settings })
+      });
+
+      history.push(backLink);
+    } else {
+      setWaitingForExtensionResponse(false);
+    }
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
+
+  return true;
+};
+
+const dataElementsList = ({ registry }) => {
+  const componentList = {};
+  const groupList = [];
+
+  (registry.getIn(['components', 'dataElements']) || List()).valueSeq().forEach((v) => {
+    if (!componentList[v.get('extensionDisplayName')]) {
+      componentList[v.get('extensionDisplayName')] = [];
+    }
+    componentList[v.get('extensionDisplayName')].push({
+      id: `${v.get('extensionName')}/${v.get('libPath')}`,
+      name: v.get('displayName')
+    });
+  });
+
+  Object.keys(componentList).forEach((extenisonDisplayName) => {
+    groupList.push({
+      name: extenisonDisplayName,
+      children: componentList[extenisonDisplayName]
+    });
+  });
+
+  return groupList;
+};
+
+export default () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { data_element_id: dataElementId } = useParams();
+
+  const {
+    dataElements,
+    currentIframe,
+    registry,
+    extensions: extensionConfigurations
+  } = useSelector((state) => state);
+
+  const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [dataElement, setDataElement] = useState(Map());
+
+  const componentIframeDetails = registry.getIn([
+    'components',
+    'dataElements',
+    dataElement.get('modulePath')
+  ]);
+
+  const extensionName = (dataElement.get('modulePath') || '').split('/')[0];
+
+  useEffect(() => {
+    setDataElement(getDataElement({ dataElementId, dataElements }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
+    <>
+      {waitingForExtensionResponse ? (
+        <Backdrop message="Waiting for the extension response..." />
+      ) : null}
+      <Flex direction="row" flex>
+        <View
+          minWidth="size-3600"
+          width="size-3600"
+          borderEndWidth="thin"
+          borderEndColor="gray-400"
+          marginStart="size-150"
+        >
+          <Heading level={4}>Data Element Details</Heading>
+          <TextField
+            label="Name"
+            isRequired
+            width="size-3400"
+            necessityIndicator="label"
+            validationState={errors.name ? 'invalid' : ''}
+            value={dataElement.get('name') || ''}
+            onChange={(newValue) =>
+              handleInputChange({ fieldName: 'name', newValue, dataElement, setDataElement })
+            }
+          />
+
+          <Picker
+            marginTop="size-150"
+            isRequired
+            necessityIndicator="label"
+            validationState={errors.modulePath ? 'invalid' : ''}
+            label="Type"
+            selectedKey={dataElement.get('modulePath') || ''}
+            onSelectionChange={(modulePath) =>
+              handleComponentTypeChange({ modulePath, dataElement, setDataElement })
+            }
+            width="size-3400"
+            items={dataElementsList({ registry })}
+          >
+            {(item) => (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {(subitem) => <Item>{subitem.name}</Item>}
+              </Section>
+            )}
+          </Picker>
+
+          <TextField
+            marginTop="size-150"
+            label="Default Value"
+            width="size-3400"
+            value={dataElement.get('defaultValue') || ''}
+            onChange={(newValue) =>
+              handleInputChange({
+                fieldName: 'defaultValue',
+                newValue,
+                dataElement,
+                setDataElement
+              })
+            }
+          />
+
+          <Checkbox
+            marginTop="size-150"
+            isSelected={dataElement.get('forceLowerCase') || false}
+            onChange={(newValue) =>
+              handleInputChange({
+                fieldName: 'forceLowerCase',
+                newValue,
+                dataElement,
+                setDataElement
+              })
+            }
+          >
+            Force lower case
+          </Checkbox>
+
+          <br />
+
+          <Checkbox
+            isSelected={dataElement.get('cleanText') || false}
+            onChange={(newValue) =>
+              handleInputChange({
+                fieldName: 'cleanText',
+                newValue,
+                dataElement,
+                setDataElement
+              })
+            }
+          >
+            Clean Text
+          </Checkbox>
+
+          <Picker
+            marginTop="size-150"
+            label="Storage duration"
+            selectedKey={dataElement.get('storageDuration') || ''}
+            onSelectionChange={(newValue) =>
+              handleInputChange({
+                fieldName: 'storageDuration',
+                newValue,
+                dataElement,
+                setDataElement
+              })
+            }
+            width="size-3400"
+            items={[
+              { id: '', name: 'None' },
+              { id: 'pageview', name: 'Pageview' },
+              { id: 'session', name: 'Session' },
+              { id: 'visitor', name: 'Visitor' }
+            ]}
+          >
+            {(item) => <Item>{item.name}</Item>}
+          </Picker>
+
+          <ButtonGroup marginTop="size-150" marginBottom="size-150">
+            <Button
+              variant="cta"
+              onPress={() =>
+                handleSave({
+                  dispatch,
+                  currentIframe,
+                  history,
+                  dataElementId,
+                  dataElement,
+                  dataElements,
+                  setWaitingForExtensionResponse,
+                  setErrors
+                })
+              }
+            >
+              Save
+            </Button>
+
+            <Button variant="secondary" onPress={() => history.push(backLink)}>
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </View>
+
+        <ComponentIframe
+          component={componentIframeDetails}
+          extensionConfiguration={extensionConfigurations
+            .filter((i) => i.get('name') === extensionName)
+            .first()}
+          settings={dataElement.get('settings')}
+          server={registry.getIn(['environment', 'server'])}
+        />
+      </Flex>
+    </>
+  );
+};

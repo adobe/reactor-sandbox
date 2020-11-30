@@ -10,133 +10,129 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
+import { useHistory } from 'react-router-dom';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
-class OtherSettings extends Component {
-  constructor(props) {
-    super(props);
+const handleOrgIdChange = ({ orgId, setCompanySettings, companySettings }) => {
+  setCompanySettings(companySettings.set('orgId', orgId));
+};
 
-    this.state = {
-      companySettings: props.companySettings,
-      otherSettings: props.otherSettings,
-      errors: {}
-    };
+const handleImsChange = ({ imsAccess, otherSettings, setOtherSettings }) => {
+  setOtherSettings(otherSettings.setIn(['tokens', 'imsAccess'], imsAccess));
+};
+
+const isValid = ({ companySettings, otherSettings, setErrors }) => {
+  const errors = {};
+
+  if (!companySettings.get('orgId')) {
+    errors.orgId = true;
   }
 
-  handleOrgIdChange = (orgId) => {
-    const { companySettings } = this.state;
+  if (!otherSettings.getIn(['tokens', 'imsAccess'])) {
+    errors.imsAccess = true;
+  }
 
-    this.setState({
-      companySettings: companySettings.set('orgId', orgId)
-    });
-  };
+  setErrors(errors);
+  return Object.keys(errors).length === 0;
+};
 
-  handleImsChange = (imsAccess) => {
-    const { otherSettings } = this.state;
+const handleSave = async ({
+  companySettings,
+  otherSettings,
+  setErrors,
+  history,
+  saveCompanySettings,
+  saveOtherSettings
+}) => {
+  if (!isValid({ companySettings, otherSettings, setErrors })) {
+    return false;
+  }
 
-    this.setState({
-      otherSettings: otherSettings.setIn(['tokens', 'imsAccess'], imsAccess)
-    });
-  };
-
-  handleSave = () => {
-    const { history, saveCompanySettings, saveOtherSettings } = this.props;
-    const { otherSettings, companySettings } = this.state;
-
-    if (!this.isValid()) {
-      return false;
-    }
-
-    saveCompanySettings(companySettings);
-    saveOtherSettings(otherSettings);
+  try {
+    await Promise.all([saveCompanySettings(companySettings), saveOtherSettings(otherSettings)]);
     history.push(NAMED_ROUTES.LIBRARY_EDITOR);
-
-    return true;
-  };
-
-  isValid() {
-    const errors = {};
-    const { companySettings, otherSettings } = this.state;
-
-    if (!companySettings.get('orgId')) {
-      errors.orgId = true;
-    }
-
-    if (!otherSettings.getIn(['tokens', 'imsAccess'])) {
-      errors.imsAccess = true;
-    }
-
-    this.setState({ errors });
-    return Object.keys(errors).length === 0;
+  } catch (e) {
+    setErrors({ api: e.message });
   }
 
-  render() {
-    const { errors, otherSettings, companySettings } = this.state;
+  return true;
+};
 
-    return (
-      <Flex direction="column">
-        <View width="100%" alignSelf="center">
-          <Heading level={2}>Company Settings</Heading>
-          <Divider />
-          <Flex direction="column" alignItems="center">
+export default () => {
+  const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const [companySettings, setCompanySettings] = useState(useSelector((state) => state.company));
+  const [otherSettings, setOtherSettings] = useState(useSelector((state) => state.otherSettings));
+
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
+    <Flex direction="column">
+      <View width="100%" alignSelf="center">
+        <Heading level={2}>Company Settings</Heading>
+        <Divider />
+        <Flex direction="column" alignItems="center">
+          <TextField
+            label="Organization ID"
+            necessityIndicator="label"
+            isRequired
+            width="size-6000"
+            marginTop="size-150"
+            validationState={errors.orgId ? 'invalid' : ''}
+            value={companySettings.get('orgId') || ''}
+            onChange={(orgId) => {
+              handleOrgIdChange({ orgId, companySettings, setCompanySettings });
+            }}
+          />
+        </Flex>
+
+        <Heading level={2} marginTop="size-400">
+          IMS Token Settings
+        </Heading>
+        <Divider />
+        <Flex direction="column" alignItems="center">
+          <View>
             <TextField
-              label="Organization ID"
+              label="IMS Token"
               necessityIndicator="label"
               isRequired
               width="size-6000"
               marginTop="size-150"
-              validationState={errors.orgId ? 'invalid' : ''}
-              value={companySettings.get('orgId')}
-              onChange={this.handleOrgIdChange}
+              validationState={errors.imsAccess ? 'invalid' : ''}
+              value={otherSettings.getIn(['tokens', 'imsAccess']) || ''}
+              onChange={(imsAccess) => {
+                handleImsChange({ imsAccess, otherSettings, setOtherSettings });
+              }}
             />
-          </Flex>
+            <br />
 
-          <Heading level={2} marginTop="size-400">
-            IMS Token Settings
-          </Heading>
-          <Divider />
-          <Flex direction="column" alignItems="center">
-            <View>
-              <TextField
-                label="IMS Token"
-                necessityIndicator="label"
-                isRequired
-                width="size-6000"
-                marginTop="size-150"
-                validationState={errors.imsAccess ? 'invalid' : ''}
-                value={otherSettings.getIn(['tokens', 'imsAccess'])}
-                onChange={this.handleImsChange}
-              />
-              <br />
-
-              <Button variant="cta" marginTop="size-400" onPress={this.handleSave}>
-                Save
-              </Button>
-            </View>
-          </Flex>
-        </View>
-      </Flex>
-    );
-  }
-}
-
-const mapState = (state) => ({
-  companySettings: state.company,
-  otherSettings: state.otherSettings
-});
-
-const mapDispatch = ({
-  otherSettings: { saveOtherSettings },
-  company: { saveCompanySettings }
-}) => ({
-  saveCompanySettings: (payload) => saveCompanySettings(payload),
-  saveOtherSettings: (payload) => saveOtherSettings(payload)
-});
-
-export default withRouter(connect(mapState, mapDispatch)(OtherSettings));
+            <Button
+              variant="cta"
+              marginTop="size-400"
+              onPress={() => {
+                handleSave({
+                  companySettings,
+                  otherSettings,
+                  setErrors,
+                  history,
+                  saveCompanySettings: dispatch.company.saveCompanySettings,
+                  saveOtherSettings: dispatch.otherSettings.saveOtherSettings
+                });
+              }}
+            >
+              Save
+            </Button>
+          </View>
+        </Flex>
+      </View>
+    </Flex>
+  );
+};

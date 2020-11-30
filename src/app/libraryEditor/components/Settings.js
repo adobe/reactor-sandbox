@@ -11,50 +11,48 @@ governing permissions and limitations under the License.
 */
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Flex, View } from '@adobe/react-spectrum';
 import OtherSettings from './OtherSettings';
 
 import './Settings.css';
 
-const Main = ({ brain, orgId, imsAccess, clearContainerData, clearLocalStorage }) => (
-  <View margin="2rem auto" width="50rem">
-    <OtherSettings key={`${orgId}${imsAccess}`} />
-    <div>
-      <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-        <p>If you want to reset current data click on the `Reset data` button.</p>
-        <Button
-          onPress={() => {
-            clearContainerData();
-            clearLocalStorage();
-          }}
-          marginStart="size-100"
-        >
-          Reset data
-        </Button>
-      </Flex>
+export default () => {
+  const brain = useSelector((state) => state.brain);
+  const orgId = useSelector((state) => state.company.get('orgId'));
+  const imsAccess = useSelector((state) => state.otherSettings.getIn(['tokens', 'imsAccess']));
+  const dispatch = useDispatch();
 
-      {brain.get('containerDataReseted') != null ? (
+  return (
+    <View margin="2rem auto" width="50rem">
+      <OtherSettings key={`${orgId}${imsAccess}`} />
+      <div>
         <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-          <div className={`status-${brain.get('containerDataReseted')}`}>
-            Last reset status: <strong>{brain.get('containerDataReseted')}</strong>.
-          </div>
+          <p>
+            If you want to have a start fresh with an empty library, you can click on the `Reset
+            data` button.
+          </p>
+          <Button
+            onPress={() => {
+              return Promise.all([
+                dispatch.brain.clearContainerData(),
+                dispatch.brain.clearLocalStorage()
+              ]);
+            }}
+            marginStart="size-100"
+          >
+            Reset data
+          </Button>
         </Flex>
-      ) : null}
-    </div>
-  </View>
-);
 
-const mapState = (state) => ({
-  brain: state.brain,
-  orgId: state.company.get('orgId'),
-  imsAccess: state.otherSettings.getIn(['tokens', 'imsAccess'])
-});
-
-const mapDispatch = ({ brain: { clearContainerData, clearLocalStorage } }) => ({
-  clearContainerData: () => clearContainerData(),
-  clearLocalStorage: () => clearLocalStorage()
-});
-
-export default withRouter(connect(mapState, mapDispatch)(Main));
+        {brain.get('containerDataReseted') != null ? (
+          <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
+            <div className={`status-${brain.get('containerDataReseted')}`}>
+              Last reset status: <strong>{brain.get('containerDataReseted')}</strong>.
+            </div>
+          </Flex>
+        ) : null}
+      </div>
+    </View>
+  );
+};

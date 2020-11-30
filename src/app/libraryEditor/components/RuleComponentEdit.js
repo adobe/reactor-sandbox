@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
 import { Map, List } from 'immutable';
 import {
   Flex,
@@ -28,11 +28,12 @@ import {
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
-const isNewComponent = (componentId, type, currentRule) =>
+const isNewComponent = ({ componentId, type, currentRule }) =>
   componentId === 'new' || componentId >= (currentRule.get(type) || List()).size;
 
-const getCurrentRule = (currentRule, rules, ruleId) => {
+const getCurrentRule = ({ currentRule, rules, ruleId }) => {
   let rule;
 
   if (currentRule && currentRule.get('id') === ruleId) {
@@ -45,13 +46,11 @@ const getCurrentRule = (currentRule, rules, ruleId) => {
 };
 
 const getComponent = ({
-  match: {
-    params: { type, component_id: componentId, rule_id: ruleId }
-  },
+  params: { type, component_id: componentId, rule_id: ruleId },
   rules,
   currentRule
 }) => {
-  const rule = getCurrentRule(currentRule, rules, ruleId);
+  const rule = getCurrentRule({ currentRule, rules, ruleId });
   return (
     rule.getIn([type, componentId]) ||
     Map({
@@ -61,246 +60,218 @@ const getComponent = ({
   );
 };
 
-class RuleComponentEdit extends Component {
-  constructor(props) {
-    super(props);
+const handleComponentTypeChange = ({ modulePath, component, setComponent }) =>
+  setComponent(
+    component.merge({
+      settings: null,
+      modulePath
+    })
+  );
 
-    const currentRule = getCurrentRule(props.currentRule, props.rules, props.match.params.rule_id);
-
-    this.state = {
-      errors: {},
-      waitingForExtensionResponse: false,
-      component: getComponent(props),
-      currentRule
-    };
-
-    props.setCurrentRule(currentRule);
-  }
-
-  handleComponentTypeChange = (modulePath) => {
-    const { component } = this.state;
-
-    this.setState({
-      component: component.merge({
-        settings: null,
-        modulePath
-      })
-    });
-  };
-
-  handleOrderChange = (value) => {
-    const { component } = this.state;
-
-    const newComponent = component.set('order', value);
-    this.setState({ component: newComponent });
-  };
-
-  handleSave = () => {
-    if (!this.isValid()) {
-      return false;
-    }
-
-    const { component } = this.state;
-
-    const {
-      addComponent,
-      saveComponent,
-      match: {
-        params: { component_id: componentId, type }
-      },
-      currentIframe,
-      history
-    } = this.props;
-
-    const { currentRule } = this.state;
-
-    const method = isNewComponent(componentId, type, currentRule) ? addComponent : saveComponent;
-
-    this.setState({
-      waitingForExtensionResponse: true
-    });
-
-    currentIframe.promise
-      .then((api) => Promise.all([api.validate(), api.getSettings()]))
-      .then(([isValid, settings]) => {
-        if (isValid) {
-          method({
-            id: componentId,
-            type,
-            component: component.merge({ settings })
-          });
-
-          history.push(this.backLink());
-        } else {
-          this.setState({
-            waitingForExtensionResponse: false
-          });
-        }
-      });
-
-    return true;
-  };
-
-  componentList() {
-    const {
-      match: {
-        params: { type }
-      },
-      registry
-    } = this.props;
-    const componentList = {};
-    const groupList = [];
-
-    (registry.getIn(['components', type]) || List()).valueSeq().forEach((v) => {
-      if (!componentList[v.get('extensionDisplayName')]) {
-        componentList[v.get('extensionDisplayName')] = [];
-      }
-      componentList[v.get('extensionDisplayName')].push({
-        id: `${v.get('extensionName')}/${v.get('libPath')}`,
-        name: v.get('displayName')
-      });
-    });
-
-    Object.keys(componentList).forEach((extenisonDisplayName) => {
-      groupList.push({
-        name: extenisonDisplayName,
-        children: componentList[extenisonDisplayName]
-      });
-    });
-
-    return groupList;
-  }
-
-  isValid() {
-    const errors = {};
-    const { component } = this.state;
-
-    if (!component.get('modulePath')) {
-      errors.modulePath = true;
-    }
-
-    this.setState({ errors });
-    return Object.keys(errors).length === 0;
-  }
-
-  backLink() {
-    const {
-      match: {
-        params: { rule_id: ruleId }
-      }
-    } = this.props;
-
-    return `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${ruleId}`;
-  }
-
-  render() {
-    const { waitingForExtensionResponse, component, errors } = this.state;
-    const {
-      match: {
-        params: { type }
-      },
-      history,
-      registry,
-      extensionConfigurations
-    } = this.props;
-
-    const componentIframeDetails = registry.getIn([
-      'components',
-      type,
-      component.get('modulePath')
-    ]);
-
-    const extensionName = component.get('modulePath').split('/')[0];
-
-    return (
-      <>
-        {waitingForExtensionResponse ? (
-          <Backdrop message="Waiting for the extension response..." />
-        ) : null}
-        <Flex direction="row" flex>
-          <View
-            minWidth="size-3600"
-            width="size-3600"
-            borderEndWidth="thin"
-            borderEndColor="gray-400"
-            marginStart="size-150"
-          >
-            <Heading level={4}>Component Details</Heading>
-
-            <Picker
-              marginTop="size-150"
-              isRequired
-              necessityIndicator="label"
-              validationState={errors.modulePath ? 'invalid' : ''}
-              label="Type"
-              selectedKey={component.get('modulePath')}
-              onSelectionChange={this.handleComponentTypeChange}
-              width="size-3400"
-              items={this.componentList()}
-            >
-              {(item) => (
-                <Section key={item.name} items={item.children} title={item.name}>
-                  {(subitem) => <Item>{subitem.name}</Item>}
-                </Section>
-              )}
-            </Picker>
-
-            <TextField
-              marginTop="size-150"
-              label="Order"
-              width="size-3400"
-              value={component.get('order') || '50'}
-              onChange={this.handleOrderChange}
-            />
-
-            <ButtonGroup marginTop="size-150" marginBottom="size-150">
-              <Button variant="cta" onPress={this.handleSave}>
-                Save
-              </Button>
-
-              <Button
-                variant="secondary"
-                onPress={() => {
-                  history.push(this.backLink());
-                }}
-              >
-                Cancel
-              </Button>
-            </ButtonGroup>
-          </View>
-
-          <ComponentIframe
-            component={componentIframeDetails}
-            extensionConfiguration={extensionConfigurations
-              .filter((i) => i.get('name') === extensionName)
-              .first()}
-            settings={component.get('settings')}
-            server={registry.getIn(['environment', 'server'])}
-          />
-        </Flex>
-      </>
-    );
-  }
-}
-
-const mapState = (state) => {
-  return {
-    rules: state.rules,
-    currentRule: state.currentRule,
-    currentIframe: state.currentIframe,
-    registry: state.registry,
-    extensionConfigurations: state.extensions
-  };
+const handleOrderChange = ({ order, component, setComponent }) => {
+  const newComponent = component.set('order', order);
+  setComponent(newComponent);
 };
 
-const mapDispatch = ({
-  rules: { saveRule },
-  currentRule: { setCurrentRule, saveComponent, addComponent }
-}) => ({
-  saveRule: (payload) => saveRule(payload),
-  setCurrentRule: (payload) => setCurrentRule(payload),
-  saveComponent: (payload) => saveComponent(payload),
-  addComponent: (payload) => addComponent(payload)
-});
+const isComponentValid = ({ component, setErrors }) => {
+  const errors = {};
 
-export default withRouter(connect(mapState, mapDispatch)(RuleComponentEdit));
+  if (!component.get('modulePath')) {
+    errors.modulePath = true;
+  }
+
+  setErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+
+const backLink = ({ ruleId }) => `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${ruleId}`;
+
+const handleSave = async ({
+  component,
+  setErrors,
+  addComponent,
+  saveComponent,
+  params: { rule_id: ruleId, component_id: componentId, type },
+  currentRule,
+  currentIframe,
+  setWaitingForExtensionResponse,
+  history
+}) => {
+  if (!isComponentValid({ component, setErrors })) {
+    return false;
+  }
+
+  const method = isNewComponent({ componentId, type, currentRule }) ? addComponent : saveComponent;
+
+  setWaitingForExtensionResponse(true);
+
+  try {
+    const api = await currentIframe.promise;
+    const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
+
+    if (isValid) {
+      await method({
+        id: componentId,
+        type,
+        component: component.merge({ settings })
+      });
+
+      history.push(backLink({ ruleId }));
+    } else {
+      setWaitingForExtensionResponse(false);
+    }
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
+
+  return true;
+};
+
+const getComponentList = ({ type, registry }) => {
+  const componentList = {};
+  const groupList = [];
+
+  (registry.getIn(['components', type]) || List()).valueSeq().forEach((v) => {
+    if (!componentList[v.get('extensionDisplayName')]) {
+      componentList[v.get('extensionDisplayName')] = [];
+    }
+    componentList[v.get('extensionDisplayName')].push({
+      id: `${v.get('extensionName')}/${v.get('libPath')}`,
+      name: v.get('displayName')
+    });
+  });
+
+  Object.keys(componentList).forEach((extenisonDisplayName) => {
+    groupList.push({
+      name: extenisonDisplayName,
+      children: componentList[extenisonDisplayName]
+    });
+  });
+
+  return groupList;
+};
+
+export default () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const params = useParams();
+
+  const {
+    rules,
+    currentRule,
+    currentIframe,
+    registry,
+    extensions: extensionConfigurations
+  } = useSelector((state) => state);
+
+  const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [component, setComponent] = useState(Map());
+
+  const componentIframeDetails = registry.getIn([
+    'components',
+    params.type,
+    component.get('modulePath')
+  ]);
+
+  const extensionName = (component.get('modulePath') || '').split('/')[0];
+
+  useEffect(() => {
+    const c = getCurrentRule({ currentRule, rules, ruleId: params.rule_id });
+    dispatch.currentRule.setCurrentRule(c);
+    setComponent(getComponent({ params, rules, currentRule }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
+    <>
+      {waitingForExtensionResponse ? (
+        <Backdrop message="Waiting for the extension response..." />
+      ) : null}
+      <Flex direction="row" flex>
+        <View
+          minWidth="size-3600"
+          width="size-3600"
+          borderEndWidth="thin"
+          borderEndColor="gray-400"
+          marginStart="size-150"
+        >
+          <Heading level={4}>Component Details</Heading>
+
+          <Picker
+            marginTop="size-150"
+            isRequired
+            necessityIndicator="label"
+            validationState={errors.modulePath ? 'invalid' : ''}
+            label="Type"
+            selectedKey={component.get('modulePath') || ''}
+            onSelectionChange={(modulePath) => {
+              handleComponentTypeChange({ component, setComponent, modulePath });
+            }}
+            width="size-3400"
+            items={getComponentList({ type: params.type, registry })}
+          >
+            {(item) => (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {(subitem) => <Item>{subitem.name}</Item>}
+              </Section>
+            )}
+          </Picker>
+
+          <TextField
+            marginTop="size-150"
+            label="Order"
+            width="size-3400"
+            value={component.get('order') || '50'}
+            onChange={(order) => {
+              handleOrderChange({ order, component, setComponent });
+            }}
+          />
+
+          <ButtonGroup marginTop="size-150" marginBottom="size-150">
+            <Button
+              variant="cta"
+              onPress={() => {
+                handleSave({
+                  component,
+                  setErrors,
+                  addComponent: dispatch.currentRule.addComponent,
+                  saveComponent: dispatch.currentRule.saveComponent,
+                  params,
+                  currentRule,
+                  currentIframe,
+                  setWaitingForExtensionResponse,
+                  history
+                });
+              }}
+            >
+              Save
+            </Button>
+
+            <Button
+              variant="secondary"
+              onPress={() => {
+                history.push(backLink({ ruleId: params.rule_id }));
+              }}
+            >
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </View>
+
+        <ComponentIframe
+          component={componentIframeDetails}
+          extensionConfiguration={extensionConfigurations
+            .filter((i) => i.get('name') === extensionName)
+            .first()}
+          settings={component.get('settings')}
+          server={registry.getIn(['environment', 'server'])}
+        />
+      </Flex>
+    </>
+  );
+};

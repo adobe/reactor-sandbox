@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useEffect } from 'react';
-import { withRouter, useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Flex, View, ActionGroup, Item, Text } from '@adobe/react-spectrum';
 import DataElementsIcon from '@spectrum-icons/workflow/Variable';
 import RuleIcon from '@spectrum-icons/workflow/PageRule';
@@ -23,9 +23,10 @@ import NAMED_ROUTES from '../../constants';
 
 import './Menu.css';
 
-const Menu = ({ location }) => {
+export default () => {
   const [selectedKeys, setSelectedKeys] = useState(new Set([]));
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     ['extension_configurations', 'data_elements', 'rules', 'property_settings', 'settings'].forEach(
@@ -87,5 +88,3 @@ const Menu = ({ location }) => {
     </Flex>
   );
 };
-
-export default withRouter(Menu);

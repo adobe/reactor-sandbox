@@ -11,26 +11,22 @@ governing permissions and limitations under the License.
 */
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import List from './List';
 
-const DataElementsList = ({ dataElements, deleteDataElement }) => (
-  <List
-    items={dataElements}
-    nameProperty="name"
-    deleteFn={deleteDataElement}
-    linkPrefix="/data_elements"
-    heading="Data Elements"
-  />
-);
+const DataElementsList = () => {
+  const dispatch = useDispatch();
+  const dataElements = useSelector((state) => state.dataElements);
 
-const mapState = (state) => ({
-  dataElements: state.dataElements
-});
+  return (
+    <List
+      items={dataElements}
+      nameProperty="name"
+      deleteFn={dispatch.dataElements.deleteDataElement}
+      linkPrefix="/data_elements"
+      heading="Data Elements"
+    />
+  );
+};
 
-const mapDispatch = ({ dataElements: { deleteDataElement } }) => ({
-  deleteDataElement: (i) => deleteDataElement(i)
-});
-
-export default withRouter(connect(mapState, mapDispatch)(DataElementsList));
+export default DataElementsList;
