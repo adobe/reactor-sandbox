@@ -64,25 +64,22 @@ const handleSave = ({
   addRule,
   saveRule,
   ruleId,
-  // eslint-disable-next-line no-unused-vars
   setCurrentRule,
-  // eslint-disable-next-line no-unused-vars
   history
 }) => {
   if (!isValid({ rule, setErrors })) {
     return false;
   }
 
-  // eslint-disable-next-line no-unused-vars
   const method = isNewRule({ rules, ruleId }) ? addRule : saveRule;
 
   method({
     id: ruleId,
     rule
+  }).then(() => {
+    setCurrentRule(null);
+    history.push(backLink);
   });
-
-  setCurrentRule(null);
-  history.push(backLink);
 
   return true;
 };

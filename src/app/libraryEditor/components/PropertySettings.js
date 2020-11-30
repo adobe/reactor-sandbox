@@ -37,9 +37,9 @@ const handleSave = ({ domains, setErrors, history, propertySettings, savePropert
 
   savePropertySettings(
     propertySettings.setIn(['settings', 'domains'], fromJS(domains.split(',').map((s) => s.trim())))
-  );
-
-  history.push(NAMED_ROUTES.LIBRARY_EDITOR);
+  ).then(() => {
+    history.push(NAMED_ROUTES.LIBRARY_EDITOR);
+  });
 
   return true;
 };

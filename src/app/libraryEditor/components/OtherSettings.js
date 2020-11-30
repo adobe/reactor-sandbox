@@ -51,11 +51,11 @@ const handleSave = ({
     return false;
   }
 
-  return Promise.all([saveCompanySettings(companySettings), saveOtherSettings(otherSettings)]).then(
-    () => {
-      history.push(NAMED_ROUTES.LIBRARY_EDITOR);
-    }
-  );
+  Promise.all([saveCompanySettings(companySettings), saveOtherSettings(otherSettings)]).then(() => {
+    history.push(NAMED_ROUTES.LIBRARY_EDITOR);
+  });
+
+  return true;
 };
 
 export default () => {
