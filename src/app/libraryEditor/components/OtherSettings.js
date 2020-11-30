@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import { useHistory } from 'react-router-dom';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const handleOrgIdChange = ({ orgId, setCompanySettings, companySettings }) => {
   setCompanySettings(companySettings.set('orgId', orgId));
@@ -39,7 +40,7 @@ const isValid = ({ companySettings, otherSettings, setErrors }) => {
   return Object.keys(errors).length === 0;
 };
 
-const handleSave = ({
+const handleSave = async ({
   companySettings,
   otherSettings,
   setErrors,
@@ -51,9 +52,12 @@ const handleSave = ({
     return false;
   }
 
-  Promise.all([saveCompanySettings(companySettings), saveOtherSettings(otherSettings)]).then(() => {
+  try {
+    await Promise.all([saveCompanySettings(companySettings), saveOtherSettings(otherSettings)]);
     history.push(NAMED_ROUTES.LIBRARY_EDITOR);
-  });
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
 
   return true;
 };
@@ -66,7 +70,11 @@ export default () => {
   const [companySettings, setCompanySettings] = useState(useSelector((state) => state.company));
   const [otherSettings, setOtherSettings] = useState(useSelector((state) => state.otherSettings));
 
-  return (
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
     <Flex direction="column">
       <View width="100%" alignSelf="center">
         <Heading level={2}>Company Settings</Heading>

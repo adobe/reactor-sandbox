@@ -18,6 +18,7 @@ import { Flex, View, Heading, Picker, Item, ButtonGroup, Button } from '@adobe/r
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewExtensionConfiguration = ({ extensionConfigurations, extensionConfigurationId }) =>
   extensionConfigurationId === 'new' ||
@@ -53,7 +54,7 @@ const isComponentValid = ({ extensionConfiguration, setErrors }) => {
   return Object.keys(errors).length === 0;
 };
 
-const handleSave = ({
+const handleSave = async ({
   dispatch: {
     extensions: { saveExtensionConfiguration, addExtensionConfiguration }
   },
@@ -82,23 +83,25 @@ const handleSave = ({
 
   setWaitingForExtensionResponse(true);
 
-  currentIframe.promise
-    .then((api) => Promise.all([api.validate(), api.getSettings()]))
-    .then(([isValid, settings]) => {
-      if (isValid) {
-        method({
-          id: extensionConfigurationId,
-          extensionConfiguration: extensionConfiguration.merge({
-            displayName,
-            settings
-          })
-        });
+  try {
+    const api = await currentIframe.promise;
+    const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
+    if (isValid) {
+      await method({
+        id: extensionConfigurationId,
+        extensionConfiguration: extensionConfiguration.merge({
+          displayName,
+          settings
+        })
+      });
 
-        history.push(backLink);
-      } else {
-        setWaitingForExtensionResponse(false);
-      }
-    });
+      history.push(backLink);
+    } else {
+      setWaitingForExtensionResponse(false);
+    }
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
 
   return true;
 };
@@ -131,7 +134,11 @@ export default () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
     <>
       {waitingForExtensionResponse ? (
         <Backdrop message="Waiting for the extension response..." />

@@ -18,6 +18,7 @@ import { View, Heading, Divider, TextField, Button, ButtonGroup } from '@adobe/r
 import { useLastLocation } from 'react-router-last-location';
 import RuleComponentsList from './RuleComponentsList';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewRule = ({ ruleId, rules }) => {
   return ruleId === 'new' || !rules || ruleId >= rules.size;
@@ -57,7 +58,7 @@ const isValid = ({ rule, setErrors }) => {
   return Object.keys(errors).length === 0;
 };
 
-const handleSave = ({
+const handleSave = async ({
   rule,
   rules,
   setErrors,
@@ -73,13 +74,17 @@ const handleSave = ({
 
   const method = isNewRule({ rules, ruleId }) ? addRule : saveRule;
 
-  method({
-    id: ruleId,
-    rule
-  }).then(() => {
+  try {
+    await method({
+      id: ruleId,
+      rule
+    });
+
     setCurrentRule(null);
     history.push(backLink);
-  });
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
 
   return true;
 };
@@ -112,7 +117,11 @@ export default () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
     <View margin="size-300" width="100%">
       <Heading level={2}>{isNewRule({ ruleId, rules }) ? 'Create' : 'Edit'} Rule</Heading>
       <Divider />

@@ -28,6 +28,7 @@ import {
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewComponent = ({ componentId, type, currentRule }) =>
   componentId === 'new' || componentId >= (currentRule.get(type) || List()).size;
@@ -85,7 +86,7 @@ const isComponentValid = ({ component, setErrors }) => {
 
 const backLink = ({ ruleId }) => `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${ruleId}`;
 
-const handleSave = ({
+const handleSave = async ({
   component,
   setErrors,
   addComponent,
@@ -104,21 +105,24 @@ const handleSave = ({
 
   setWaitingForExtensionResponse(true);
 
-  currentIframe.promise
-    .then((api) => Promise.all([api.validate(), api.getSettings()]))
-    .then(([isValid, settings]) => {
-      if (isValid) {
-        method({
-          id: componentId,
-          type,
-          component: component.merge({ settings })
-        });
+  try {
+    const api = await currentIframe.promise;
+    const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
 
-        history.push(backLink({ ruleId }));
-      } else {
-        setWaitingForExtensionResponse(false);
-      }
-    });
+    if (isValid) {
+      await method({
+        id: componentId,
+        type,
+        component: component.merge({ settings })
+      });
+
+      history.push(backLink({ ruleId }));
+    } else {
+      setWaitingForExtensionResponse(false);
+    }
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
 
   return true;
 };
@@ -179,7 +183,11 @@ export default () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
     <>
       {waitingForExtensionResponse ? (
         <Backdrop message="Waiting for the extension response..." />

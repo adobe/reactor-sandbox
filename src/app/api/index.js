@@ -53,9 +53,10 @@ export const saveContainerData = (containerData) =>
     },
     body: JSON.stringify(containerData)
   })
-    .then((response) => {
+    .then(async (response) => {
       if (!response.ok) {
-        throw new Error(response.statusText);
+        const body = await response.text();
+        throw new Error(`${response.statusText}: ${body}`);
       }
 
       return response;

@@ -18,6 +18,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const isValid = ({ domains, setErrors }) => {
   const errors = {};
@@ -30,16 +31,28 @@ const isValid = ({ domains, setErrors }) => {
   return Object.keys(errors).length === 0;
 };
 
-const handleSave = ({ domains, setErrors, history, propertySettings, savePropertySettings }) => {
+const handleSave = async ({
+  domains,
+  setErrors,
+  history,
+  propertySettings,
+  savePropertySettings
+}) => {
   if (!isValid({ domains, setErrors })) {
     return false;
   }
 
-  savePropertySettings(
-    propertySettings.setIn(['settings', 'domains'], fromJS(domains.split(',').map((s) => s.trim())))
-  ).then(() => {
+  try {
+    await savePropertySettings(
+      propertySettings.setIn(
+        ['settings', 'domains'],
+        fromJS(domains.split(',').map((s) => s.trim()))
+      )
+    );
     history.push(NAMED_ROUTES.LIBRARY_EDITOR);
-  });
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
 
   return true;
 };
@@ -54,7 +67,11 @@ export default () => {
     propertySettings.getIn(['settings', 'domains']).toJS().join(', ')
   );
 
-  return (
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
     <View margin="2rem auto" width="50rem">
       <Heading level={2}>Property Settings</Heading>
       <Divider />

@@ -30,6 +30,7 @@ import {
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
 import NAMED_ROUTES from '../../constants';
+import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewComponent = ({ dataElementId, dataElements }) => {
   return dataElementId === 'new' || dataElementId >= (dataElements || List()).size;
@@ -73,7 +74,7 @@ const isComponentValid = ({ dataElement, currentIframe, setErrors }) => {
   return Object.keys(errors).length === 0;
 };
 
-const handleSave = ({
+const handleSave = async ({
   dispatch: {
     dataElements: { saveDataElement, addDataElement }
   },
@@ -93,20 +94,23 @@ const handleSave = ({
 
   setWaitingForExtensionResponse(true);
 
-  currentIframe.promise
-    .then((api) => Promise.all([api.validate(), api.getSettings()]))
-    .then(([isValid, settings]) => {
-      if (isValid) {
-        method({
-          id: dataElementId,
-          dataElement: dataElement.merge({ settings })
-        });
+  try {
+    const api = await currentIframe.promise;
+    const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
 
-        history.push(backLink);
-      } else {
-        setWaitingForExtensionResponse(false);
-      }
-    });
+    if (isValid) {
+      await method({
+        id: dataElementId,
+        dataElement: dataElement.merge({ settings })
+      });
+
+      history.push(backLink);
+    } else {
+      setWaitingForExtensionResponse(false);
+    }
+  } catch (e) {
+    setErrors({ api: e.message });
+  }
 
   return true;
 };
@@ -164,7 +168,11 @@ export default () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
     <>
       {waitingForExtensionResponse ? (
         <Backdrop message="Waiting for the extension response..." />
