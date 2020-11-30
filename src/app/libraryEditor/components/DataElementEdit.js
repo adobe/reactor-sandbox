@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map, List } from 'immutable';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -35,15 +35,12 @@ const isNewComponent = ({ dataElementId, dataElements }) => {
   return dataElementId === 'new' || dataElementId >= (dataElements || List()).size;
 };
 
-const getDataElement = ({ dataElementId, dataElements }) => {
-  return (
-    (dataElements || List()).get(dataElementId) ||
-    Map({
-      modulePath: '',
-      settings: null
-    })
-  );
-};
+const getDataElement = ({ dataElementId, dataElements }) =>
+  (dataElements || List()).get(dataElementId) ||
+  Map({
+    modulePath: '',
+    settings: null
+  });
 
 const backLink = `${NAMED_ROUTES.LIBRARY_EDITOR}/data_elements/`;
 
@@ -152,7 +149,7 @@ export default () => {
 
   const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
   const [errors, setErrors] = useState({});
-  const [dataElement, setDataElement] = useState(getDataElement({ dataElementId, dataElements }));
+  const [dataElement, setDataElement] = useState(Map());
 
   const componentIframeDetails = registry.getIn([
     'components',
@@ -160,7 +157,12 @@ export default () => {
     dataElement.get('modulePath')
   ]);
 
-  const extensionName = dataElement.get('modulePath').split('/')[0];
+  const extensionName = (dataElement.get('modulePath') || '').split('/')[0];
+
+  useEffect(() => {
+    setDataElement(getDataElement({ dataElementId, dataElements }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -194,7 +196,7 @@ export default () => {
             necessityIndicator="label"
             validationState={errors.modulePath ? 'invalid' : ''}
             label="Type"
-            selectedKey={dataElement.get('modulePath')}
+            selectedKey={dataElement.get('modulePath') || ''}
             onSelectionChange={(modulePath) =>
               handleComponentTypeChange({ modulePath, dataElement, setDataElement })
             }

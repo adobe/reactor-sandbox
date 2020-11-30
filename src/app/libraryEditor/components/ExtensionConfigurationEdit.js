@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { Map, List } from 'immutable';
@@ -121,11 +121,15 @@ export default () => {
 
   const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
   const [errors, setErrors] = useState({});
-  const [extensionConfiguration, setExtensionConfiguration] = useState(
-    getExtensionConfiguration({ extensionConfigurationId, extensionConfigurations })
-  );
-
+  const [extensionConfiguration, setExtensionConfiguration] = useState(Map());
   const componentIframeDetails = registry.getIn(['extensions', extensionConfiguration.get('name')]);
+
+  useEffect(() => {
+    setExtensionConfiguration(
+      getExtensionConfiguration({ extensionConfigurationId, extensionConfigurations })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -147,7 +151,7 @@ export default () => {
             isRequired
             necessityIndicator="label"
             validationState={errors.name ? 'invalid' : ''}
-            selectedKey={extensionConfiguration.get('name')}
+            selectedKey={extensionConfiguration.get('name') || ''}
             onSelectionChange={(name) =>
               handleNameChange({ name, extensionConfiguration, setExtensionConfiguration })
             }

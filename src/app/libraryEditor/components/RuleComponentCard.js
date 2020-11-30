@@ -24,7 +24,7 @@ const cardDetails = (item, type, registry) => {
   const component = registry.getIn(['components', type, item.get('modulePath')]);
   return (
     <>
-      <Heading level={4} margin="0" marginBottom="size-150">
+      <Heading level={4} margin="0" marginBottom="size-150" UNSAFE_style={{ textAlign: 'center' }}>
         {component.get('displayName')}
       </Heading>
       <Heading level={5} margin="0" marginBottom="size-400">
