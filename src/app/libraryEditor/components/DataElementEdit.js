@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
-import { Map, List } from 'immutable';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import produce from 'immer';
 import {
   Flex,
   View,
@@ -32,41 +32,62 @@ import Backdrop from './Backdrop';
 import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 
-const isNewComponent = ({ dataElementId, dataElements }) => {
-  return dataElementId === 'new' || dataElementId >= (dataElements || List()).size;
+const isNewDataElement = ({ dataElementId, dataElements }) => {
+  return dataElementId === 'new' || dataElementId >= (dataElements || []).length;
 };
 
-const getDataElement = ({ dataElementId, dataElements }) =>
-  (dataElements || List()).get(dataElementId) ||
-  Map({
-    modulePath: '',
-    settings: null
-  });
+const getDataElement = ({ dataElementId, dataElements }) => {
+  const dataElement = (dataElements || [])[dataElementId];
+
+  if (!dataElement) {
+    return {
+      id: dataElementId,
+      name: '',
+      settings: null,
+      cleanText: false,
+      enableDefaultValue: false,
+      defaultValue: '',
+      forceLowerCase: false,
+      modulePath: '',
+      storageDuration: ''
+    };
+  }
+
+  return {
+    ...dataElement,
+    id: Number(dataElementId),
+    enableDefaultValue: Object.keys(dataElement).includes('defaultValue'),
+    defaultValue: dataElement.defaultValue || ''
+  };
+};
 
 const backLink = `${NAMED_ROUTES.LIBRARY_EDITOR}/data_elements/`;
 
 const handleComponentTypeChange = ({ modulePath, dataElement, setDataElement }) => {
   setDataElement(
-    dataElement.merge({
-      settings: null,
-      modulePath
+    produce(dataElement, (draft) => {
+      draft.modulePath = modulePath;
+      draft.settings = null;
     })
   );
 };
 
 const handleInputChange = ({ fieldName, newValue, dataElement, setDataElement }) => {
-  const newDataElement = dataElement.set(fieldName, newValue);
-  setDataElement(newDataElement);
+  setDataElement(
+    produce(dataElement, (draft) => {
+      draft[fieldName] = newValue;
+    })
+  );
 };
 
-const isComponentValid = ({ dataElement, currentIframe, setErrors }) => {
+const isComponentValid = ({ dataElement, setErrors }) => {
   const errors = {};
 
-  if (!dataElement.get('name')) {
+  if (!dataElement.name) {
     errors.name = true;
   }
 
-  if (!dataElement.get('modulePath') || !currentIframe.promise) {
+  if (!dataElement.modulePath) {
     errors.modulePath = true;
   }
 
@@ -75,34 +96,29 @@ const isComponentValid = ({ dataElement, currentIframe, setErrors }) => {
 };
 
 const handleSave = async ({
-  dispatch: {
-    dataElements: { saveDataElement, addDataElement }
-  },
-  currentIframe,
+  apiPromise,
+  saveMethod,
   history,
-  dataElementId,
   dataElement,
-  dataElements,
   setWaitingForExtensionResponse,
   setErrors
 }) => {
-  if (!isComponentValid({ dataElement, currentIframe, setErrors })) {
+  if (!isComponentValid({ dataElement, setErrors })) {
     return false;
   }
-
-  const method = isNewComponent({ dataElementId, dataElements }) ? addDataElement : saveDataElement;
 
   setWaitingForExtensionResponse(true);
 
   try {
-    const api = await currentIframe.promise;
+    const api = await apiPromise;
     const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
 
     if (isValid) {
-      await method({
-        id: dataElementId,
-        dataElement: dataElement.merge({ settings })
-      });
+      await saveMethod(
+        produce(dataElement, (draft) => {
+          draft.settings = settings;
+        })
+      );
 
       history.push(backLink);
     } else {
@@ -110,22 +126,23 @@ const handleSave = async ({
     }
   } catch (e) {
     setErrors({ api: e.message });
+    throw e;
   }
 
   return true;
 };
 
-const dataElementsList = ({ registry }) => {
+const computeDataElementList = (dataElements = {}) => {
   const componentList = {};
   const groupList = [];
 
-  (registry.getIn(['components', 'dataElements']) || List()).valueSeq().forEach((v) => {
-    if (!componentList[v.get('extensionDisplayName')]) {
-      componentList[v.get('extensionDisplayName')] = [];
+  Object.values(dataElements).forEach((dataElement) => {
+    if (!componentList[dataElement.extensionDisplayName]) {
+      componentList[dataElement.extensionDisplayName] = [];
     }
-    componentList[v.get('extensionDisplayName')].push({
-      id: `${v.get('extensionName')}/${v.get('libPath')}`,
-      name: v.get('displayName')
+    componentList[dataElement.extensionDisplayName].push({
+      id: `${dataElement.extensionName}/${dataElement.libPath}`,
+      name: dataElement.displayName
     });
   });
 
@@ -153,15 +170,25 @@ export default () => {
 
   const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
   const [errors, setErrors] = useState({});
-  const [dataElement, setDataElement] = useState(Map());
+  const [dataElement, setDataElement] = useState({});
 
-  const componentIframeDetails = registry.getIn([
-    'components',
-    'dataElements',
-    dataElement.get('modulePath')
+  const dataElementsList = useMemo(() => computeDataElementList(registry.components.dataElements), [
+    registry.components.dataElements
   ]);
 
-  const extensionName = (dataElement.get('modulePath') || '').split('/')[0];
+  const saveMethod = useMemo(() => {
+    const { addAndSaveToContainer, updateAndSaveToContainer } = dispatch.dataElements;
+    return isNewDataElement({ dataElementId, dataElements })
+      ? addAndSaveToContainer
+      : updateAndSaveToContainer;
+  }, [dispatch.dataElements, dataElementId, dataElements]);
+
+  const componentIframeDetails = (registry.components.dataElements || {})[dataElement.modulePath];
+
+  const extensionConfiguration = useMemo(() => {
+    const extensionName = (dataElement.modulePath || '').split('/')[0];
+    return extensionConfigurations.filter((i) => i.name === extensionName)[0];
+  }, [dataElement.modulePath, extensionConfigurations]);
 
   useEffect(() => {
     setDataElement(getDataElement({ dataElementId, dataElements }));
@@ -192,7 +219,7 @@ export default () => {
             width="size-3400"
             necessityIndicator="label"
             validationState={errors.name ? 'invalid' : ''}
-            value={dataElement.get('name') || ''}
+            value={dataElement.name || ''}
             onChange={(newValue) =>
               handleInputChange({ fieldName: 'name', newValue, dataElement, setDataElement })
             }
@@ -204,12 +231,12 @@ export default () => {
             necessityIndicator="label"
             validationState={errors.modulePath ? 'invalid' : ''}
             label="Type"
-            selectedKey={dataElement.get('modulePath') || ''}
+            selectedKey={dataElement.modulePath || ''}
             onSelectionChange={(modulePath) =>
               handleComponentTypeChange({ modulePath, dataElement, setDataElement })
             }
             width="size-3400"
-            items={dataElementsList({ registry })}
+            items={dataElementsList}
           >
             {(item) => (
               <Section key={item.name} items={item.children} title={item.name}>
@@ -218,24 +245,42 @@ export default () => {
             )}
           </Picker>
 
-          <TextField
+          <Checkbox
             marginTop="size-150"
-            label="Default Value"
-            width="size-3400"
-            value={dataElement.get('defaultValue') || ''}
+            isSelected={dataElement.enableDefaultValue || false}
             onChange={(newValue) =>
               handleInputChange({
-                fieldName: 'defaultValue',
+                fieldName: 'enableDefaultValue',
                 newValue,
                 dataElement,
                 setDataElement
               })
             }
-          />
+          >
+            Enable default value
+          </Checkbox>
+
+          <br />
+
+          {dataElement.enableDefaultValue && (
+            <TextField
+              label="Default Value"
+              width="size-3400"
+              value={dataElement.defaultValue || ''}
+              onChange={(newValue) =>
+                handleInputChange({
+                  fieldName: 'defaultValue',
+                  newValue,
+                  dataElement,
+                  setDataElement
+                })
+              }
+            />
+          )}
 
           <Checkbox
             marginTop="size-150"
-            isSelected={dataElement.get('forceLowerCase') || false}
+            isSelected={dataElement.forceLowerCase || false}
             onChange={(newValue) =>
               handleInputChange({
                 fieldName: 'forceLowerCase',
@@ -251,7 +296,8 @@ export default () => {
           <br />
 
           <Checkbox
-            isSelected={dataElement.get('cleanText') || false}
+            marginTop="size-150"
+            isSelected={dataElement.cleanText || false}
             onChange={(newValue) =>
               handleInputChange({
                 fieldName: 'cleanText',
@@ -267,7 +313,7 @@ export default () => {
           <Picker
             marginTop="size-150"
             label="Storage duration"
-            selectedKey={dataElement.get('storageDuration') || ''}
+            selectedKey={dataElement.storageDuration || ''}
             onSelectionChange={(newValue) =>
               handleInputChange({
                 fieldName: 'storageDuration',
@@ -292,12 +338,10 @@ export default () => {
               variant="cta"
               onPress={() =>
                 handleSave({
-                  dispatch,
-                  currentIframe,
+                  saveMethod,
+                  apiPromise: currentIframe.promise,
                   history,
-                  dataElementId,
                   dataElement,
-                  dataElements,
                   setWaitingForExtensionResponse,
                   setErrors
                 })
@@ -314,11 +358,9 @@ export default () => {
 
         <ComponentIframe
           component={componentIframeDetails}
-          extensionConfiguration={extensionConfigurations
-            .filter((i) => i.get('name') === extensionName)
-            .first()}
-          settings={dataElement.get('settings')}
-          server={registry.getIn(['environment', 'server'])}
+          extensionConfiguration={extensionConfiguration}
+          settings={dataElement.settings}
+          server={registry.environment.server}
         />
       </Flex>
     </>

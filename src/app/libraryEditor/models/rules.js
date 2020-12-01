@@ -22,63 +22,73 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-param-reassign */
-
-import { List, Map } from 'immutable';
+import produce from 'immer';
 import saveContainer from '../helpers/saveContainer';
 
-const add = (list, payload) => {
-  return list.push(payload.rule.set('id', `RL${Date.now()}`));
-};
+const add = (list, payload) =>
+  produce([list, payload], ([rules, rule]) => {
+    delete rule.ruleId;
+    rules.push(rule);
+  });
 
-const save = (list, payload) =>
-  list.update(payload.id, () => payload.rule.set('id', `RL${Date.now()}`));
-const del = (list, payload) => list.delete(payload);
+const update = (list, payload) =>
+  produce([list, payload], ([rules, { ruleId, ...rule }]) => {
+    delete rule.ruleId;
+    rules[ruleId] = rule;
+  });
+
+const del = (list, payload) =>
+  produce([list, payload], ([rules, id]) => {
+    // eslint-disable-next-line no-unused-vars
+    rules = rules.splice(id, 1);
+  });
+
+const cloneState = produce((draft, rules) => {
+  draft.rules = rules;
+});
 
 export default {
-  state: List(), // initial state
+  state: [], // initial state
   reducers: {
-    setRules(state, payload) {
+    set(state, payload) {
       return payload;
     },
-    addRuleReducer(state, payload) {
-      const rules = add(state, payload);
+    add(state, payload) {
+      const [rules] = add(state, payload);
       return rules;
     },
-    saveRuleReducer(state, payload) {
-      const rules = save(state, payload);
+    update(state, payload) {
+      const [rules] = update(state, payload);
       return rules;
     },
-    deleteRuleReducer(state, payload) {
-      const rules = del(state, payload);
+    delete(state, payload) {
+      const [rules] = del(state, payload);
       return rules;
     }
   },
   effects: {
-    async addRule(payload, rootState) {
-      const rules = add(rootState.rules, payload);
+    async addAndSaveToContainer(payload, rootState) {
+      const [rules] = add(rootState.rules, payload);
+      const clonedState = cloneState(rootState, rules);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('rules', rules);
-      return saveContainer(clonedState.toJS()).then(() => this.addRuleReducer(payload));
+      await saveContainer(clonedState);
+      return this.add(payload);
     },
 
-    async saveRule(payload, rootState) {
-      const rules = save(rootState.rules, payload);
+    async updateAndSaveToContainer(payload, rootState) {
+      const [rules] = update(rootState.rules, payload);
+      const clonedState = cloneState(rootState, rules);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('rules', rules);
-
-      return saveContainer(clonedState.toJS()).then(() => this.saveRuleReducer(payload));
+      await saveContainer(clonedState);
+      return this.update(payload);
     },
 
-    async deleteRule(payload, rootState) {
-      const rules = del(rootState.rules, payload);
+    async deleteAndSaveContainer(payload, rootState) {
+      const [rules] = del(rootState.rules, payload);
+      const clonedState = cloneState(rootState, rules);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('rules', rules);
-
-      return saveContainer(clonedState.toJS()).then(() => this.deleteRuleReducer(payload));
+      await saveContainer(clonedState);
+      return this.delete(payload);
     }
   }
 };

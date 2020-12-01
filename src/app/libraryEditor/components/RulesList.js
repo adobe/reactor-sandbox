@@ -21,8 +21,9 @@ export default () => {
   return (
     <List
       items={rules}
+      keyName="id"
       nameProperty="name"
-      deleteFn={dispatch.rules.deleteRule}
+      deleteFn={dispatch.rules.deleteAndSaveContainer}
       linkPrefix="/rules"
       heading="Rules"
     />

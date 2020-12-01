@@ -27,10 +27,9 @@ import Add from '@spectrum-icons/workflow/Add';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
 
-const List = ({ items, nameProperty, deleteFn, heading = 'Unknows' }) => {
+const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) => {
   const { url } = useRouteMatch();
   const history = useHistory();
-
   return (
     <Flex direction="column" width="50rem" margin="2rem auto">
       <Heading level="2">{heading}</Heading>
@@ -44,8 +43,8 @@ const List = ({ items, nameProperty, deleteFn, heading = 'Unknows' }) => {
         </TableHeader>
         <TableBody>
           {items.map((item, i) => (
-            <Row key={item}>
-              <Cell>{item.get(nameProperty)}</Cell>
+            <Row key={item[keyName]}>
+              <Cell>{item[nameProperty]}</Cell>
               <Cell>
                 <ActionGroup
                   onAction={(key) =>
@@ -66,7 +65,8 @@ const List = ({ items, nameProperty, deleteFn, heading = 'Unknows' }) => {
               </Cell>
             </Row>
           ))}
-          {items.size === 0 ? (
+
+          {items.length === 0 ? (
             <Row>
               <Cell>No items found.</Cell>
               <Cell>&nbsp;</Cell>

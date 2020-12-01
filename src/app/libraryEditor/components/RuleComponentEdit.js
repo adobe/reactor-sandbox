@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { Map, List } from 'immutable';
+import produce from 'immer';
 import {
   Flex,
   View,
@@ -31,52 +31,55 @@ import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewComponent = ({ componentId, type, currentRule }) =>
-  componentId === 'new' || componentId >= (currentRule.get(type) || List()).size;
+  componentId === 'new' || !currentRule || componentId >= (currentRule[type] || []).length;
 
-const getCurrentRule = ({ currentRule, rules, ruleId }) => {
-  let rule;
+const getCurrentRule = ({ ruleId, rules }) => {
+  const rule = (rules || [])[ruleId];
 
-  if (currentRule && currentRule.get('id') === ruleId) {
-    rule = currentRule;
-  } else {
-    rule = (rules || List()).get(ruleId) || Map();
+  if (!rule) {
+    return {
+      id: Number(ruleId),
+      name: ''
+    };
   }
-  rule = rule.set('id', ruleId);
-  return rule;
+
+  return {
+    ...rule,
+    id: Number(ruleId)
+  };
 };
 
-const getComponent = ({
-  params: { type, component_id: componentId, rule_id: ruleId },
-  rules,
-  currentRule
-}) => {
-  const rule = getCurrentRule({ currentRule, rules, ruleId });
-  return (
-    rule.getIn([type, componentId]) ||
-    Map({
+const getComponent = ({ params: { type, component_id: componentId }, currentRule }) => {
+  const ruleComponent = (currentRule[type] || [])[componentId];
+  if (!ruleComponent) {
+    return {
       modulePath: '',
       settings: null
-    })
-  );
+    };
+  }
+  return ruleComponent;
 };
 
 const handleComponentTypeChange = ({ modulePath, component, setComponent }) =>
   setComponent(
-    component.merge({
-      settings: null,
-      modulePath
+    produce(component, (draft) => {
+      draft.modulePath = modulePath;
+      draft.settings = null;
     })
   );
 
 const handleOrderChange = ({ order, component, setComponent }) => {
-  const newComponent = component.set('order', order);
-  setComponent(newComponent);
+  setComponent(
+    produce(component, (draft) => {
+      draft.order = order;
+    })
+  );
 };
 
 const isComponentValid = ({ component, setErrors }) => {
   const errors = {};
 
-  if (!component.get('modulePath')) {
+  if (!component.modulePath) {
     errors.modulePath = true;
   }
 
@@ -87,33 +90,31 @@ const isComponentValid = ({ component, setErrors }) => {
 const backLink = ({ ruleId }) => `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${ruleId}`;
 
 const handleSave = async ({
+  apiPromise,
+  saveMethod,
   component,
-  setErrors,
-  addComponent,
-  saveComponent,
+  history,
   params: { rule_id: ruleId, component_id: componentId, type },
-  currentRule,
-  currentIframe,
   setWaitingForExtensionResponse,
-  history
+  setErrors
 }) => {
   if (!isComponentValid({ component, setErrors })) {
     return false;
   }
 
-  const method = isNewComponent({ componentId, type, currentRule }) ? addComponent : saveComponent;
-
   setWaitingForExtensionResponse(true);
 
   try {
-    const api = await currentIframe.promise;
+    const api = await apiPromise;
     const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
 
     if (isValid) {
-      await method({
+      await saveMethod({
         id: componentId,
         type,
-        component: component.merge({ settings })
+        component: produce([component, settings], ([draft, newSettings]) => {
+          draft.settings = newSettings;
+        })[0]
       });
 
       history.push(backLink({ ruleId }));
@@ -122,22 +123,23 @@ const handleSave = async ({
     }
   } catch (e) {
     setErrors({ api: e.message });
+    throw e;
   }
 
   return true;
 };
 
-const getComponentList = ({ type, registry }) => {
+const computeComponentList = (components = {}) => {
   const componentList = {};
   const groupList = [];
 
-  (registry.getIn(['components', type]) || List()).valueSeq().forEach((v) => {
-    if (!componentList[v.get('extensionDisplayName')]) {
-      componentList[v.get('extensionDisplayName')] = [];
+  Object.values(components).forEach((component) => {
+    if (!componentList[component.extensionDisplayName]) {
+      componentList[component.extensionDisplayName] = [];
     }
-    componentList[v.get('extensionDisplayName')].push({
-      id: `${v.get('extensionName')}/${v.get('libPath')}`,
-      name: v.get('displayName')
+    componentList[component.extensionDisplayName].push({
+      id: `${component.extensionName}/${component.libPath}`,
+      name: component.displayName
     });
   });
 
@@ -166,20 +168,36 @@ export default () => {
 
   const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
   const [errors, setErrors] = useState({});
-  const [component, setComponent] = useState(Map());
+  const [component, setComponent] = useState({});
 
-  const componentIframeDetails = registry.getIn([
-    'components',
+  const componentList = useMemo(() => computeComponentList(registry.components[params.type]), [
     params.type,
-    component.get('modulePath')
+    registry.components
   ]);
 
-  const extensionName = (component.get('modulePath') || '').split('/')[0];
+  const saveMethod = useMemo(() => {
+    const { addComponent, updateComponent } = dispatch.currentRule;
+    return isNewComponent({ componentId: params.component_id, type: params.type, currentRule })
+      ? addComponent
+      : updateComponent;
+  }, [dispatch.currentRule, params.component_id, params.type, currentRule]);
+
+  const componentIframeDetails = (registry.components[params.type] || {})[component.modulePath];
+
+  const extensionConfiguration = useMemo(() => {
+    const extensionName = (component.modulePath || '').split('/')[0];
+    return extensionConfigurations.filter((i) => i.name === extensionName)[0];
+  }, [component.modulePath, extensionConfigurations]);
 
   useEffect(() => {
-    const c = getCurrentRule({ currentRule, rules, ruleId: params.rule_id });
-    dispatch.currentRule.setCurrentRule(c);
-    setComponent(getComponent({ params, rules, currentRule }));
+    let detectedRule;
+
+    if (!currentRule) {
+      detectedRule = getCurrentRule({ ruleId: params.rule_id, rules });
+      dispatch.currentRule.setCurrentRule(detectedRule);
+    }
+
+    setComponent(getComponent({ params, rules, currentRule: currentRule || detectedRule }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -208,12 +226,12 @@ export default () => {
             necessityIndicator="label"
             validationState={errors.modulePath ? 'invalid' : ''}
             label="Type"
-            selectedKey={component.get('modulePath') || ''}
+            selectedKey={component.modulePath || ''}
             onSelectionChange={(modulePath) => {
               handleComponentTypeChange({ component, setComponent, modulePath });
             }}
             width="size-3400"
-            items={getComponentList({ type: params.type, registry })}
+            items={componentList}
           >
             {(item) => (
               <Section key={item.name} items={item.children} title={item.name}>
@@ -226,7 +244,7 @@ export default () => {
             marginTop="size-150"
             label="Order"
             width="size-3400"
-            value={component.get('order') || '50'}
+            value={component.order || '50'}
             onChange={(order) => {
               handleOrderChange({ order, component, setComponent });
             }}
@@ -237,15 +255,13 @@ export default () => {
               variant="cta"
               onPress={() => {
                 handleSave({
+                  apiPromise: currentIframe.promise,
+                  saveMethod,
                   component,
-                  setErrors,
-                  addComponent: dispatch.currentRule.addComponent,
-                  saveComponent: dispatch.currentRule.saveComponent,
+                  history,
                   params,
-                  currentRule,
-                  currentIframe,
                   setWaitingForExtensionResponse,
-                  history
+                  setErrors
                 });
               }}
             >
@@ -265,11 +281,9 @@ export default () => {
 
         <ComponentIframe
           component={componentIframeDetails}
-          extensionConfiguration={extensionConfigurations
-            .filter((i) => i.get('name') === extensionName)
-            .first()}
-          settings={component.get('settings')}
-          server={registry.getIn(['environment', 'server'])}
+          extensionConfiguration={extensionConfiguration}
+          settings={component.settings}
+          server={registry.environment.server}
         />
       </Flex>
     </>

@@ -22,7 +22,8 @@ export default () => {
     <List
       items={extensionConfigurations}
       nameProperty="displayName"
-      deleteFn={dispatch.extensions.deleteExtensionConfiguration}
+      keyName="name"
+      deleteFn={dispatch.extensions.deleteAndSaveContainer}
       linkPrefix="/extension_configurations"
       heading="Extension Configurations"
     />

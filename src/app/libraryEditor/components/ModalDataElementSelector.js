@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState } from 'react';
-import { List } from 'immutable';
+
 import {
   Dialog,
   DialogContainer,
@@ -32,13 +32,15 @@ const handleOnSave = ({
   closeDataElementSelectorModal
 }) => {
   let newDataElement = '';
-  const tokenize = dataElementSelectorModal.getIn(['options', 'tokenize']);
+  const {
+    options: { tokenize }
+  } = dataElementSelectorModal;
 
   if (dataElement) {
     newDataElement = tokenize ? `%${dataElement}%` : dataElement;
   }
 
-  dataElementSelectorModal.get('onSave')(newDataElement);
+  dataElementSelectorModal.onSave(newDataElement);
   setDataElement('');
   closeDataElementSelectorModal();
 };
@@ -48,26 +50,24 @@ const handleOnClose = ({
   setDataElement,
   closeDataElementSelectorModal
 }) => {
-  dataElementSelectorModal.get('onClose')();
+  dataElementSelectorModal.onClose();
   setDataElement('');
   closeDataElementSelectorModal();
 };
 
 const dataElementList = ({ dataElements }) =>
-  (dataElements || List()).valueSeq().map((v) => ({
-    id: v.get('name'),
-    name: v.get('name')
+  Object.values(dataElements).map((v) => ({
+    id: v.name,
+    name: v.name
   }));
 
 export default () => {
   const dispatch = useDispatch();
   const dataElements = useSelector((state) => state.dataElements);
-  const dataElementSelectorModal = useSelector((state) =>
-    state.modals.getIn(['dataElementSelectorModal'])
-  );
+  const dataElementSelectorModal = useSelector((state) => state.modals.dataElementSelectorModal);
   const [dataElement, setDataElement] = useState('');
 
-  return dataElementSelectorModal && dataElementSelectorModal.get('open') ? (
+  return dataElementSelectorModal && dataElementSelectorModal.open ? (
     <DialogContainer>
       <Dialog>
         <Heading>Datas Element Selector</Heading>

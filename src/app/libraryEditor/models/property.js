@@ -10,11 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Map } from 'immutable';
+import produce from 'immer';
 import saveContainer from '../helpers/saveContainer';
 
+const cloneState = produce((draft, propertySettings) => {
+  draft.property = propertySettings;
+});
+
 export default {
-  state: Map(), // initial state
+  state: {}, // initial state
   reducers: {
     setPropertySettings(state, payload) {
       return payload;
@@ -22,17 +26,16 @@ export default {
   },
   effects: {
     async savePropertySettings(payload, rootState) {
-      const settings = payload
-        .setIn(['settings', 'linkDelay'], 100)
-        .setIn(['settings', 'trackingCookieName'], 'sat_track')
-        .setIn(['settings', 'undefinedVarsReturnEmpty'], false);
-
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('property', settings);
-
-      return saveContainer(clonedState.toJS()).then(() => {
-        this.setPropertySettings(payload);
+      const propertySettings = produce(payload, (draft) => {
+        draft.settings.linkDelay = 100;
+        draft.settings.trackingCookieName = 'sat_track';
+        draft.settings.undefinedVarsReturnEmpty = false;
       });
+
+      const clonedState = cloneState(rootState, propertySettings);
+
+      await saveContainer(clonedState);
+      this.setPropertySettings(payload);
     }
   }
 };

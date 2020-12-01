@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { List } from 'immutable';
+import produce from 'immer';
 
 export default {
   state: null, // initial state
@@ -18,13 +18,16 @@ export default {
     setCurrentRule(state, payload) {
       return payload;
     },
-    saveComponent(state, payload) {
-      return state.updateIn([payload.type, payload.id], () => payload.component);
+    updateComponent(state, payload) {
+      return produce([state, payload], ([currentRule, { type, id, component }]) => {
+        currentRule[type][id] = component;
+      })[0];
     },
     addComponent(state, payload) {
-      return state.update(payload.type, () =>
-        (state.get(payload.type) || List()).push(payload.component)
-      );
+      return produce([state, payload], ([currentRule, { type, component }]) => {
+        currentRule[type] = currentRule[type] || [];
+        currentRule[type].push(component);
+      })[0];
     }
   }
 };

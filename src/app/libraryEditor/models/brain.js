@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { fromJS, Map } from 'immutable';
+import produce from 'immer';
 import { getEditorRegistry, getContainerData } from '../../api/index';
 import localStorage from './localStorage';
 import saveContainer from '../helpers/saveContainer';
@@ -22,33 +22,39 @@ const loadOtherSettings = (extensionName) => {
   localStorage.loadStateFor(extensionName);
 
   if (!localStorage.get('otherSettings')) {
-    localStorage.update(
-      'otherSettings',
-      fromJS({
-        tokens: {
-          imsAccess: 'fake-ims-access-token'
-        }
-      })
-    );
+    localStorage.update('otherSettings', {
+      tokens: {
+        imsAccess: 'fake-ims-access-token'
+      }
+    });
   }
 
   dispatch.otherSettings.setOtherSettings(localStorage.get('otherSettings'));
 };
 
 export default {
-  state: Map(), // initial state
+  state: {}, // initial state
+
   reducers: {
-    setError(state, error) {
-      return state.set('error', error);
+    setError(baseState, error) {
+      return produce(baseState, (draftState) => {
+        draftState.error = error;
+      });
     },
-    setContainerDataReseted(state, payload) {
-      return state.set('containerDataReseted', payload);
+    setContainerDataReseted(baseState, payload) {
+      return produce(baseState, (draftState) => {
+        draftState.containerDataReseted = payload;
+      });
     },
-    setInitialized(state, payload) {
-      return state.set('initialized', payload);
+    setInitialized(baseState, payload) {
+      return produce(baseState, (draftState) => {
+        draftState.initialized = payload;
+      });
     },
-    setExtensionName(state, payload) {
-      return state.set('extensionName', payload);
+    setExtensionName(baseState, payload) {
+      return produce(baseState, (draftState) => {
+        draftState.extensionName = payload;
+      });
     }
   },
   effects: {
@@ -67,20 +73,24 @@ export default {
 
     async loadRegistryData() {
       const data = await getEditorRegistry();
-      const jsData = fromJS(data);
 
-      dispatch.registry.setRegistry(jsData.delete('currentExtensionName'));
-      this.setExtensionName(jsData.get('currentExtensionName'));
-      loadOtherSettings(jsData.get('currentExtensionName'));
+      dispatch.registry.setRegistry(
+        produce(data, (draftState) => {
+          delete draftState.currentExtensionName;
+        })
+      );
+
+      this.setExtensionName(data.currentExtensionName);
+      loadOtherSettings(data.currentExtensionName);
     },
 
     async loadContainerData() {
       const containerData = await getContainerData();
-      this.pushDataDown(fromJS(containerData));
+      this.pushDataDown(containerData);
     },
 
     async clearContainerData() {
-      const emptyContainerData = fromJS({
+      const emptyContainerData = {
         extensions: [],
         rules: [],
         dataElements: [],
@@ -95,26 +105,26 @@ export default {
         company: {
           orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
         }
-      });
+      };
 
       await this.pushDataDown(emptyContainerData);
-      await saveContainer(emptyContainerData.toJS());
+      await saveContainer(emptyContainerData);
 
       this.setContainerDataReseted('success');
     },
 
     async clearLocalStorage(_, rootState) {
       localStorage.delete();
-      loadOtherSettings(rootState.brain.get('extensionName'));
+      loadOtherSettings(rootState.brain.extensionName);
     },
 
     async pushDataDown(payload) {
-      dispatch.extensions.setExtensionConfigurations(payload.get('extensions'));
-      dispatch.rules.setRules(payload.get('rules'));
-      dispatch.dataElements.setDataElements(payload.get('dataElements'));
+      dispatch.extensions.set(payload.extensions);
+      dispatch.rules.set(payload.rules);
+      dispatch.dataElements.set(payload.dataElements);
 
-      dispatch.property.setPropertySettings(payload.get('property'));
-      dispatch.company.setCompanySettings(payload.get('company'));
+      dispatch.property.setPropertySettings(payload.property);
+      dispatch.company.setCompanySettings(payload.company);
     }
   }
 };

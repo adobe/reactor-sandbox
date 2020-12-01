@@ -10,12 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-param-reassign */
-
+import produce from 'immer';
 import { saveContainerData } from '../../api/index';
 
 const arrayToObj = (result, item) => {
-  // eslint-disable-next-line no-debugger
   const itemName = item.name;
   delete item.name;
 
@@ -23,10 +21,17 @@ const arrayToObj = (result, item) => {
   return result;
 };
 
-export default ({ dataElements, extensions, rules, property, company }) => {
+export default (state) => {
+  const transformedState = produce(state, (draft) => {
+    draft.extensions = draft.extensions.reduce(arrayToObj, {});
+    draft.dataElements = draft.dataElements.reduce(arrayToObj, {});
+  });
+
+  const { extensions, dataElements, rules, property, company } = transformedState;
+
   const containerData = {
-    extensions: extensions.reduce(arrayToObj, {}),
-    dataElements: dataElements.reduce(arrayToObj, {}),
+    extensions,
+    dataElements,
     rules,
     property,
     company

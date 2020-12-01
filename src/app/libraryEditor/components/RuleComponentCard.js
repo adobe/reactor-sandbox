@@ -29,14 +29,14 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import NAMED_ROUTES from '../../constants';
 
 const cardDetails = (item, type, registry) => {
-  const component = registry.getIn(['components', type, item.get('modulePath')]);
+  const component = registry.components[type][item.modulePath];
   return (
     <View flex>
       <Heading level={4} margin="0" marginBottom="size-150" UNSAFE_style={{ textAlign: 'center' }}>
-        {component.get('displayName')}
+        {component.displayName}
       </Heading>
       <Heading level={5} margin="0" marginBottom="size-400" UNSAFE_style={{ textAlign: 'center' }}>
-        {component.get('extensionDisplayName')}
+        {component.extensionDisplayName}
       </Heading>
     </View>
   );
