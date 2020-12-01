@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState } from 'react';
+import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import { useHistory } from 'react-router-dom';
@@ -18,21 +19,29 @@ import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 
 const handleOrgIdChange = ({ orgId, setCompanySettings, companySettings }) => {
-  setCompanySettings(companySettings.set('orgId', orgId));
+  setCompanySettings(
+    produce(companySettings, (draft) => {
+      draft.orgId = orgId;
+    })
+  );
 };
 
 const handleImsChange = ({ imsAccess, otherSettings, setOtherSettings }) => {
-  setOtherSettings(otherSettings.setIn(['tokens', 'imsAccess'], imsAccess));
+  setOtherSettings(
+    produce(otherSettings, (draft) => {
+      draft.tokens.imsAccess = imsAccess;
+    })
+  );
 };
 
 const isValid = ({ companySettings, otherSettings, setErrors }) => {
   const errors = {};
 
-  if (!companySettings.get('orgId')) {
+  if (!companySettings.orgId) {
     errors.orgId = true;
   }
 
-  if (!otherSettings.getIn(['tokens', 'imsAccess'])) {
+  if (!otherSettings.tokens?.imsAccess) {
     errors.imsAccess = true;
   }
 
@@ -57,6 +66,7 @@ const handleSave = async ({
     history.push(NAMED_ROUTES.LIBRARY_EDITOR);
   } catch (e) {
     setErrors({ api: e.message });
+    throw e;
   }
 
   return true;
@@ -87,7 +97,7 @@ export default () => {
             width="size-6000"
             marginTop="size-150"
             validationState={errors.orgId ? 'invalid' : ''}
-            value={companySettings.get('orgId') || ''}
+            value={companySettings.orgId || ''}
             onChange={(orgId) => {
               handleOrgIdChange({ orgId, companySettings, setCompanySettings });
             }}
@@ -107,7 +117,7 @@ export default () => {
               width="size-6000"
               marginTop="size-150"
               validationState={errors.imsAccess ? 'invalid' : ''}
-              value={otherSettings.getIn(['tokens', 'imsAccess']) || ''}
+              value={otherSettings?.tokens?.imsAccess || ''}
               onChange={(imsAccess) => {
                 handleImsChange({ imsAccess, otherSettings, setOtherSettings });
               }}

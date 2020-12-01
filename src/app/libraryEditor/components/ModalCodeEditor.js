@@ -27,27 +27,27 @@ import {
 import './ModalCodeEditor.css';
 
 const handleOnSave = ({ codeEditorModal, codeEditorModalContent, closeCodeEditorModal }) => {
-  codeEditorModal.get('onSave')(codeEditorModalContent);
+  codeEditorModal.onSave(codeEditorModalContent);
   closeCodeEditorModal();
 };
 
 const handleOnClose = ({ codeEditorModal, closeCodeEditorModal }) => {
-  codeEditorModal.get('onClose')();
+  codeEditorModal.onClose();
   closeCodeEditorModal();
 };
 
 export default () => {
   const dispatch = useDispatch();
-  const codeEditorModal = useSelector((state) => state.modals.getIn(['codeEditorModal']));
+  const codeEditorModal = useSelector((state) => state.modals.codeEditorModal);
   const [codeEditorModalContent, setCodeEditorModalContent] = useState('');
 
   useEffect(() => {
     if (codeEditorModal) {
-      setCodeEditorModalContent(codeEditorModal.get('code'));
+      setCodeEditorModalContent(codeEditorModal.code);
     }
   }, [codeEditorModal]);
 
-  return codeEditorModal && codeEditorModal.get('open') ? (
+  return codeEditorModal && codeEditorModal.open ? (
     <DialogContainer>
       <Dialog>
         <Heading>Code Editor</Heading>

@@ -10,10 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { Map, List } from 'immutable';
+import produce from 'immer';
 import { Flex, View, Heading, Picker, Item, ButtonGroup, Button } from '@adobe/react-spectrum';
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
@@ -22,22 +24,43 @@ import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewExtensionConfiguration = ({ extensionConfigurations, extensionConfigurationId }) =>
   extensionConfigurationId === 'new' ||
-  extensionConfigurationId >= (extensionConfigurations || List()).size;
+  extensionConfigurationId >= (extensionConfigurations || []).length;
 
-const getExtensionConfiguration = ({ extensionConfigurations, extensionConfigurationId }) =>
-  (extensionConfigurations || List()).get(extensionConfigurationId) ||
-  Map({
-    name: '',
-    settings: null
-  });
+const getExtensionConfiguration = ({
+  registry,
+  extensionConfigurationId,
+  extensionConfigurations
+}) => {
+  const extensionConfiguration = (extensionConfigurations || [])[extensionConfigurationId];
+
+  if (!extensionConfiguration) {
+    return {
+      id: extensionConfigurationId,
+      name: '',
+      displayName: '',
+      settings: null
+    };
+  }
+
+  return {
+    id: Number(extensionConfigurationId),
+    displayName: (registry.extensions[extensionConfiguration.name] || {}).displayName,
+    ...extensionConfiguration
+  };
+};
 
 const backLink = `${NAMED_ROUTES.LIBRARY_EDITOR}/extension_configurations/`;
 
-const handleNameChange = ({ name, extensionConfiguration, setExtensionConfiguration }) => {
+const handleNameChange = ({
+  extensionConfiguration,
+  extensionRegistryData,
+  setExtensionConfiguration
+}) => {
   setExtensionConfiguration(
-    extensionConfiguration.merge({
-      settings: null,
-      name
+    produce(extensionConfiguration, (draft) => {
+      draft.name = extensionRegistryData.name;
+      draft.displayName = extensionRegistryData.displayName;
+      draft.settings = null;
     })
   );
 };
@@ -45,7 +68,7 @@ const handleNameChange = ({ name, extensionConfiguration, setExtensionConfigurat
 const isComponentValid = ({ extensionConfiguration, setErrors }) => {
   const errors = {};
 
-  if (!extensionConfiguration.get('name')) {
+  if (!extensionConfiguration.name) {
     errors.name = true;
   }
 
@@ -55,45 +78,28 @@ const isComponentValid = ({ extensionConfiguration, setErrors }) => {
 };
 
 const handleSave = async ({
-  dispatch: {
-    extensions: { saveExtensionConfiguration, addExtensionConfiguration }
-  },
-  currentIframe,
+  apiPromise,
   history,
-  extensionConfigurationId,
   extensionConfiguration,
-  extensionConfigurations,
+  saveMethod,
   setWaitingForExtensionResponse,
-  registry,
   setErrors
 }) => {
   if (!isComponentValid({ extensionConfiguration, setErrors })) {
     return false;
   }
 
-  const method = isNewExtensionConfiguration({ extensionConfigurationId, extensionConfigurations })
-    ? addExtensionConfiguration
-    : saveExtensionConfiguration;
-
-  const displayName = registry.getIn([
-    'extensions',
-    extensionConfiguration.get('name'),
-    'displayName'
-  ]);
-
   setWaitingForExtensionResponse(true);
 
   try {
-    const api = await currentIframe.promise;
+    const api = await apiPromise;
     const [isValid, settings] = await Promise.all([api.validate(), api.getSettings()]);
     if (isValid) {
-      await method({
-        id: extensionConfigurationId,
-        extensionConfiguration: extensionConfiguration.merge({
-          displayName,
-          settings
+      await saveMethod(
+        produce(extensionConfiguration, (draft) => {
+          draft.settings = settings;
         })
-      });
+      );
 
       history.push(backLink);
     } else {
@@ -101,16 +107,16 @@ const handleSave = async ({
     }
   } catch (e) {
     setErrors({ api: e.message });
+    throw e;
   }
 
   return true;
 };
 
-const extensionConfigurationList = ({ registry }) => {
-  return (registry.get('extensions') || List())
-    .filter((i) => i.get('viewPath'))
-    .valueSeq()
-    .map((v) => ({ id: v.get('name'), name: v.get('displayName') }));
+const computeExtensionConfigurationList = (extensions = {}) => {
+  return Object.entries(extensions)
+    .filter(([, extension]) => extension.viewPath)
+    .map(([name, extension]) => ({ id: name, name: extension.displayName }));
 };
 
 export default () => {
@@ -124,12 +130,25 @@ export default () => {
 
   const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
   const [errors, setErrors] = useState({});
-  const [extensionConfiguration, setExtensionConfiguration] = useState(Map());
-  const componentIframeDetails = registry.getIn(['extensions', extensionConfiguration.get('name')]);
+  const [extensionConfiguration, setExtensionConfiguration] = useState({});
+
+  const extensionConfigurationList = useMemo(
+    () => computeExtensionConfigurationList(registry.extensions),
+    [registry.extensions]
+  );
+
+  const saveMethod = useMemo(() => {
+    const { addAndSaveToContainer, updateAndSaveToContainer } = dispatch.extensions;
+    return isNewExtensionConfiguration({ extensionConfigurationId, extensionConfigurations })
+      ? addAndSaveToContainer
+      : updateAndSaveToContainer;
+  }, [dispatch.extensions, extensionConfigurationId, extensionConfigurations]);
+
+  const componentIframeDetails = registry.extensions[extensionConfiguration.name];
 
   useEffect(() => {
     setExtensionConfiguration(
-      getExtensionConfiguration({ extensionConfigurationId, extensionConfigurations })
+      getExtensionConfiguration({ registry, extensionConfigurationId, extensionConfigurations })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -158,12 +177,16 @@ export default () => {
             isRequired
             necessityIndicator="label"
             validationState={errors.name ? 'invalid' : ''}
-            selectedKey={extensionConfiguration.get('name') || ''}
+            selectedKey={extensionConfiguration.name || ''}
             onSelectionChange={(name) =>
-              handleNameChange({ name, extensionConfiguration, setExtensionConfiguration })
+              handleNameChange({
+                extensionRegistryData: registry.extensions[name],
+                extensionConfiguration,
+                setExtensionConfiguration
+              })
             }
             width="size-3400"
-            items={extensionConfigurationList({ registry })}
+            items={extensionConfigurationList}
           >
             {(item) => <Item>{item.name}</Item>}
           </Picker>
@@ -173,14 +196,11 @@ export default () => {
               variant="cta"
               onPress={() =>
                 handleSave({
-                  dispatch,
-                  currentIframe,
+                  saveMethod,
+                  apiPromise: currentIframe.promise,
                   history,
-                  extensionConfigurationId,
                   extensionConfiguration,
-                  extensionConfigurations,
                   setWaitingForExtensionResponse,
-                  registry,
                   setErrors
                 })
               }
@@ -200,8 +220,8 @@ export default () => {
         </View>
         <ComponentIframe
           component={componentIframeDetails}
-          settings={extensionConfiguration.get('settings')}
-          server={registry.getIn(['environment', 'server'])}
+          settings={extensionConfiguration.settings}
+          server={registry.environment.server}
         />
       </Flex>
     </>

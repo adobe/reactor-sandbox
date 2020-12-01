@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 /* eslint-disable react/jsx-no-bind */
 
 import React, { useState } from 'react';
-import { fromJS } from 'immutable';
+import produce from 'immer';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
@@ -44,10 +44,9 @@ const handleSave = async ({
 
   try {
     await savePropertySettings(
-      propertySettings.setIn(
-        ['settings', 'domains'],
-        fromJS(domains.split(',').map((s) => s.trim()))
-      )
+      produce(propertySettings, (draft) => {
+        draft.settings.domains = domains.split(',').map((s) => s.trim());
+      })
     );
     history.push(NAMED_ROUTES.LIBRARY_EDITOR);
   } catch (e) {
@@ -63,9 +62,7 @@ export default () => {
 
   const propertySettings = useSelector((state) => state.property);
   const [errors, setErrors] = useState({});
-  const [domains, setDomains] = useState(
-    propertySettings.getIn(['settings', 'domains']).toJS().join(', ')
-  );
+  const [domains, setDomains] = useState(propertySettings.settings.domains.join(', '));
 
   return errors.api ? (
     <View flex>

@@ -48,6 +48,7 @@
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "consistent-this": [0, "self"],
     "spaced-comment": 0,
+    "no-param-reassign": 0,
     "prefer-const": [
       "error",
       {

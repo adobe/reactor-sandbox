@@ -21,8 +21,9 @@ const DataElementsList = () => {
   return (
     <List
       items={dataElements}
+      keyName="name"
       nameProperty="name"
-      deleteFn={dispatch.dataElements.deleteDataElement}
+      deleteFn={dispatch.dataElements.deleteAndSaveContainer}
       linkPrefix="/data_elements"
       heading="Data Elements"
     />

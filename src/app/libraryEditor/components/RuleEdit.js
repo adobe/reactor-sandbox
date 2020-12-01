@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
-import { List, Map } from 'immutable';
 import { View, Heading, Divider, TextField, Button, ButtonGroup } from '@adobe/react-spectrum';
 import { useLastLocation } from 'react-router-last-location';
 import RuleComponentsList from './RuleComponentsList';
@@ -21,28 +21,32 @@ import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewRule = ({ ruleId, rules }) => {
-  return ruleId === 'new' || !rules || ruleId >= rules.size;
+  return ruleId === 'new' || !rules || ruleId >= rules.length;
 };
 
-const checkLastLocation = (location) => {
+const isUserComingFromRuleComponentsPage = (location) => {
   if (!location) {
     return false;
   }
 
-  return location.pathname.match(/\/rules\/.*\/(:?events|conditions|actions)\/.*$/);
+  return Boolean(location.pathname.match(/\/rules\/.*\/(:?events|conditions|actions)\/.*$/));
 };
 
-const getCurrentRule = ({ ruleId, rules, lastLocation, currentRule }) => {
-  let rule;
+const getRule = ({ ruleId, rules }) => {
+  const rule = (rules || [])[ruleId];
 
-  if (currentRule && currentRule.get('id') === ruleId && checkLastLocation(lastLocation)) {
-    rule = currentRule;
-  } else {
-    rule = (rules || List()).get(ruleId) || Map();
+  if (!rule) {
+    return {
+      ruleId,
+      id: `RL${Date.now()}`,
+      name: ''
+    };
   }
 
-  rule = rule.set('id', ruleId);
-  return rule;
+  return {
+    ...rule,
+    ruleId: Number(ruleId)
+  };
 };
 
 const backLink = `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/`;
@@ -50,7 +54,7 @@ const backLink = `${NAMED_ROUTES.LIBRARY_EDITOR}/rules/`;
 const isValid = ({ rule, setErrors }) => {
   const errors = {};
 
-  if (!rule.get('name')) {
+  if (!rule.name) {
     errors.name = true;
   }
 
@@ -58,28 +62,13 @@ const isValid = ({ rule, setErrors }) => {
   return Object.keys(errors).length === 0;
 };
 
-const handleSave = async ({
-  rule,
-  rules,
-  setErrors,
-  addRule,
-  saveRule,
-  ruleId,
-  setCurrentRule,
-  history
-}) => {
+const handleSave = async ({ rule, saveMethod, setErrors, setCurrentRule, history }) => {
   if (!isValid({ rule, setErrors })) {
     return false;
   }
 
-  const method = isNewRule({ rules, ruleId }) ? addRule : saveRule;
-
   try {
-    await method({
-      id: ruleId,
-      rule
-    });
-
+    await saveMethod(rule);
     setCurrentRule(null);
     history.push(backLink);
   } catch (e) {
@@ -90,30 +79,44 @@ const handleSave = async ({
 };
 
 const handleNameChange = ({ name, rule, setRule, setCurrentRule }) => {
-  const newRule = rule.set('name', name);
+  const newRule = produce(rule, (draft) => {
+    draft.name = name;
+  });
   setCurrentRule(newRule);
   setRule(newRule);
 };
 
 const handleDeleteClick = ({ rule, setCurrentRule, setRule }) => (type, index) => {
-  const newRule = rule.deleteIn([type, index]);
+  const newRule = produce(rule, (draft) => {
+    draft[type].splice(index, 1);
+  });
   setCurrentRule(newRule);
   setRule(newRule);
 };
 
 export default () => {
-  const history = useHistory();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { rule_id: ruleId } = useParams();
+
   const [errors, setErrors] = useState({});
   const lastLocation = useLastLocation();
-  const { rule_id: ruleId } = useParams();
   const { currentRule, rules } = useSelector((state) => state);
-  const [rule, setRule] = useState(Map());
+  const [rule, setRule] = useState({});
+
+  const saveMethod = useMemo(() => {
+    const { addAndSaveToContainer, updateAndSaveToContainer } = dispatch.rules;
+    return isNewRule({ ruleId, rules }) ? addAndSaveToContainer : updateAndSaveToContainer;
+  }, [dispatch.rules, ruleId, rules]);
 
   useEffect(() => {
-    const c = getCurrentRule({ ruleId, rules, lastLocation, currentRule });
-    dispatch.currentRule.setCurrentRule(c);
-    setRule(c);
+    if (isUserComingFromRuleComponentsPage(lastLocation)) {
+      setRule(currentRule);
+    } else {
+      const r = getRule({ ruleId, rules });
+      dispatch.currentRule.setCurrentRule(r);
+      setRule(r);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -132,7 +135,7 @@ export default () => {
         width="size-6000"
         marginTop="size-150"
         validationState={errors.name ? 'invalid' : ''}
-        value={rule.get('name') || ''}
+        value={rule.name || ''}
         onChange={(name) => {
           handleNameChange({
             rule,
@@ -151,7 +154,7 @@ export default () => {
           setRule,
           setCurrentRule: dispatch.currentRule.setCurrentRule
         })}
-        items={rule.get('events') || List()}
+        items={rule.events || []}
         type="events"
       />
       <Heading level={3}>Conditions</Heading>
@@ -162,7 +165,7 @@ export default () => {
           setRule,
           setCurrentRule: dispatch.currentRule.setCurrentRule
         })}
-        items={rule.get('conditions') || List()}
+        items={rule.conditions || []}
         type="conditions"
       />
       <Heading level={3}>Actions</Heading>
@@ -173,7 +176,7 @@ export default () => {
           setRule,
           setCurrentRule: dispatch.currentRule.setCurrentRule
         })}
-        items={rule.get('actions') || List()}
+        items={rule.actions || []}
         type="actions"
       />
       <Divider marginTop="size-300" />
@@ -182,13 +185,10 @@ export default () => {
           variant="cta"
           onPress={() => {
             handleSave({
-              ruleId,
               rule,
-              rules,
-              setErrors,
+              saveMethod,
               history,
-              addRule: dispatch.rules.addRule,
-              saveRule: dispatch.rules.saveRule,
+              setErrors,
               setCurrentRule: dispatch.currentRule.setCurrentRule
             });
           }}

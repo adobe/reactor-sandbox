@@ -10,79 +10,92 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-param-reassign */
+import produce from 'immer';
 
-import { List, Map } from 'immutable';
 import saveContainer from '../helpers/saveContainer';
 
-const add = (list, payload) => {
-  const extensionConfigurationIndex = list.findIndex(
-    (i) => i.get('name') === payload.extensionConfiguration.get('name')
-  );
-  if (extensionConfigurationIndex !== -1) {
-    return list.update(extensionConfigurationIndex, () => payload.extensionConfiguration);
-  }
-  return list.push(payload.extensionConfiguration);
-};
+const add = (list, payload) =>
+  produce([list, payload], ([extensionConfigurations, { name, displayName, settings }]) => {
+    let extensionConfigurationIndex = -1;
+    for (let i = 0; i < extensionConfigurations.length; i += 1) {
+      if (extensionConfigurations[i].name === name) {
+        extensionConfigurationIndex = i;
+      }
+    }
 
-const save = (list, payload) => list.update(payload.id, () => payload.extensionConfiguration);
-const del = (list, payload) => list.delete(payload);
+    if (extensionConfigurationIndex !== -1) {
+      extensionConfigurations[extensionConfigurationIndex] = { name, displayName, settings };
+    } else {
+      extensionConfigurations.push({ name, displayName, settings });
+    }
+  });
+
+const update = (list, payload) =>
+  produce([list, payload], ([extensionConfigurations, { id, name, displayName, settings }]) => {
+    extensionConfigurations[id] = { name, displayName, settings };
+  });
+
+const del = (list, payload) =>
+  produce([list, payload], ([extensionConfigurations, id]) => {
+    // eslint-disable-next-line no-unused-vars
+    extensionConfigurations = extensionConfigurations.splice(id, 1);
+  });
+
+const cloneState = produce((draft, extensionConfigurations) => {
+  draft.extensions = extensionConfigurations;
+});
 
 export default {
-  state: List(), // initial state
+  state: [], // initial state
   reducers: {
-    setExtensionConfigurations(state, payload) {
-      const extensionConfigurations = payload
-        .entrySeq()
-        .map(([key, value]) => value.merge({ name: key }))
-        .toList();
+    set(state, payload) {
+      return produce(payload, (draft) =>
+        Object.keys(draft).reduce((accumulator, key) => {
+          accumulator.push({
+            ...draft[key],
+            name: key
+          });
 
+          return accumulator;
+        }, [])
+      );
+    },
+    add(state, payload) {
+      const [extensionConfigurations] = add(state, payload);
       return extensionConfigurations;
     },
-    addExtensionConfigurationReducer(state, payload) {
-      const extensionConfigurations = add(state, payload);
+    update(state, payload) {
+      const [extensionConfigurations] = update(state, payload);
       return extensionConfigurations;
     },
-    saveExtensionConfigurationReducer(state, payload) {
-      const extensionConfigurations = save(state, payload);
-      return extensionConfigurations;
-    },
-    deleteExtensionConfigurationReducer(state, payload) {
-      const extensionConfigurations = del(state, payload);
+    delete(state, payload) {
+      const [extensionConfigurations] = del(state, payload);
       return extensionConfigurations;
     }
   },
   effects: {
-    async addExtensionConfiguration(payload, rootState) {
-      const extensionConfigurations = add(rootState.extensions, payload);
+    async addAndSaveToContainer(payload, rootState) {
+      const [extensionConfigurations] = add(rootState.extensions, payload);
+      const clonedState = cloneState(rootState, extensionConfigurations);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('extensions', extensionConfigurations);
-      return saveContainer(clonedState.toJS()).then(() =>
-        this.addExtensionConfigurationReducer(payload)
-      );
+      await saveContainer(clonedState);
+      return this.add(payload);
     },
 
-    async saveExtensionConfiguration(payload, rootState) {
-      const extensionConfigurations = save(rootState.extensions, payload);
+    async updateAndSaveToContainer(payload, rootState) {
+      const [extensionConfigurations] = update(rootState.extensions, payload);
+      const clonedState = cloneState(rootState, extensionConfigurations);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('extensions', extensionConfigurations);
-
-      return saveContainer(clonedState.toJS()).then(() =>
-        this.saveExtensionConfigurationReducer(payload)
-      );
+      await saveContainer(clonedState);
+      return this.update(payload);
     },
 
-    async deleteExtensionConfiguration(payload, rootState) {
-      const extensionConfigurations = del(rootState.extensions, payload);
+    async deleteAndSaveContainer(payload, rootState) {
+      const [extensionConfigurations] = del(rootState.extensions, payload);
+      const clonedState = cloneState(rootState, extensionConfigurations);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('extensions', extensionConfigurations);
-
-      return saveContainer(clonedState.toJS()).then(() =>
-        this.deleteExtensionConfigurationReducer(payload)
-      );
+      await saveContainer(clonedState);
+      return this.delete(payload);
     }
   }
 };

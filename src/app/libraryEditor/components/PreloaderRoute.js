@@ -30,7 +30,7 @@ export default ({ component: Component, ...rest }) => {
       render={(props) => {
         return (
           <>
-            {brain.get('initialized') && (
+            {brain.initialized && (
               <>
                 <ModalCodeEditor />
                 <ModalDataElementSelector />
@@ -41,9 +41,9 @@ export default ({ component: Component, ...rest }) => {
               </>
             )}
 
-            {brain.get('error') && <ErrorMessage message={brain.get('error').message} />}
+            {brain.error && <ErrorMessage message={brain.error.message} />}
 
-            {!brain.get('initialized') && !brain.get('error') && (
+            {!brain.initialized && !brain.error && (
               <Flex
                 direction="row"
                 justifyContent="center"

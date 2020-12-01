@@ -19,8 +19,8 @@ import './Settings.css';
 
 export default () => {
   const brain = useSelector((state) => state.brain);
-  const orgId = useSelector((state) => state.company.get('orgId'));
-  const imsAccess = useSelector((state) => state.otherSettings.getIn(['tokens', 'imsAccess']));
+  const orgId = useSelector((state) => state.company.orgId);
+  const imsAccess = useSelector((state) => state.otherSettings?.tokens?.imsAccess);
   const dispatch = useDispatch();
 
   return (
@@ -45,10 +45,10 @@ export default () => {
           </Button>
         </Flex>
 
-        {brain.get('containerDataReseted') != null ? (
+        {brain.containerDataReseted != null ? (
           <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-            <div className={`status-${brain.get('containerDataReseted')}`}>
-              Last reset status: <strong>{brain.get('containerDataReseted')}</strong>.
+            <div className={`status-${brain.containerDataReseted}`}>
+              Last reset status: <strong>{brain.containerDataReseted}</strong>.
             </div>
           </Flex>
         ) : null}

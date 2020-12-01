@@ -10,71 +10,100 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-param-reassign */
+import produce from 'immer';
 
-import { List, Map } from 'immutable';
 import saveContainer from '../helpers/saveContainer';
 
-const add = (list, payload) => {
-  const index = list.findIndex((i) => i.get('name') === payload.dataElement.get('name'));
-  if (index !== -1) {
-    return list.update(index, () => payload.dataElement);
-  }
-  return list.push(payload.dataElement);
-};
+const add = (list, payload) =>
+  produce([list, payload], ([dataElements, { id, enableDefaultValue, ...dataElement }]) => {
+    let dataElementIndex = -1;
+    for (let i = 0; i < dataElements.length; i += 1) {
+      if (dataElements[i].name === dataElement.name) {
+        dataElementIndex = i;
+      }
+    }
 
-const save = (list, payload) => list.update(payload.id, () => payload.dataElement);
-const del = (list, payload) => list.delete(payload);
+    if (!enableDefaultValue) {
+      delete dataElement.defaultValue;
+    }
+
+    if (dataElementIndex !== -1) {
+      dataElements[dataElementIndex] = dataElement;
+    } else {
+      dataElements.push(dataElement);
+    }
+  });
+
+const update = (list, payload) =>
+  produce([list, payload], ([dataElements, { id, enableDefaultValue, ...dataElement }]) => {
+    if (!enableDefaultValue) {
+      delete dataElement.defaultValue;
+    }
+
+    dataElements[id] = dataElement;
+  });
+
+const del = (list, payload) =>
+  produce([list, payload], ([dataElements, id]) => {
+    // eslint-disable-next-line no-unused-vars
+    dataElements = dataElements.splice(id, 1);
+  });
+
+const cloneState = produce((draft, dataElements) => {
+  draft.dataElements = dataElements;
+});
 
 export default {
-  state: List(), // initial state
+  state: [], // initial state
   reducers: {
-    setDataElements(state, payload) {
-      const dataElements = payload
-        .entrySeq()
-        .map(([key, value]) => value.merge({ name: key }))
-        .toList();
+    set(state, payload) {
+      return produce(payload, (draft) =>
+        Object.keys(draft).reduce((accumulator, key) => {
+          accumulator.push({
+            ...draft[key],
+            name: key
+          });
 
+          return accumulator;
+        }, [])
+      );
+    },
+    add(state, payload) {
+      const [dataElements] = add(state, payload);
       return dataElements;
     },
-    addDataElementReducer(state, payload) {
-      const dataElements = add(state, payload);
+    update(state, payload) {
+      const [dataElements] = update(state, payload);
       return dataElements;
     },
-    saveDataElementReducer(state, payload) {
-      const dataElements = save(state, payload);
-      return dataElements;
-    },
-    deleteDataElementReducer(state, payload) {
-      const dataElements = del(state, payload);
+    delete(state, payload) {
+      const [dataElements] = del(state, payload);
       return dataElements;
     }
   },
   effects: {
-    async addDataElement(payload, rootState) {
-      const dataElements = add(rootState.dataElements, payload);
+    async addAndSaveToContainer(payload, rootState) {
+      const [dataElements] = add(rootState.dataElements, payload);
+      const clonedState = cloneState(rootState, dataElements);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('dataElements', dataElements);
-      return saveContainer(clonedState.toJS()).then(() => this.addDataElementReducer(payload));
+      await saveContainer(clonedState);
+      return this.add(payload);
     },
 
-    async saveDataElement(payload, rootState) {
-      const dataElements = save(rootState.dataElements, payload);
+    async updateAndSaveToContainer(payload, rootState) {
+      const [dataElements] = update(rootState.dataElements, payload);
+      const clonedState = cloneState(rootState, dataElements);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('dataElements', dataElements);
-
-      return saveContainer(clonedState.toJS()).then(() => this.saveDataElementReducer(payload));
+      await saveContainer(clonedState);
+      return this.update(payload);
     },
 
-    async deleteDataElement(payload, rootState) {
-      const dataElements = del(rootState.dataElements, payload);
+    async deleteAndSaveContainer(payload, rootState) {
+      const [dataElements] = del(rootState.dataElements, payload);
+      const clonedState = cloneState(rootState, dataElements);
 
-      let clonedState = Map(rootState);
-      clonedState = clonedState.set('dataElements', dataElements);
-
-      return saveContainer(clonedState.toJS()).then(() => this.deleteDataElementReducer(payload));
+      await saveContainer(clonedState);
+      return this.delete(payload);
     }
   }
 };

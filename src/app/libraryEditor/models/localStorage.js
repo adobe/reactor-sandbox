@@ -10,19 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { fromJS, Map } from 'immutable';
+import produce from 'immer';
 
 export default {
   extensionName: null,
-  state: Map(),
+  state: {},
   get(key) {
-    return this.state.get(key);
+    return this.state[key];
   },
   save() {
     if (this.extensionName) {
       localStorage.setItem(
         `sandbox-rule-editor-container-${this.extensionName}`,
-        JSON.stringify(this.state.toJS())
+        JSON.stringify(this.state)
       );
     }
   },
@@ -33,12 +33,14 @@ export default {
       JSON.parse(localStorage.getItem(`sandbox-rule-editor-container-${extensionName}`)) || {};
 
     if (state) {
-      this.state = fromJS(state);
+      this.state = state;
     }
   },
   update(key, value) {
     const newValue = value;
-    this.state = this.state.set(key, newValue);
+    this.state = produce(this.state, (draft) => {
+      draft[key] = newValue;
+    });
   },
 
   delete() {

@@ -10,44 +10,44 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { fromJS, Map } from 'immutable';
+import produce from 'immer';
 
 export default {
-  state: Map(), // initial state
+  state: {}, // initial state
   reducers: {
     openCodeEditorModal(state, payload) {
-      return state.merge(
-        fromJS({
-          codeEditorModal: {
-            open: true,
-            options: payload.options,
-            code: payload.code,
-            onSave: payload.onSave,
-            onClose: payload.onClose
-          }
-        })
-      );
+      return produce(state, (draft) => {
+        draft.codeEditorModal = {
+          open: true,
+          options: payload.options,
+          code: payload.code,
+          onSave: payload.onSave,
+          onClose: payload.onClose
+        };
+      });
     },
 
     closeCodeEditorModal(state) {
-      return state.delete('codeEditorModal');
+      return produce(state, (draft) => {
+        delete draft.codeEditorModal;
+      });
     },
 
     openDataElementSelectorModal(state, payload) {
-      return state.merge(
-        fromJS({
-          dataElementSelectorModal: {
-            open: true,
-            options: payload.options,
-            onSave: payload.onSave,
-            onClose: payload.onClose
-          }
-        })
-      );
+      return produce(state, (draft) => {
+        draft.dataElementSelectorModal = {
+          open: true,
+          options: payload.options,
+          onSave: payload.onSave,
+          onClose: payload.onClose
+        };
+      });
     },
 
     closeDataElementSelectorModal(state) {
-      return state.delete('dataElementSelectorModal');
+      return produce(state, (draft) => {
+        delete draft.dataElementSelectorModal;
+      });
     }
   }
 };

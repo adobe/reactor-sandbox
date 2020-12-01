@@ -10,11 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Map } from 'immutable';
 import localStorage from './localStorage';
 
 export default {
-  state: Map(), // initial state
+  state: {}, // initial state
   reducers: {
     setOtherSettings(state, payload) {
       return payload;

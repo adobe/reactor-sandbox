@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable no-unused-vars */
+
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadIframe } from '@adobe/reactor-bridge';
@@ -21,14 +23,13 @@ const getUrl = ({ component, server }) => {
     return '';
   }
 
-  let path = component.get('viewPath');
+  let path = component.viewPath;
 
   if (!path) {
     path = 'noConfigIframe.html';
   }
 
-  const host = server.get('host');
-  const port = server.get('port');
+  const { host, port } = server;
   return `${host}:${port}/${path}`;
 };
 
@@ -53,24 +54,18 @@ const renderIframe = ({
   }
 
   const extensionInitOptions = {
-    settings: settings && settings.toJS(),
-    company: companySettings.toJS(),
-    propertySettings: propertySettings.toJS(),
-    tokens: otherSettings.get('tokens').toJS()
+    settings,
+    company: companySettings,
+    propertySettings,
+    tokens: otherSettings.tokens
   };
 
   if (extensionConfiguration) {
-    extensionInitOptions.extensionSettings = extensionConfiguration.get('settings').toJS();
+    extensionInitOptions.extensionSettings = extensionConfiguration.settings;
   }
 
-  const iframe = document.createElement('iframe');
+  const iframe = iframeRef.current;
   iframe.src = url;
-
-  iframe.setAttribute('data-private', true);
-  iframe.setAttribute(
-    'sandbox',
-    'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts'
-  );
 
   const iframeApi = loadIframe({
     iframe,
@@ -92,7 +87,6 @@ const renderIframe = ({
     }
   });
 
-  iframeRef.current.appendChild(iframe);
   setCurrentIframe(iframeApi);
 };
 
@@ -104,7 +98,6 @@ export default ({ component, extensionConfiguration, settings, server }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    iframeRef.current.innerHTML = '';
     renderIframe({
       settings,
       otherSettings,
@@ -119,5 +112,14 @@ export default ({ component, extensionConfiguration, settings, server }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [component]);
 
-  return <div ref={iframeRef} className="component-iframe" />;
+  return (
+    <div className="component-iframe">
+      <iframe
+        title="iframe"
+        data-private="true"
+        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+        ref={iframeRef}
+      />
+    </div>
+  );
 };
