@@ -73,7 +73,7 @@ export default ({ selectedDescriptor, extensionDescriptor, extensionViewPaneRef 
   }, [selectedDescriptor, extensionDescriptor]);
 
   return (
-    <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>
+    <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab} height="100%">
       <Item title="Init" key="init">
         <InitTabContent
           content={initContent}

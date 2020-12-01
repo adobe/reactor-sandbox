@@ -12,6 +12,12 @@ iframe {
   height: calc(100% - 6.5rem);
 }
 
+/* Hack for making the tab headers not grow */
+#controlPane > div:first-child > div:first-child {
+  flex-grow: unset;
+  flex-basis: unset;
+}
+
 #controlPane .codeMirror-Wrapper {
   height: 100%;
 }

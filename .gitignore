@@ -4,3 +4,4 @@ sandbox
 public/extensionbridge
 build
 adobe-reactor-sandbox-*.tgz
+/.eslintcache
