@@ -21,7 +21,7 @@ export default {
   state: {}, // initial state
   reducers: {
     setCompanySettings(state, payload) {
-      return payload;
+      return payload || {};
     }
   },
   effects: {

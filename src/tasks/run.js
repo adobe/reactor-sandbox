@@ -182,13 +182,24 @@ const configureApp = (app) => {
   app.use(express.static(files.SANDBOX_EXTENSION_SRC_PATH));
 
   app.get('/editor-container.js', (req, res) => {
+    let containerText;
+
+    try {
+      containerText = fs
+        .readFileSync(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME))
+        .toString('utf8');
+    } catch (error) {
+      res.status(404);
+      res.send('File not found.');
+
+      return;
+    }
+
     try {
       // eslint-disable-next-line no-eval
       eval(
-        fs
-          .readFileSync(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME))
-          .toString('utf8')
-          .replace("use strict';", '')
+        containerText
+          .replace("'use strict';", '')
           .replace('module.exports = ', 'var container =')
           .replace('};', '}')
           .trim()
@@ -202,8 +213,8 @@ const configureApp = (app) => {
       res.send(containerContent);
     } catch (error) {
       console.log(error);
-      res.status(404);
-      res.send('File not found.');
+      res.status(500);
+      res.send(error.messa);
     }
   });
 
