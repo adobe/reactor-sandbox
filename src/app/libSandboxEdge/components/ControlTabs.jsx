@@ -18,7 +18,33 @@ import loadRequest from './helpers/loadRequest';
 import { sendEdgeRequest } from '../../api/index';
 import transformResponse from './helpers/reccursiveStringParsing';
 
-export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest }) => {
+const sendRequest = ({
+  request,
+  onSendRequest,
+  onRequestResponseReceived,
+  onError,
+  extensionDescriptor: { name, platform }
+}) => {
+  onSendRequest(true);
+  return sendEdgeRequest(request)
+    .then((response) => {
+      localStorage.setItem(`requestData/${name}/${platform}`, request);
+      onRequestResponseReceived(transformResponse(response));
+      onSendRequest(false);
+    })
+    .catch((e) => {
+      onError({ api: e.message });
+    });
+};
+
+const reset = ({ setXdm, setRequest, extensionDescriptor }) => {
+  localStorage.removeItem(
+    `requestData/${extensionDescriptor.name}/${extensionDescriptor.platform}`
+  );
+  loadRequest({ extensionDescriptor, setXdm, setRequest });
+};
+
+export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest, onError }) => {
   const [selectedTab, setSelectedTab] = useState('xdm');
   const [xdm, setXdm] = useState(null);
   const [request, setRequest] = useState(null);
@@ -54,14 +80,19 @@ export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest 
           content={xdm}
           setContent={setXdm}
           onSend={() => {
-            onSendRequest(true);
-            sendEdgeRequest(request).then((response) => {
-              onRequestResponseReceived(transformResponse(response));
-              onSendRequest(false);
+            const parsedRequest = JSON.parse(request);
+            parsedRequest.body.xdm = JSON.parse(xdm);
+
+            sendRequest({
+              request: JSON.stringify(parsedRequest),
+              onSendRequest,
+              onRequestResponseReceived,
+              onError,
+              extensionDescriptor
             });
           }}
           onReset={() => {
-            loadRequest({ extensionDescriptor, setXdm, setRequest });
+            reset({ extensionDescriptor, setXdm, setRequest });
           }}
         />
       </Item>
@@ -69,8 +100,17 @@ export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest 
         <TabContent
           content={request}
           setContent={setRequest}
+          onSend={() => {
+            sendRequest({
+              request,
+              onSendRequest,
+              onRequestResponseReceived,
+              onError,
+              extensionDescriptor
+            });
+          }}
           onReset={() => {
-            loadRequest({ extensionDescriptor, setXdm, setRequest });
+            reset({ extensionDescriptor, setXdm, setRequest });
           }}
         />
       </Item>

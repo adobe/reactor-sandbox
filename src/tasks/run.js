@@ -21,6 +21,7 @@ const fs = require('fs');
 const https = require('https');
 const express = require('express');
 const chalk = require('chalk');
+const hexDecode = require('@adobe/reactor-token-scripts-edge/src/hexDecode');
 const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const bodyParser = require('body-parser');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
@@ -29,7 +30,7 @@ const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 const editorRegistry = require('./helpers/editorRegistry');
 const saveContainer = require('./helpers/saveContainer');
-const processEdgeRequest = require('./helpers/processEdgeRequest');
+const generateEdgeLibrary = require('./helpers/generateEdgeLibrary');
 const unTransform = require('./helpers/unTransform');
 const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
@@ -208,7 +209,22 @@ const configureApp = (app) => {
 
       // container will be available after eval finishes.
       // eslint-disable-next-line no-undef
-      const containerContent = JSON.stringify(container, unTransform);
+      let containerContent = JSON.stringify(container, unTransform);
+
+      if (extensionDescriptor.platform === 'edge') {
+        // Revert edge sanitization. When we save an edge container, any data element token
+        // `{{name}}` gets transformed to getDataElementValue(reactor${encodedDataElementName})
+        // in order for the JS to be valid. Here we need to revert that transformation so that
+        // in the Library editor, the user will see the value that he entered.
+        containerContent = containerContent.replace(
+          /getDataElementValue\(reactor([^)]+)\)/g,
+          (match, encodedDataElementName) =>
+            match.replace(
+              `getDataElementValue(reactor${encodedDataElementName})`,
+              `{{${hexDecode(encodedDataElementName)}}}`
+            )
+        );
+      }
 
       res.setHeader('Content-Type', 'application/json');
       res.send(containerContent);
@@ -222,6 +238,11 @@ const configureApp = (app) => {
   app.post('/editor-container.js', (req, res) => {
     try {
       saveContainer(req.body);
+
+      if (extensionDescriptor.platform === 'edge') {
+        generateEdgeLibrary.build();
+      }
+
       res.status(200);
       res.send('OK');
     } catch (error) {
@@ -235,7 +256,7 @@ const configureApp = (app) => {
     // data everytime a new request arrives.
     const eds = getExtensionDescriptors();
 
-    const registryContent = editorRegistry(eds, {
+    const registryContent = editorRegistry(eds, extensionDescriptor, {
       request: req,
       ports: {
         http: PORT,
@@ -247,14 +268,26 @@ const configureApp = (app) => {
     res.send(JSON.stringify(registryContent));
   });
 
-  app.post('/process-edge-request', (req, res) => {
-    try {
-      res.json(processEdgeRequest(req.body));
-    } catch (error) {
-      res.status(500);
-      res.send(error.message);
-    }
-  });
+  if (extensionDescriptor.platform === 'edge') {
+    generateEdgeLibrary.build();
+
+    app.post('/process-edge-request', (req, res) => {
+      try {
+        generateEdgeLibrary
+          .getExecute()(req.body)
+          .then(([result]) => {
+            res
+              .status(202)
+              .append('Content-Type', 'application/json')
+              .send(JSON.stringify(result, null, 2));
+          });
+      } catch (error) {
+        res.status(500);
+        res.send(error.message);
+        throw error;
+      }
+    });
+  }
 };
 
 if (isSandboxLinked()) {

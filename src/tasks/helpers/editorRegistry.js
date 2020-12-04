@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable indent */
 /* eslint-disable no-param-reassign */
 
 const currentExtensionDescriptor = require('./getExtensionDescriptor')();
@@ -50,7 +51,7 @@ const populateExtensionsData = (extensionDescriptors, registry) => {
   });
 };
 
-module.exports = (extensionDescriptorPaths, { request, ports }) => {
+module.exports = (extensionDescriptorPaths, { platform }, { request, ports }) => {
   const registry = {
     currentExtensionName: currentExtensionDescriptor.name,
     environment: {
@@ -60,45 +61,69 @@ module.exports = (extensionDescriptorPaths, { request, ports }) => {
       }
     },
     components: {
-      events: {
-        'sandbox/pageTop.js': {
-          extensionDisplayName: 'Sandbox',
-          extensionName: 'sandbox',
-          displayName: 'Page Top',
-          libPath: 'pageTop.js'
-        },
-        'sandbox/click.js': {
-          extensionDisplayName: 'Sandbox',
-          extensionName: 'sandbox',
-          displayName: 'Click',
-          libPath: 'click.js'
-        }
-      },
+      events:
+        platform === 'edge'
+          ? {}
+          : {
+              'sandbox/pageTop.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'Page Top',
+                libPath: 'pageTop.js'
+              },
+              'sandbox/click.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'Click',
+                libPath: 'click.js'
+              }
+            },
       conditions: {},
-      actions: {
-        'sandbox/logEventInfo.js': {
-          extensionDisplayName: 'Sandbox',
-          extensionName: 'sandbox',
-          displayName: 'Log Event Info',
-          libPath: 'logEventInfo.js'
-        }
-      },
-      dataElements: {
-        'sandbox/localStorage.js': {
-          extensionDisplayName: 'Sandbox',
-          extensionName: 'sandbox',
-          displayName: 'Local Storage',
-          libPath: 'localStorage.js',
-          viewPath: '/localStorage.html'
-        },
-        'sandbox/javascriptVariable.js': {
-          extensionDisplayName: 'Sandbox',
-          extensionName: 'sandbox',
-          displayName: 'JavaScript Variable',
-          libPath: 'javascriptVariable.js',
-          viewPath: '/javascriptVariable.html'
-        }
-      }
+      actions:
+        platform === 'edge'
+          ? {}
+          : {
+              'sandbox/logEventInfo.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'Log Event Info',
+                libPath: 'logEventInfo.js'
+              }
+            },
+      dataElements:
+        platform === 'edge'
+          ? {
+              'sandbox/constant.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'Constant',
+                libPath: 'constant.js',
+                viewPath: '/constant.html'
+              },
+              'sandbox/path.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'Path',
+                libPath: 'path.js',
+                viewPath: '/path.html'
+              }
+            }
+          : {
+              'sandbox/localStorage.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'Local Storage',
+                libPath: 'localStorage.js',
+                viewPath: '/localStorage.html'
+              },
+              'sandbox/javascriptVariable.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'JavaScript Variable',
+                libPath: 'javascriptVariable.js',
+                viewPath: '/javascriptVariable.html'
+              }
+            }
     },
     extensions: {}
   };

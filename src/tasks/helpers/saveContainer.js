@@ -16,8 +16,11 @@ const fs = require('fs-extra');
 const path = require('path');
 const turbinePkg = require('@adobe/reactor-turbine/package.json');
 const beautify = require('js-beautify').js_beautify;
+const { sanitize } = require('@adobe/reactor-token-scripts-edge');
 const files = require('../constants/files');
 const getExtensionDescriptors = require('./getExtensionDescriptors');
+// eslint-disable-next-line import/no-dynamic-require
+const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
 
 const extensionDescriptors = getExtensionDescriptors();
 const LIBRARY_LOADED_LIB_PATH = 'core/src/lib/events/libraryLoaded.js';
@@ -332,10 +335,15 @@ module.exports = (config) => {
 
   const fileContent = `module.exports = ${JSON.stringify(config)}`;
 
+  let sanitizeFn = (a) => a;
+  if (descriptor.platform === 'edge') {
+    sanitizeFn = sanitize;
+  }
+
   fs.ensureDirSync(files.CONSUMER_PROVIDED_FILES_PATH);
   fs.writeFileSync(
     CONSUMER_CONTAINER_TEMPLATE_PATH,
     /* eslint-disable-next-line camelcase */
-    beautify(replaceTokens(fileContent, replacements), { indent_size: 2 })
+    beautify(sanitizeFn(replaceTokens(fileContent, replacements)), { indent_size: 2 })
   );
 };

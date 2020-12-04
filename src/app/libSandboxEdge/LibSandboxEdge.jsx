@@ -16,11 +16,12 @@ import { Flex, View, ActionGroup, Item } from '@adobe/react-spectrum';
 import ReactJson from 'react-json-view';
 import Spinner from '../components/Spinner';
 import ControlTabs from './components/ControlTabs';
+import ErrorMessage from '../components/ErrorMessage';
 
 import './LibSandboxEdge.css';
 
-const compactResponse = (response) =>
-  (response?.body?.traces || [])
+const compactResponse = (response) => {
+  const compactedResponse = (response?.body?.traces || [])
     .map((t) =>
       t.messages.reduce((acc, cur) => {
         const lastItem = acc.pop();
@@ -39,15 +40,30 @@ const compactResponse = (response) =>
     )
     .flat();
 
+  if (response && compactedResponse.length === 0) {
+    return [
+      'A request was sent but no logs were received back. ' +
+        'Click on the `Full` button to see more info.'
+    ];
+  }
+
+  return compactedResponse;
+};
+
 export default ({ extensionDescriptor }) => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [responseMode, setResponseMode] = React.useState(new Set(['compact']));
   const [response, setResponse] = useState();
+  const [errors, setErrors] = useState({});
   const [splitSizes] = useState(JSON.parse(localStorage.getItem('sandbox/splitSizes')) || [72, 28]);
 
   const responseToShow = responseMode.has('compact') ? compactResponse(response) : response;
 
-  return (
+  return errors.api ? (
+    <View flex>
+      <ErrorMessage message={errors.api} />
+    </View>
+  ) : (
     <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
       <Flex direction="row" flex UNSAFE_style={{ overflow: 'hidden' }}>
         <Split
@@ -98,6 +114,7 @@ export default ({ extensionDescriptor }) => {
               extensionDescriptor={extensionDescriptor}
               onSendRequest={setShowSpinner}
               onRequestResponseReceived={setResponse}
+              onError={setErrors}
             />
           </View>
         </Split>
