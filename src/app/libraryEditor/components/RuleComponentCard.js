@@ -54,7 +54,7 @@ export default ({ item, type, index, handleDeleteClick }) => {
 
       <ActionGroup
         onAction={(key) => {
-          if (key === '.$edit') {
+          if (key === 'edit') {
             history.push(`${basePath}/rules/${ruleId}/${type}/${index}`);
           } else {
             handleDeleteClick(type, index);
