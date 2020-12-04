@@ -19,6 +19,7 @@ import { useLastLocation } from 'react-router-last-location';
 import RuleComponentsList from './RuleComponentsList';
 import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
+import { getExtensionDescriptorFromApi } from '../../api/index';
 
 const isNewRule = ({ ruleId, rules }) => {
   return ruleId === 'new' || !rules || ruleId >= rules.length;
@@ -99,6 +100,7 @@ export default () => {
   const history = useHistory();
   const { rule_id: ruleId } = useParams();
 
+  const [platform, setPlatform] = useState();
   const [errors, setErrors] = useState({});
   const lastLocation = useLastLocation();
   const { currentRule, rules } = useSelector((state) => state);
@@ -110,6 +112,12 @@ export default () => {
   }, [dispatch.rules, ruleId, rules]);
 
   useEffect(() => {
+    async function fetchData() {
+      const { platform: p } = await getExtensionDescriptorFromApi();
+      setPlatform(p);
+    }
+    fetchData();
+
     if (isUserComingFromRuleComponentsPage(lastLocation)) {
       setRule(currentRule);
     } else {
@@ -146,17 +154,22 @@ export default () => {
         }}
       />
 
-      <Heading level={3}>Events</Heading>
-      <RuleComponentsList
-        addLabel="Add new event"
-        handleDeleteClick={handleDeleteClick({
-          rule,
-          setRule,
-          setCurrentRule: dispatch.currentRule.setCurrentRule
-        })}
-        items={rule.events || []}
-        type="events"
-      />
+      {platform !== 'edge' && (
+        <>
+          <Heading level={3}>Events</Heading>
+          <RuleComponentsList
+            addLabel="Add new event"
+            handleDeleteClick={handleDeleteClick({
+              rule,
+              setRule,
+              setCurrentRule: dispatch.currentRule.setCurrentRule
+            })}
+            items={rule.events || []}
+            type="events"
+          />
+        </>
+      )}
+
       <Heading level={3}>Conditions</Heading>
       <RuleComponentsList
         addLabel="Add new condition"

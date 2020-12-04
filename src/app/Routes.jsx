@@ -20,7 +20,7 @@ import NAMED_ROUTES from './constants';
 /* eslint-disable-next-line import/no-cycle */
 import Home from './Home';
 import ViewSandbox from './viewSandbox';
-import LibSandbox from './libSandbox';
+import LibSandbox from './LibSandbox';
 import Menu from './components/Menu';
 import ErrorBoundary from './components/ErrorBoundary';
 import LibraryEditor from './libraryEditor';

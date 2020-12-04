@@ -29,6 +29,7 @@ const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 const editorRegistry = require('./helpers/editorRegistry');
 const saveContainer = require('./helpers/saveContainer');
+const processEdgeRequest = require('./helpers/processEdgeRequest');
 const unTransform = require('./helpers/unTransform');
 const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
@@ -244,6 +245,15 @@ const configureApp = (app) => {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(registryContent));
+  });
+
+  app.post('/process-edge-request', (req, res) => {
+    try {
+      res.json(processEdgeRequest(req.body));
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    }
   });
 };
 
