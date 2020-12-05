@@ -38,7 +38,24 @@ const functionTokenRegistry = {
 };
 
 const augmentSandboxModules = (modulesOutput) => {
-  // Check to see if the extension under test is named sandbox.
+  modulesOutput['sandbox/customCode.js'] = {
+    displayName: 'Custom Code',
+    name: 'customCode',
+    extensionName: 'sandbox',
+    script: ({ arc, utils }) => {
+      const ruleStash = arc.ruleStash || {};
+      const coreRuleStash = ruleStash.core || {};
+      coreRuleStash.customCode = coreRuleStash.customCode || {};
+
+      const settings = utils.getSettings();
+
+      return Promise.resolve(settings.code(arc, utils)).then((r) => {
+        coreRuleStash.customCode[settings.key] = r;
+        return coreRuleStash;
+      });
+    }
+  };
+
   modulesOutput['sandbox/constant.js'] = {
     displayName: 'Constant',
     name: 'constant',
@@ -183,7 +200,9 @@ module.exports = () => {
   delete require.cache[containerPath];
   container = require(containerPath);
 
-  const extensionsOutput = {};
+  const extensionsOutput = {
+    sandbox: { displayName: 'Sandbox' }
+  };
   const modulesOutput = {};
   container.extensions = extensionsOutput;
   container.modules = modulesOutput;

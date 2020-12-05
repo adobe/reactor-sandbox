@@ -81,7 +81,15 @@ module.exports = (extensionDescriptorPaths, { platform }, { request, ports }) =>
       conditions: {},
       actions:
         platform === 'edge'
-          ? {}
+          ? {
+              'sandbox/customCode.js': {
+                extensionDisplayName: 'Sandbox',
+                extensionName: 'sandbox',
+                displayName: 'Custom Code',
+                libPath: 'customCode.js',
+                viewPath: '/customCode.html'
+              }
+            }
           : {
               'sandbox/logEventInfo.js': {
                 extensionDisplayName: 'Sandbox',
