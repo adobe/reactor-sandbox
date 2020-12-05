@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import {
   Dialog,
@@ -24,8 +24,7 @@ import {
   Item
 } from '@adobe/react-spectrum';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { getExtensionDescriptorFromApi } from '../../api/index';
+import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
 const handleOnSave = ({
   dataElement,
@@ -75,17 +74,7 @@ export default () => {
   const dataElements = useSelector((state) => state.dataElements);
   const dataElementSelectorModal = useSelector((state) => state.modals.dataElementSelectorModal);
   const [dataElement, setDataElement] = useState('');
-  const [platform, setPlatform] = useState();
-
-  useEffect(() => {
-    async function fetchData() {
-      const { platform: p } = await getExtensionDescriptorFromApi();
-      setPlatform(p);
-    }
-    fetchData();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const extensionDescriptorContext = useContext(ExtensionDescriptorContext);
 
   return dataElementSelectorModal && dataElementSelectorModal.open ? (
     <DialogContainer>
@@ -124,7 +113,7 @@ export default () => {
                 dataElementSelectorModal,
                 dataElement,
                 setDataElement,
-                platform,
+                platform: extensionDescriptorContext.platform,
                 closeDataElementSelectorModal: dispatch.modals.closeDataElementSelectorModal
               });
             }}

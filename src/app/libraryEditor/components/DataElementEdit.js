@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import produce from 'immer';
@@ -31,6 +31,7 @@ import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
 import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
+import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
 const isNewDataElement = ({ dataElementId, dataElements }) => {
   return dataElementId === 'new' || dataElementId >= (dataElements || []).length;
@@ -157,6 +158,7 @@ const computeDataElementList = (dataElements = {}) => {
 };
 
 export default () => {
+  const extensionDescriptor = useContext(ExtensionDescriptorContext);
   const dispatch = useDispatch();
   const history = useHistory();
   const { data_element_id: dataElementId } = useParams();
@@ -310,30 +312,34 @@ export default () => {
             Clean Text
           </Checkbox>
 
-          <Picker
-            marginTop="size-150"
-            label="Storage duration"
-            selectedKey={dataElement.storageDuration || ''}
-            onSelectionChange={(newValue) =>
-              handleInputChange({
-                fieldName: 'storageDuration',
-                newValue,
-                dataElement,
-                setDataElement
-              })
-            }
-            width="size-3400"
-            items={[
-              { id: '', name: 'None' },
-              { id: 'pageview', name: 'Pageview' },
-              { id: 'session', name: 'Session' },
-              { id: 'visitor', name: 'Visitor' }
-            ]}
-          >
-            {(item) => <Item>{item.name}</Item>}
-          </Picker>
+          <br />
 
-          <ButtonGroup marginTop="size-150" marginBottom="size-150">
+          {extensionDescriptor.platform !== 'edge' && (
+            <Picker
+              marginTop="size-150"
+              label="Storage duration"
+              selectedKey={dataElement.storageDuration || ''}
+              onSelectionChange={(newValue) =>
+                handleInputChange({
+                  fieldName: 'storageDuration',
+                  newValue,
+                  dataElement,
+                  setDataElement
+                })
+              }
+              width="size-3400"
+              items={[
+                { id: '', name: 'None' },
+                { id: 'pageview', name: 'Pageview' },
+                { id: 'session', name: 'Session' },
+                { id: 'visitor', name: 'Visitor' }
+              ]}
+            >
+              {(item) => <Item>{item.name}</Item>}
+            </Picker>
+          )}
+
+          <ButtonGroup marginTop="size-250" marginBottom="size-150">
             <Button
               variant="cta"
               onPress={() =>

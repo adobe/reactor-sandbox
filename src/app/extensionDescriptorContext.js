@@ -10,21 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useContext } from 'react';
-import LibSandboxEdge from './libSandboxEdge';
-import LibSandboxWeb from './libSandboxWeb';
-import ExtensionDescriptorContext from './extensionDescriptorContext';
+import React from 'react';
 
-export default () => {
-  const extensionDescriptor = useContext(ExtensionDescriptorContext);
-
-  return (
-    <>
-      {extensionDescriptor?.platform === 'edge' && (
-        <LibSandboxEdge extensionDescriptor={extensionDescriptor} />
-      )}
-
-      {extensionDescriptor?.platform === 'web' && <LibSandboxWeb />}
-    </>
-  );
-};
+export default React.createContext();

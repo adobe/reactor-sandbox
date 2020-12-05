@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { LastLocationProvider } from 'react-router-last-location';
@@ -25,34 +25,46 @@ import Menu from './components/Menu';
 import ErrorBoundary from './components/ErrorBoundary';
 import LibraryEditor from './libraryEditor';
 import store from './store';
+import { getExtensionDescriptorFromApi } from './api/index';
+import ExtensionDescriptorContext from './extensionDescriptorContext';
 
 export default function App() {
+  const [extensionDescriptor, setExtensionDescriptor] = useState();
+
+  useEffect(() => {
+    getExtensionDescriptorFromApi().then(setExtensionDescriptor);
+  }, []);
+
   return (
     <Provider store={store}>
-      <ErrorBoundary>
-        <Router>
-          <LastLocationProvider>
-            <Flex direction="column" height="100%">
-              <Menu />
-              <Switch>
-                <Route exact path={NAMED_ROUTES.HOME}>
-                  <Home />
-                </Route>
+      {extensionDescriptor ? (
+        <ExtensionDescriptorContext.Provider value={extensionDescriptor}>
+          <ErrorBoundary>
+            <Router>
+              <LastLocationProvider>
+                <Flex direction="column" height="100%">
+                  <Menu />
+                  <Switch>
+                    <Route exact path={NAMED_ROUTES.HOME}>
+                      <Home />
+                    </Route>
 
-                <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
-                  <LibSandbox flex />
-                </Route>
+                    <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
+                      <LibSandbox flex />
+                    </Route>
 
-                <Route path={NAMED_ROUTES.LIBRARY_EDITOR} component={LibraryEditor} />
+                    <Route path={NAMED_ROUTES.LIBRARY_EDITOR} component={LibraryEditor} />
 
-                <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
-                  <ViewSandbox flex />
-                </Route>
-              </Switch>
-            </Flex>
-          </LastLocationProvider>
-        </Router>
-      </ErrorBoundary>
+                    <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
+                      <ViewSandbox flex />
+                    </Route>
+                  </Switch>
+                </Flex>
+              </LastLocationProvider>
+            </Router>
+          </ErrorBoundary>
+        </ExtensionDescriptorContext.Provider>
+      ) : null}
     </Provider>
   );
 }
