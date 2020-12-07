@@ -27,8 +27,13 @@ const fetchJson = (endpoint) =>
       throw new Error(`An error occured when fetching ${endpoint}.`);
     });
 
-export const getExtensionDescriptorFromApi = () =>
-  fetchJson(`${window.EXPRESS_PUBLIC_URL}/extensionDescriptor`);
+export const getExtensionDescriptorFromApi = () => {
+  activePromises.getExtensionDescriptor =
+    activePromises.getExtensionDescriptor ||
+    fetchJson(`${window.EXPRESS_PUBLIC_URL}/extensionDescriptor`);
+
+  return activePromises.getExtensionDescriptor;
+};
 
 export const getStatus = () => {
   activePromises.getStatus =
@@ -63,4 +68,25 @@ export const saveContainerData = (containerData) =>
     })
     .catch((e) => {
       throw new Error(`An error occured when saving the container: ${e.message}.`);
+    });
+
+export const sendEdgeRequest = (body) =>
+  fetch(`${window.EXPRESS_PUBLIC_URL}/process-edge-request`, {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        const responseBody = await response.text();
+        throw new Error(`${response.statusText}: ${responseBody}`);
+      }
+
+      return response.json();
+    })
+    .catch((e) => {
+      throw new Error(`An error occured when processing the hit: ${e.message}.`);
     });

@@ -10,56 +10,39 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import Split from 'react-split';
 import { Flex, View } from '@adobe/react-spectrum';
 
-import { getExtensionDescriptorFromApi } from '../api';
 import ViewsSelector from './components/ViewsSelector';
 import ControlTabs from './components/ControlTabs';
 import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByValue';
 import setUpGlobalLoadExtensionView from './helpers/setUpGlobalLoadExtensionView';
+import ExtensionDescriptorContext from '../extensionDescriptorContext';
 
 import './ViewSandbox.css';
-import ErrorMessage from '../components/ErrorMessage';
 
 export default () => {
-  const [error, setError] = useState();
-  const [state, setState] = useState({
-    extensionDescriptor: null,
-    extensionViewDescriptorsByValue: null
-  });
+  const extensionDescriptor = useContext(ExtensionDescriptorContext);
+  const extensionViewDescriptorsByValue = getExtensionDescriptorsByValue(extensionDescriptor);
 
   const [selectedDescriptor, setSelectedDescriptor] = useState(null);
   const [splitSizes] = useState(JSON.parse(localStorage.getItem('sandbox/splitSizes')) || [72, 28]);
 
   const extensionViewPaneRef = useRef();
 
-  useEffect(() => {
-    getExtensionDescriptorFromApi()
-      .then((extensionDescriptorResult) => {
-        setState({
-          extensionDescriptor: extensionDescriptorResult,
-          extensionViewDescriptorsByValue: getExtensionDescriptorsByValue(extensionDescriptorResult)
-        });
-      })
-      .catch((e) => {
-        setError(new Error(e));
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   setUpGlobalLoadExtensionView({
-    state,
+    state: { extensionDescriptor, extensionViewDescriptorsByValue },
     extensionViewPaneRef
   });
 
-  return error ? (
-    <ErrorMessage message={error.message} />
-  ) : (
+  return (
     <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
       <View borderBottomWidth="thin" borderBottomColor="gray-400">
-        <ViewsSelector state={state} setSelectedDescriptor={setSelectedDescriptor} />
+        <ViewsSelector
+          state={{ extensionDescriptor, extensionViewDescriptorsByValue }}
+          setSelectedDescriptor={setSelectedDescriptor}
+        />
       </View>
       <Flex direction="row" flex UNSAFE_style={{ overflow: 'hidden' }}>
         <Split
@@ -80,7 +63,7 @@ export default () => {
             <ControlTabs
               extensionViewPaneRef={extensionViewPaneRef}
               selectedDescriptor={selectedDescriptor}
-              extensionDescriptor={state.extensionDescriptor}
+              extensionDescriptor={extensionDescriptor}
             />
           </View>
         </Split>

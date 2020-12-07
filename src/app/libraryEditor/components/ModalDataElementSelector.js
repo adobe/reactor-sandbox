@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import {
   Dialog,
@@ -24,11 +24,13 @@ import {
   Item
 } from '@adobe/react-spectrum';
 import { useDispatch, useSelector } from 'react-redux';
+import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
 const handleOnSave = ({
   dataElement,
   dataElementSelectorModal,
   setDataElement,
+  platform,
   closeDataElementSelectorModal
 }) => {
   let newDataElement = '';
@@ -37,7 +39,13 @@ const handleOnSave = ({
   } = dataElementSelectorModal;
 
   if (dataElement) {
-    newDataElement = tokenize ? `%${dataElement}%` : dataElement;
+    if (!tokenize) {
+      newDataElement = dataElement;
+    } else if (platform === 'edge') {
+      newDataElement = `{{${dataElement}}}`;
+    } else {
+      newDataElement = `%${dataElement}%`;
+    }
   }
 
   dataElementSelectorModal.onSave(newDataElement);
@@ -66,6 +74,7 @@ export default () => {
   const dataElements = useSelector((state) => state.dataElements);
   const dataElementSelectorModal = useSelector((state) => state.modals.dataElementSelectorModal);
   const [dataElement, setDataElement] = useState('');
+  const extensionDescriptorContext = useContext(ExtensionDescriptorContext);
 
   return dataElementSelectorModal && dataElementSelectorModal.open ? (
     <DialogContainer>
@@ -104,6 +113,7 @@ export default () => {
                 dataElementSelectorModal,
                 dataElement,
                 setDataElement,
+                platform: extensionDescriptorContext.platform,
                 closeDataElementSelectorModal: dispatch.modals.closeDataElementSelectorModal
               });
             }}

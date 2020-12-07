@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Custom Code Action</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" />
+    <link rel="stylesheet" href="extensionView.css" />
+    <script src="https://assets.adobedtm.com/activation/reactor/extensionbridge/extensionbridge.min.js"></script>
+    <script src="extensionView.js"></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script>
+      Form.create(
+        {
+          key: {
+            title: 'Key name',
+            required: true
+          },
+          code: {
+            title: 'Open Code Editor',
+            required: true,
+            type: 'code'
+          }
+        },
+        document.getElementById('root')
+      );
+    </script>
+  </body>
+</html>

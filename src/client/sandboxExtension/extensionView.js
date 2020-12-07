@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const allValues = {};
+
 // eslint-disable-next-line no-unused-vars
 const Form = {
   create(fields, root) {
@@ -35,6 +37,20 @@ const Form = {
   },
 
   buildField(fieldName, fieldData) {
+    if (fieldData.type === 'code') {
+      return `<button class="pure-button" onClick="
+          window.extensionBridge.openCodeEditor({
+            code: allValues['${fieldName}'],
+            language: 'javascript'
+          })
+          .then(function(code) {
+            allValues['${fieldName}'] = code;
+          })
+      ">
+        ${fieldData.title}
+      </button>`;
+    }
+
     return `${'<div class="pure-control-group"><label for="'}${fieldName}">${
       fieldData.title
     }</label><input id="${fieldName}" type="text">${this.buildFieldMessage(fieldData)}</div>`;
@@ -64,7 +80,12 @@ const Form = {
           if (Array.isArray(fieldValue)) {
             fieldValue = fieldValue.join(',');
           }
-          document.getElementById(fieldName).value = fieldValue;
+
+          allValues[fieldName] = fieldValue;
+          const input = document.getElementById(fieldName);
+          if (input) {
+            input.value = fieldValue;
+          }
         }, this);
       },
 
@@ -72,7 +93,9 @@ const Form = {
         const settings = {};
 
         fieldNames.forEach((fieldName) => {
-          settings[fieldName] = document.getElementById(fieldName).value || '';
+          const inputValue =
+            document.getElementById(fieldName) && document.getElementById(fieldName).value;
+          settings[fieldName] = inputValue || allValues[fieldName] || '';
           if (fields[fieldName].type === 'array') {
             settings[fieldName] = settings[fieldName].split(',').map((s) => s.trim());
           }
@@ -91,10 +114,10 @@ const Form = {
         fieldNames.forEach((fieldName) => {
           if (fields[fieldName].required) {
             const fieldInput = document.getElementById(fieldName);
-            if (!fieldInput.value) {
+            if (fieldInput && !fieldInput.value) {
               fieldInput.parentNode.classList.add('error');
               result = false;
-            } else {
+            } else if (fieldInput) {
               fieldInput.parentNode.classList.remove('error');
             }
           }

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ import { useLastLocation } from 'react-router-last-location';
 import RuleComponentsList from './RuleComponentsList';
 import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
+import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
 const isNewRule = ({ ruleId, rules }) => {
   return ruleId === 'new' || !rules || ruleId >= rules.length;
@@ -95,6 +96,7 @@ const handleDeleteClick = ({ rule, setCurrentRule, setRule }) => (type, index) =
 };
 
 export default () => {
+  const extensionDescriptor = useContext(ExtensionDescriptorContext);
   const dispatch = useDispatch();
   const history = useHistory();
   const { rule_id: ruleId } = useParams();
@@ -146,17 +148,22 @@ export default () => {
         }}
       />
 
-      <Heading level={3}>Events</Heading>
-      <RuleComponentsList
-        addLabel="Add new event"
-        handleDeleteClick={handleDeleteClick({
-          rule,
-          setRule,
-          setCurrentRule: dispatch.currentRule.setCurrentRule
-        })}
-        items={rule.events || []}
-        type="events"
-      />
+      {extensionDescriptor.platform !== 'edge' && (
+        <>
+          <Heading level={3}>Events</Heading>
+          <RuleComponentsList
+            addLabel="Add new event"
+            handleDeleteClick={handleDeleteClick({
+              rule,
+              setRule,
+              setCurrentRule: dispatch.currentRule.setCurrentRule
+            })}
+            items={rule.events || []}
+            type="events"
+          />
+        </>
+      )}
+
       <Heading level={3}>Conditions</Heading>
       <RuleComponentsList
         addLabel="Add new condition"
