@@ -10,13 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import { useHistory } from 'react-router-dom';
 import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
+import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
 const handleOrgIdChange = ({ orgId, setCompanySettings, companySettings }) => {
   setCompanySettings(
@@ -34,10 +35,10 @@ const handleImsChange = ({ imsAccess, otherSettings, setOtherSettings }) => {
   );
 };
 
-const isValid = ({ companySettings, otherSettings, setErrors }) => {
+const isValid = ({ companySettings, otherSettings, setErrors, platform }) => {
   const errors = {};
 
-  if (!companySettings.orgId) {
+  if (!companySettings.orgId && platform !== 'edge') {
     errors.orgId = true;
   }
 
@@ -50,6 +51,7 @@ const isValid = ({ companySettings, otherSettings, setErrors }) => {
 };
 
 const handleSave = async ({
+  platform,
   companySettings,
   otherSettings,
   setErrors,
@@ -57,7 +59,7 @@ const handleSave = async ({
   saveCompanySettings,
   saveOtherSettings
 }) => {
-  if (!isValid({ companySettings, otherSettings, setErrors })) {
+  if (!isValid({ companySettings, otherSettings, setErrors, platform })) {
     return false;
   }
 
@@ -79,6 +81,7 @@ export default () => {
 
   const [companySettings, setCompanySettings] = useState(useSelector((state) => state.company));
   const [otherSettings, setOtherSettings] = useState(useSelector((state) => state.otherSettings));
+  const { platform } = useContext(ExtensionDescriptorContext);
 
   return errors.api ? (
     <View flex>
@@ -87,23 +90,26 @@ export default () => {
   ) : (
     <Flex direction="column">
       <View width="100%" alignSelf="center">
-        <Heading level={2}>Company Settings</Heading>
-        <Divider />
-        <Flex direction="column" alignItems="center">
-          <TextField
-            label="Organization ID"
-            necessityIndicator="label"
-            isRequired
-            width="size-6000"
-            marginTop="size-150"
-            validationState={errors.orgId ? 'invalid' : ''}
-            value={companySettings.orgId || ''}
-            onChange={(orgId) => {
-              handleOrgIdChange({ orgId, companySettings, setCompanySettings });
-            }}
-          />
-        </Flex>
-
+        {platform !== 'edge' && (
+          <>
+            <Heading level={2}>Company Settings</Heading>
+            <Divider />
+            <Flex direction="column" alignItems="center">
+              <TextField
+                label="Organization ID"
+                necessityIndicator="label"
+                isRequired
+                width="size-6000"
+                marginTop="size-150"
+                validationState={errors.orgId ? 'invalid' : ''}
+                value={companySettings.orgId || ''}
+                onChange={(orgId) => {
+                  handleOrgIdChange({ orgId, companySettings, setCompanySettings });
+                }}
+              />
+            </Flex>
+          </>
+        )}
         <Heading level={2} marginTop="size-400">
           IMS Token Settings
         </Heading>
@@ -129,6 +135,7 @@ export default () => {
               marginTop="size-400"
               onPress={() => {
                 handleSave({
+                  platform,
                   companySettings,
                   otherSettings,
                   setErrors,

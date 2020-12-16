@@ -11,7 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import produce from 'immer';
-import { getEditorRegistry, getContainerData } from '../../api/index';
+import {
+  getEditorRegistry,
+  getContainerData,
+  getExtensionDescriptorFromApi
+} from '../../api/index';
 import localStorage from './localStorage';
 import saveContainer from '../helpers/saveContainer';
 
@@ -36,6 +40,11 @@ export default {
   state: {}, // initial state
 
   reducers: {
+    setPlatform(baseState, platform) {
+      return produce(baseState, (draftState) => {
+        draftState.platform = platform;
+      });
+    },
     setError(baseState, error) {
       return produce(baseState, (draftState) => {
         draftState.error = error;
@@ -58,7 +67,10 @@ export default {
     }
   },
   effects: {
-    initialize() {
+    async initialize() {
+      const { platform } = await getExtensionDescriptorFromApi();
+      this.setPlatform(platform);
+
       Promise.all([
         this.loadRegistryData(),
         this.loadContainerData().catch(() => {
@@ -89,22 +101,32 @@ export default {
       this.pushDataDown(containerData);
     },
 
-    async clearContainerData() {
+    async clearContainerData(_, rootState) {
+      const {
+        brain: { platform }
+      } = rootState;
+
       const emptyContainerData = {
         extensions: [],
         rules: [],
         dataElements: [],
         property: {
-          settings: {
-            domains: ['example.com'],
-            linkDelay: 100,
-            trackingCookieName: 'sat_track',
-            undefinedVarsReturnEmpty: false
-          }
+          settings:
+            platform === 'edge'
+              ? {}
+              : {
+                  domains: ['example.com'],
+                  linkDelay: 100,
+                  trackingCookieName: 'sat_track',
+                  undefinedVarsReturnEmpty: false
+                }
         },
-        company: {
-          orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
-        }
+        company:
+          platform === 'edge'
+            ? {}
+            : {
+                orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+              }
       };
 
       await this.pushDataDown(emptyContainerData);

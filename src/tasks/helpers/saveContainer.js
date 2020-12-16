@@ -15,6 +15,7 @@ governing permissions and limitations under the License.
 const fs = require('fs-extra');
 const path = require('path');
 const turbinePkg = require('@adobe/reactor-turbine/package.json');
+const turbineEdgePkg = require('@adobe/reactor-turbine-edge/package.json');
 const beautify = require('js-beautify').js_beautify;
 const { sanitize } = require('@adobe/reactor-token-scripts-edge');
 const files = require('../constants/files');
@@ -333,7 +334,7 @@ module.exports = (config) => {
 
   config = Object.assign(config, {
     buildInfo: {
-      turbineVersion: turbinePkg.version,
+      turbineVersion: descriptor.platform === 'edge' ? turbineEdgePkg.version : turbinePkg.version,
       turbineBuildDate: new Date().toISOString(),
       buildDate: new Date().toISOString(),
       environment: 'development'

@@ -12,13 +12,14 @@ governing permissions and limitations under the License.
 
 /* eslint-disable react/jsx-no-bind */
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import produce from 'immer';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import NAMED_ROUTES from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
+import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
 const isValid = ({ domains, setErrors }) => {
   const errors = {};
@@ -62,7 +63,8 @@ export default () => {
 
   const propertySettings = useSelector((state) => state.property);
   const [errors, setErrors] = useState({});
-  const [domains, setDomains] = useState(propertySettings.settings.domains.join(', '));
+  const [domains, setDomains] = useState((propertySettings.settings.domains || []).join(', '));
+  const { platform } = useContext(ExtensionDescriptorContext);
 
   return errors.api ? (
     <View flex>
@@ -72,38 +74,42 @@ export default () => {
     <View margin="2rem auto" width="50rem">
       <Heading level={2}>Property Settings</Heading>
       <Divider />
-      <Flex direction="column" alignItems="center">
-        <View>
-          <TextField
-            label="Domains List"
-            necessityIndicator="label"
-            isRequired
-            width="size-6000"
-            marginTop="size-150"
-            validationState={errors.domains ? 'invalid' : ''}
-            value={domains}
-            onChange={setDomains}
-          />
-          <Heading level={6} margin="size-100">
-            Comma separated values are accepted.
-          </Heading>
-          <Button
-            variant="cta"
-            marginTop="size-100"
-            onPress={() => {
-              handleSave({
-                domains,
-                setErrors,
-                history,
-                propertySettings,
-                savePropertySettings: dispatch.property.savePropertySettings
-              });
-            }}
-          >
-            Save
-          </Button>
-        </View>
-      </Flex>
+      {platform === 'edge' ? (
+        <View padding="size-250">At this moment, there are no settings to configure.</View>
+      ) : (
+        <Flex direction="column" alignItems="center">
+          <View>
+            <TextField
+              label="Domains List"
+              necessityIndicator="label"
+              isRequired
+              width="size-6000"
+              marginTop="size-150"
+              validationState={errors.domains ? 'invalid' : ''}
+              value={domains}
+              onChange={setDomains}
+            />
+            <Heading level={6} margin="size-100">
+              Comma separated values are accepted.
+            </Heading>
+            <Button
+              variant="cta"
+              marginTop="size-100"
+              onPress={() => {
+                handleSave({
+                  domains,
+                  setErrors,
+                  history,
+                  propertySettings,
+                  savePropertySettings: dispatch.property.savePropertySettings
+                });
+              }}
+            >
+              Save
+            </Button>
+          </View>
+        </Flex>
+      )}
     </View>
   );
 };
