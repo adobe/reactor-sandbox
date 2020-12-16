@@ -198,7 +198,11 @@ const augmentModules = (modulesOutput, extensionDescriptor, extensionPath) => {
 module.exports = () => {
   const containerPath = path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME);
   delete require.cache[containerPath];
-  container = require(containerPath);
+  try {
+    container = require(containerPath);
+  } catch (e) {
+    container = {};
+  }
 
   const extensionsOutput = {
     sandbox: { displayName: 'Sandbox' }
