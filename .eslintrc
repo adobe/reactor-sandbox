@@ -24,7 +24,7 @@
     "react/jsx-filename-extension": 0,
     "jsx-a11y/label-has-for": 0,
     "camelcase": [2, { "properties": "always" }],
-    "indent": [2, 2, { "SwitchCase": 1 }], // 2 spaces indentation
+    "indent": 0, // Disabled because we use prettier. Sometimes they are colliding.
     "semi": [2, "always"],
     "keyword-spacing": ["error"],
     "space-before-function-paren": [
