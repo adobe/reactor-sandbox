@@ -78,6 +78,8 @@
     "jsonlint-mod": "^1.7.6",
     "match-requires": "^2.0.1",
     "node-fetch": "^2.6.1",
+    "pkg-dir": "^5.0.0",
+    "pkg-up": "^3.1.0",
     "react": "^17.0.1",
     "react-codemirror2": "^7.2.1",
     "react-dom": "^17.0.1",

@@ -14,6 +14,7 @@ governing permissions and limitations under the License.
 /* eslint-disable global-require */
 
 const { transform } = require('@babel/core');
+const pkgDir = require('pkg-dir');
 const path = require('path');
 const files = require('../constants/files');
 const extensionDescriptorPaths = require('./extensionDescriptorPaths');
@@ -255,8 +256,12 @@ module.exports = () => {
     return functionTokenRegistry.getFunctionStr(tokenId);
   });
 
+  const babelPluginDir = pkgDir.sync(
+    require.resolve('@adobe/reactor-babel-plugin-replace-tokens-edge')
+  );
+
   container = transform(`container = (getDataElementValues) => (${container})`, {
-    plugins: [`${__dirname}/../../../node_modules/@adobe/reactor-babel-plugin-replace-tokens-edge`]
+    plugins: [babelPluginDir]
   }).code;
 
   // eslint-disable-next-line no-eval
