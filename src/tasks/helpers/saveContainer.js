@@ -19,11 +19,13 @@ const turbineEdgePkg = require('@adobe/reactor-turbine-edge/package.json');
 const beautify = require('js-beautify').js_beautify;
 const { sanitize } = require('@adobe/reactor-token-scripts-edge');
 const files = require('../constants/files');
+const getExtensionDescriptor = require('./getExtensionDescriptor');
 const getExtensionDescriptors = require('./getExtensionDescriptors');
 // eslint-disable-next-line import/no-dynamic-require
 const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
+const { platform } = getExtensionDescriptor();
 
-const extensionDescriptors = getExtensionDescriptors();
+const extensionDescriptors = getExtensionDescriptors(platform);
 const LIBRARY_LOADED_LIB_PATH = 'core/src/lib/events/libraryLoaded.js';
 const PAGE_BOTTOM_LIB_PATH = 'core/src/lib/events/pageBottom.js';
 let token = -1;

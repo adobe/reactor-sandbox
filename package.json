@@ -49,6 +49,7 @@
     "@adobe/react-spectrum": "^3.7.0",
     "@adobe/reactor-babel-plugin-replace-tokens-edge": "^1.0.0",
     "@adobe/reactor-bridge": "^11.0.0",
+    "@adobe/reactor-extension-core-edge": "^1.0.1",
     "@adobe/reactor-token-scripts-edge": "^1.1.1",
     "@adobe/reactor-turbine": "^26.0.2",
     "@adobe/reactor-turbine-edge": "^2.0.0",

@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
 const path = require('path');
 const extensionDescriptorPaths = require('./extensionDescriptorPaths');
 
-module.exports = () => {
+module.exports = (platform) => {
   // We have all the logic inside the function because we want to give
   // the most current data from inside the descriptors each time the function is called.
   const extensionDescriptors = {};
@@ -27,7 +27,10 @@ module.exports = () => {
 
     const extensionDescriptor = require(resolvedExtensionDescriptorPath);
     extensionDescriptor.extensionDescriptorPath = resolvedExtensionDescriptorPath;
-    extensionDescriptors[extensionDescriptor.name] = extensionDescriptor;
+
+    if (platform === extensionDescriptor.platform) {
+      extensionDescriptors[extensionDescriptor.name] = extensionDescriptor;
+    }
   });
 
   return extensionDescriptors;
