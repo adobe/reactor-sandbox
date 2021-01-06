@@ -12,7 +12,9 @@
 
     <script>
       const protocol = window.location.protocol;
-      window.EXPRESS_PUBLIC_URL = `${protocol}//localhost:3000`;
+      const port = protocol === 'https:' ? 4000 : 3000;
+
+      window.EXPRESS_PUBLIC_URL = `${protocol}//localhost:${port}`;
       window.REACT_PUBLIC_URL = `${protocol}//localhost:3001`;
     </script>
     <!--
