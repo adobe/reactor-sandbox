@@ -39,70 +39,11 @@ const functionTokenRegistry = {
 };
 
 const augmentSandboxModules = (modulesOutput) => {
-  modulesOutput['sandbox/customCode.js'] = {
-    displayName: 'Custom Code',
-    name: 'customCode',
-    extensionName: 'sandbox',
-    script: ({ arc, utils }) => {
-      const ruleStash = arc.ruleStash || {};
-      const coreRuleStash = ruleStash.core || {};
-      coreRuleStash.customCode = coreRuleStash.customCode || {};
-
-      const settings = utils.getSettings();
-
-      return Promise.resolve(settings.code(arc, utils)).then((r) => {
-        coreRuleStash.customCode[settings.key] = r;
-        return coreRuleStash;
-      });
-    }
-  };
-
   modulesOutput['sandbox/constant.js'] = {
     displayName: 'Constant',
     name: 'constant',
     extensionName: 'sandbox',
     script: ({ utils: { getSettings } }) => getSettings().path
-  };
-
-  modulesOutput['sandbox/path.js'] = {
-    displayName: 'Path',
-    name: 'path',
-    extensionName: 'sandbox',
-    script: ({ arc, utils: { getSettings } }) => {
-      const isKeyArray = (i) => {
-        return !!i.match(/[[0-9]+]/);
-      };
-
-      const getArrayIndex = (i) => {
-        const match = i.match(/\[([0-9]+)]$/);
-        return match && match[1];
-      };
-
-      const getValue = (payload, sourcePath) => {
-        const pathParts = sourcePath.split('.');
-        let result = payload;
-
-        pathParts.forEach((pathPart) => {
-          if (result) {
-            if (isKeyArray(pathPart)) {
-              const property = pathPart.substring(0, pathPart.indexOf('['));
-              const index = getArrayIndex(pathPart);
-              if (result[property]) {
-                result = result[property][index];
-              }
-            } else {
-              result = result[pathPart];
-            }
-          }
-        });
-
-        return result || null;
-      };
-
-      const { path: p } = getSettings();
-      const c = { arc };
-      return getValue(c, p);
-    }
   };
 };
 

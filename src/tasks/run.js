@@ -37,6 +37,8 @@ const executeSandboxComponents = require('../helpers/executeSandboxComponents');
 const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
 const getLatestVersion = require('../helpers/getLatestVersion');
 
+const { platform } = getExtensionDescriptor();
+
 const PORT = 3000;
 const SSL_PORT = 4000;
 
@@ -111,7 +113,7 @@ const configureApp = (app) => {
 
     // In case someone edited `extension.json` we want always to get the latest
     // data everytime a new request arrives.
-    const extensionDescriptors = getExtensionDescriptors();
+    const extensionDescriptors = getExtensionDescriptors(platform);
 
     // Get the descriptor that matches the extension name and the version from the request.
     // eslint-disable-next-line no-shadow
@@ -139,7 +141,7 @@ const configureApp = (app) => {
   });
 
   // We serve all the view folders from each detected extension.
-  const extensionDescriptors = getExtensionDescriptors();
+  const extensionDescriptors = getExtensionDescriptors(platform);
   Object.keys(extensionDescriptors).forEach((key) => {
     const ed = extensionDescriptors[key];
 
@@ -254,7 +256,7 @@ const configureApp = (app) => {
   app.get('/editor-registry.js', (req, res) => {
     // In case someone edited `extension.json` we want always to get the latest
     // data everytime a new request arrives.
-    const eds = getExtensionDescriptors();
+    const eds = getExtensionDescriptors(platform);
 
     const registryContent = editorRegistry(eds, extensionDescriptor, {
       request: req,
@@ -290,7 +292,7 @@ const configureApp = (app) => {
   }
 };
 
-if (isSandboxLinked()) {
+if (isSandboxLinked() && !process.env.SKIP_DEV_SERVER) {
   executeSandboxComponents();
 }
 

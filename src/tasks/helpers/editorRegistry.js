@@ -80,24 +80,16 @@ module.exports = (extensionDescriptorPaths, { platform }, { request, ports }) =>
             },
       conditions: {},
       actions:
-        platform === 'edge'
+        platform !== 'edge'
           ? {
-              'sandbox/customCode.js': {
-                extensionDisplayName: 'Sandbox',
-                extensionName: 'sandbox',
-                displayName: 'Custom Code',
-                libPath: 'customCode.js',
-                viewPath: '/customCode.html'
-              }
-            }
-          : {
               'sandbox/logEventInfo.js': {
                 extensionDisplayName: 'Sandbox',
                 extensionName: 'sandbox',
                 displayName: 'Log Event Info',
                 libPath: 'logEventInfo.js'
               }
-            },
+            }
+          : {},
       dataElements:
         platform === 'edge'
           ? {
@@ -107,13 +99,6 @@ module.exports = (extensionDescriptorPaths, { platform }, { request, ports }) =>
                 displayName: 'Constant',
                 libPath: 'constant.js',
                 viewPath: '/constant.html'
-              },
-              'sandbox/path.js': {
-                extensionDisplayName: 'Sandbox',
-                extensionName: 'sandbox',
-                displayName: 'Path',
-                libPath: 'path.js',
-                viewPath: '/path.html'
               }
             }
           : {
