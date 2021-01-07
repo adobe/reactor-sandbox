@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import {
   Dialog,
@@ -40,14 +40,16 @@ const handleOnSave = ({ dataElement, tokenize, platform, onSave }) => {
   onSave(newDataElement);
 };
 
-const dataElementList = (dataElements) =>
-  Object.values(dataElements).map((v) => ({
-    id: v.name,
-    name: v.name
-  }));
-
 export default ({ dataElements, platform, tokenize, onClose, onSave }) => {
   const [dataElement, setDataElement] = useState('');
+  const dataElementList = useMemo(
+    () =>
+      dataElements.map(({ name }) => ({
+        id: name,
+        name
+      })),
+    [dataElements]
+  );
 
   return (
     <DialogContainer>
@@ -61,7 +63,7 @@ export default ({ dataElements, platform, tokenize, onClose, onSave }) => {
             selectedKey={dataElement}
             onSelectionChange={setDataElement}
             width="100%"
-            items={dataElementList(dataElements)}
+            items={dataElementList}
           >
             {(item) => <Item>{item.name}</Item>}
           </Picker>
