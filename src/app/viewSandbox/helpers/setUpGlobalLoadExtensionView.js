@@ -17,12 +17,14 @@ import getNewBridge from './getNewBridge';
 
 export default ({
   state: { extensionViewDescriptorsByValue, extensionDescriptor },
+  setDataElementSelectorModal,
+  setCodeEditorModal,
   extensionViewPaneRef
 }) => {
   window.loadExtensionView = ({
     viewPath,
     initInfo,
-    openCodeEditor = defaultOpenCodeEditor,
+    openCodeEditor,
     openRegexTester = defaultOpenRegexTester,
     openDataElementSelector
   }) => {
@@ -35,11 +37,15 @@ export default ({
       const descriptor = extensionViewDescriptorsByValue[selectedDescriptorKey];
 
       return getNewBridge({
+        setDataElementSelectorModal,
+        setCodeEditorModal,
         parentContainerRef: extensionViewPaneRef,
         extensionDescriptor,
         selectedDescriptor: { type, descriptor },
         initInfo,
-        openCodeEditor,
+        openCodeEditor: openCodeEditor
+          ? () => (options = {}) => openCodeEditor(options)
+          : defaultOpenCodeEditor,
         openRegexTester,
         openDataElementSelector: openDataElementSelector
           ? () => (options = {}) => openDataElementSelector(options)

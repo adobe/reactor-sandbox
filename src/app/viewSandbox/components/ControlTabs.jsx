@@ -44,7 +44,13 @@ const mergeSettingsOnTopOfIniContent = ({ initContent, settings }) => {
   return null;
 };
 
-export default ({ selectedDescriptor, extensionDescriptor, extensionViewPaneRef }) => {
+export default ({
+  selectedDescriptor,
+  extensionDescriptor,
+  extensionViewPaneRef,
+  setDataElementSelectorModal,
+  setCodeEditorModal
+}) => {
   const [selectedTab, setSelectedTab] = useState('init');
   const [initContent, setInitContent] = useState();
   const [currentExtensionBridge, setCurrentExtensionBridge] = useState({});
@@ -59,6 +65,8 @@ export default ({ selectedDescriptor, extensionDescriptor, extensionViewPaneRef 
     const parsedContent = JSON.parse(newInitContent);
 
     const newBrige = getNewBridge({
+      setDataElementSelectorModal,
+      setCodeEditorModal,
       parentContainerRef: extensionViewPaneRef,
       extensionDescriptor,
       selectedDescriptor,
