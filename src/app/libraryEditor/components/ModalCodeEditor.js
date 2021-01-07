@@ -10,84 +10,37 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  Dialog,
-  DialogContainer,
-  Heading,
-  Content,
-  ButtonGroup,
-  Button,
-  TextArea,
-  Divider
-} from '@adobe/react-spectrum';
+import ModalCodeEditor from '../../components/ModalCodeEditor';
 
-import './ModalCodeEditor.css';
-
-const handleOnSave = ({ codeEditorModal, codeEditorModalContent, closeCodeEditorModal }) => {
-  codeEditorModal.onSave(codeEditorModalContent);
+const handleOnSave = ({ codeEditorModal, closeCodeEditorModal }) => (newContent) => {
+  codeEditorModal.onSave(newContent);
   closeCodeEditorModal();
 };
 
-const handleOnClose = ({ codeEditorModal, closeCodeEditorModal }) => {
+const handleOnClose = ({ codeEditorModal, closeCodeEditorModal }) => () => {
   codeEditorModal.onClose();
   closeCodeEditorModal();
 };
 
 export default () => {
-  const dispatch = useDispatch();
   const codeEditorModal = useSelector((state) => state.modals.codeEditorModal);
-  const [codeEditorModalContent, setCodeEditorModalContent] = useState('');
+  const {
+    modals: { closeCodeEditorModal }
+  } = useDispatch();
 
-  useEffect(() => {
-    if (codeEditorModal) {
-      setCodeEditorModalContent(codeEditorModal.code);
-    }
-  }, [codeEditorModal]);
+  if (!codeEditorModal) {
+    return null;
+  }
 
-  return codeEditorModal && codeEditorModal.open ? (
-    <DialogContainer>
-      <Dialog>
-        <Heading>Code Editor</Heading>
-        <Divider />
-        <Content>
-          <TextArea
-            UNSAFE_className="codeEditorTextArea"
-            label="Code"
-            width="100%"
-            autoComplete="off"
-            value={codeEditorModalContent}
-            onChange={setCodeEditorModalContent}
-          />
-        </Content>
-        <ButtonGroup>
-          <Button
-            variant="secondary"
-            onPress={() =>
-              handleOnClose({
-                codeEditorModal,
-                closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
-              })
-            }
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="cta"
-            onPress={() =>
-              handleOnSave({
-                codeEditorModal,
-                codeEditorModalContent,
-                closeCodeEditorModal: dispatch.modals.closeCodeEditorModal
-              })
-            }
-          >
-            Save
-          </Button>
-        </ButtonGroup>
-      </Dialog>
-    </DialogContainer>
-  ) : null;
+  return (
+    <ModalCodeEditor
+      options={codeEditorModal.options}
+      code={codeEditorModal.code}
+      onSave={handleOnSave({ codeEditorModal, closeCodeEditorModal })}
+      onClose={handleOnClose({ codeEditorModal, closeCodeEditorModal })}
+    />
+  );
 };

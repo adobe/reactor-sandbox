@@ -32,6 +32,8 @@ const buildExtensionViewUrl = ({ extensionDescriptor, selectedDescriptor: { desc
 let id = 0;
 
 export default ({
+  setDataElementSelectorModal,
+  setCodeEditorModal,
   selectedDescriptor,
   extensionDescriptor,
   parentContainerRef,
@@ -63,9 +65,12 @@ export default ({
   const newBridge = loadIframe({
     iframe,
     extensionInitOptions: initInfo,
-    openCodeEditor,
+    openCodeEditor: openCodeEditor(setCodeEditorModal),
     openRegexTester,
-    openDataElementSelector: openDataElementSelector(extensionDescriptor)
+    openDataElementSelector: openDataElementSelector(
+      extensionDescriptor,
+      setDataElementSelectorModal
+    )
   });
 
   id += 1;

@@ -19,6 +19,8 @@ import ControlTabs from './components/ControlTabs';
 import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByValue';
 import setUpGlobalLoadExtensionView from './helpers/setUpGlobalLoadExtensionView';
 import ExtensionDescriptorContext from '../extensionDescriptorContext';
+import ModalDataElementSelector from '../components/ModalDataElementSelector';
+import ModalCodeEditor from '../components/ModalCodeEditor';
 
 import './ViewSandbox.css';
 
@@ -27,47 +29,86 @@ export default () => {
   const extensionViewDescriptorsByValue = getExtensionDescriptorsByValue(extensionDescriptor);
 
   const [selectedDescriptor, setSelectedDescriptor] = useState(null);
+  const [dataElementSelectorModal, setDataElementSelectorModal] = useState(null);
+  const [codeEditorModal, setCodeEditorModal] = useState(null);
   const [splitSizes] = useState(JSON.parse(localStorage.getItem('sandbox/splitSizes')) || [72, 28]);
 
   const extensionViewPaneRef = useRef();
 
   setUpGlobalLoadExtensionView({
     state: { extensionDescriptor, extensionViewDescriptorsByValue },
+    setDataElementSelectorModal,
+    setCodeEditorModal,
     extensionViewPaneRef
   });
 
   return (
-    <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
-      <View borderBottomWidth="thin" borderBottomColor="gray-400">
-        <ViewsSelector
-          state={{ extensionDescriptor, extensionViewDescriptorsByValue }}
-          setSelectedDescriptor={setSelectedDescriptor}
-        />
-      </View>
-      <Flex direction="row" flex UNSAFE_style={{ overflow: 'hidden' }}>
-        <Split
-          sizes={splitSizes}
-          style={{ display: 'flex', width: '100%' }}
-          onDragEnd={(sizes) => {
-            localStorage.setItem('sandbox/splitSizes', JSON.stringify(sizes));
-          }}
-        >
-          <div
-            id="extensionViewPane"
-            ref={extensionViewPaneRef}
-            style={{ background: 'white', flexGrow: 1 }}
+    <>
+      <Flex direction="column" height="100%" UNSAFE_style={{ overflow: 'hidden' }}>
+        <View borderBottomWidth="thin" borderBottomColor="gray-400">
+          <ViewsSelector
+            state={{ extensionDescriptor, extensionViewDescriptorsByValue }}
+            setSelectedDescriptor={setSelectedDescriptor}
+          />
+        </View>
+        <Flex direction="row" flex UNSAFE_style={{ overflow: 'hidden' }}>
+          <Split
+            sizes={splitSizes}
+            style={{ display: 'flex', width: '100%' }}
+            onDragEnd={(sizes) => {
+              localStorage.setItem('sandbox/splitSizes', JSON.stringify(sizes));
+            }}
           >
-            &nbsp;
-          </div>
-          <View id="controlPane" minWidth="size-6000">
-            <ControlTabs
-              extensionViewPaneRef={extensionViewPaneRef}
-              selectedDescriptor={selectedDescriptor}
-              extensionDescriptor={extensionDescriptor}
-            />
-          </View>
-        </Split>
+            <div
+              id="extensionViewPane"
+              ref={extensionViewPaneRef}
+              style={{ background: 'white', flexGrow: 1 }}
+            >
+              &nbsp;
+            </div>
+            <View id="controlPane" minWidth="size-6000">
+              <ControlTabs
+                extensionViewPaneRef={extensionViewPaneRef}
+                selectedDescriptor={selectedDescriptor}
+                extensionDescriptor={extensionDescriptor}
+                setDataElementSelectorModal={setDataElementSelectorModal}
+                setCodeEditorModal={setCodeEditorModal}
+              />
+            </View>
+          </Split>
+        </Flex>
       </Flex>
-    </Flex>
+
+      {dataElementSelectorModal && (
+        <ModalDataElementSelector
+          platform={dataElementSelectorModal.platform}
+          tokenize={dataElementSelectorModal.options.tokenize}
+          dataElements={[{ name: 'Data Element 1' }, { name: 'Data Element 2' }]}
+          onSave={(dataElement) => {
+            dataElementSelectorModal.onSave(dataElement);
+            setDataElementSelectorModal(null);
+          }}
+          onClose={() => {
+            dataElementSelectorModal.onClose();
+            setDataElementSelectorModal(null);
+          }}
+        />
+      )}
+
+      {codeEditorModal && (
+        <ModalCodeEditor
+          options={codeEditorModal.options}
+          code={codeEditorModal.code}
+          onSave={(code) => {
+            codeEditorModal.onSave(code);
+            setCodeEditorModal(null);
+          }}
+          onClose={() => {
+            codeEditorModal.onClose();
+            setCodeEditorModal(null);
+          }}
+        />
+      )}
+    </>
   );
 };

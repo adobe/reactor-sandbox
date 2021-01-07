@@ -10,19 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const getTokenizedValue = (platform, value) => {
-  if (platform === 'edge') {
-    return `{{${value}}}`;
-  }
-
-  return `%${value}%`;
-};
-
-module.exports = ({ platform }) => (options = {}) => {
-  let value = `dataElement${Math.round(Math.random() * 10000)}`;
-  // Tokenize by default. The tokenize option must be set explicitly to false to disable it.
-  if (options.tokenize !== false) {
-    value = getTokenizedValue(platform, value);
-  }
-  return value;
+module.exports = ({ platform }, openDataElementSelectorModal) => (options = {}) => {
+  return new Promise((resolve, reject) => {
+    openDataElementSelectorModal({
+      platform,
+      options,
+      onSave: resolve,
+      onClose: reject
+    });
+  }).catch(() => '');
 };

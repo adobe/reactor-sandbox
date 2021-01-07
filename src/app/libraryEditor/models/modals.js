@@ -18,7 +18,6 @@ export default {
     openCodeEditorModal(state, payload) {
       return produce(state, (draft) => {
         draft.codeEditorModal = {
-          open: true,
           options: payload.options,
           code: payload.code,
           onSave: payload.onSave,
@@ -36,7 +35,6 @@ export default {
     openDataElementSelectorModal(state, payload) {
       return produce(state, (draft) => {
         draft.dataElementSelectorModal = {
-          open: true,
           options: payload.options,
           onSave: payload.onSave,
           onClose: payload.onClose
