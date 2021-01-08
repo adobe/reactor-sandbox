@@ -12,9 +12,11 @@
 
     <script>
       const protocol = window.location.protocol;
-      const port = protocol === 'https:' ? 4000 : 3000;
+      const hostname = window.location.hostname;
+      const port = window.location.port || 80;
+      const appPort = port === '3001' ? 3000 : port;
 
-      window.EXPRESS_PUBLIC_URL = `${protocol}//localhost:${port}`;
+      window.EXPRESS_PUBLIC_URL = `${protocol}//${hostname}:${appPort}`;
     </script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
