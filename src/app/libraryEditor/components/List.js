@@ -31,61 +31,63 @@ const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) =
   const { url } = useRouteMatch();
   const history = useHistory();
   return (
-    <Flex direction="column" width="50rem" margin="2rem auto">
-      <Heading level="2">{heading}</Heading>
-      <Divider />
-      <Table aria-label="table" overflowMode="wrap" marginTop="size-200">
-        <TableHeader>
-          <Column key="name">Name</Column>
-          <Column key="actions" width="30%">
-            Actions
-          </Column>
-        </TableHeader>
-        <TableBody>
-          {items.map((item, i) => (
-            <Row key={item[keyName]}>
-              <Cell>{item[nameProperty]}</Cell>
-              <Cell>
-                <ActionGroup
-                  onAction={(key) =>
-                    key === 'delete'
-                      ? deleteFn(i)
-                      : history.push(`${url}${url.endsWith('/') ? '' : '/'}${i}`)
-                  }
-                >
-                  <Item key="edit" textValue="edit">
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item key="delete" textValue="delete">
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </ActionGroup>
-              </Cell>
-            </Row>
-          ))}
+    <View padding="size-200" flex>
+      <Flex direction="column" maxWidth="50rem" margin="2rem auto">
+        <Heading level="2">{heading}</Heading>
+        <Divider />
+        <Table aria-label="table" overflowMode="wrap" marginTop="size-200">
+          <TableHeader>
+            <Column key="name">Name</Column>
+            <Column key="actions" width="30%">
+              Actions
+            </Column>
+          </TableHeader>
+          <TableBody>
+            {items.map((item, i) => (
+              <Row key={item[keyName]}>
+                <Cell>{item[nameProperty]}</Cell>
+                <Cell>
+                  <ActionGroup
+                    onAction={(key) =>
+                      key === 'delete'
+                        ? deleteFn(i)
+                        : history.push(`${url}${url.endsWith('/') ? '' : '/'}${i}`)
+                    }
+                  >
+                    <Item key="edit" textValue="edit">
+                      <Edit />
+                      <Text>Edit</Text>
+                    </Item>
+                    <Item key="delete" textValue="delete">
+                      <Delete />
+                      <Text>Delete</Text>
+                    </Item>
+                  </ActionGroup>
+                </Cell>
+              </Row>
+            ))}
 
-          {items.length === 0 ? (
-            <Row>
-              <Cell>No items found.</Cell>
-              <Cell>&nbsp;</Cell>
-            </Row>
-          ) : null}
-        </TableBody>
-      </Table>
+            {items.length === 0 ? (
+              <Row>
+                <Cell>No items found.</Cell>
+                <Cell>&nbsp;</Cell>
+              </Row>
+            ) : null}
+          </TableBody>
+        </Table>
 
-      <View>
-        <Button
-          variant="cta"
-          marginTop="size-150"
-          onPress={() => history.push(`${url}${url.endsWith('/') ? '' : '/'}new`)}
-        >
-          <Add />
-          <Text>Add</Text>
-        </Button>
-      </View>
-    </Flex>
+        <View>
+          <Button
+            variant="cta"
+            marginTop="size-150"
+            onPress={() => history.push(`${url}${url.endsWith('/') ? '' : '/'}new`)}
+          >
+            <Add />
+            <Text>Add</Text>
+          </Button>
+        </View>
+      </Flex>
+    </View>
   );
 };
 

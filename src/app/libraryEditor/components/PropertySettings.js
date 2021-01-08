@@ -71,45 +71,47 @@ export default () => {
       <ErrorMessage message={errors.api} />
     </View>
   ) : (
-    <View margin="2rem auto" width="50rem">
-      <Heading level={2}>Property Settings</Heading>
-      <Divider />
-      {platform === 'edge' ? (
-        <View padding="size-250">At this moment, there are no settings to configure.</View>
-      ) : (
-        <Flex direction="column" alignItems="center">
-          <View>
-            <TextField
-              label="Domains List"
-              necessityIndicator="label"
-              isRequired
-              width="size-6000"
-              marginTop="size-150"
-              validationState={errors.domains ? 'invalid' : ''}
-              value={domains}
-              onChange={setDomains}
-            />
-            <Heading level={6} margin="size-100">
-              Comma separated values are accepted.
-            </Heading>
-            <Button
-              variant="cta"
-              marginTop="size-100"
-              onPress={() => {
-                handleSave({
-                  domains,
-                  setErrors,
-                  history,
-                  propertySettings,
-                  savePropertySettings: dispatch.property.savePropertySettings
-                });
-              }}
-            >
-              Save
-            </Button>
-          </View>
-        </Flex>
-      )}
+    <View padding="size-200" flex>
+      <View margin="2rem auto" maxWidth="50rem">
+        <Heading level={2}>Property Settings</Heading>
+        <Divider />
+        {platform === 'edge' ? (
+          <View padding="size-250">At this moment, there are no settings to configure.</View>
+        ) : (
+          <Flex direction="column" alignItems="center">
+            <View>
+              <TextField
+                label="Domains List"
+                necessityIndicator="label"
+                isRequired
+                width="size-6000"
+                marginTop="size-150"
+                validationState={errors.domains ? 'invalid' : ''}
+                value={domains}
+                onChange={setDomains}
+              />
+              <Heading level={6} margin="size-100">
+                Comma separated values are accepted.
+              </Heading>
+              <Button
+                variant="cta"
+                marginTop="size-100"
+                onPress={() => {
+                  handleSave({
+                    domains,
+                    setErrors,
+                    history,
+                    propertySettings,
+                    savePropertySettings: dispatch.property.savePropertySettings
+                  });
+                }}
+              >
+                Save
+              </Button>
+            </View>
+          </Flex>
+        )}
+      </View>
     </View>
   );
 };

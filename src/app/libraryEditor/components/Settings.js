@@ -24,35 +24,38 @@ export default () => {
   const dispatch = useDispatch();
 
   return (
-    <View margin="2rem auto" width="50rem">
-      <OtherSettings key={`${orgId}${imsAccess}`} />
-      <div>
-        <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-          <p>
-            If you want to have a start fresh with an empty library, you can click on the `Reset
-            data` button.
-          </p>
-          <Button
-            onPress={() => {
-              return Promise.all([
-                dispatch.brain.clearContainerData(),
-                dispatch.brain.clearLocalStorage()
-              ]);
-            }}
-            marginStart="size-100"
-          >
-            Reset data
-          </Button>
-        </Flex>
-
-        {brain.containerDataReseted != null ? (
+    <View padding="size-200" flex>
+      <View margin="2rem auto" maxWidth="50rem">
+        <OtherSettings key={`${orgId}${imsAccess}`} />
+        <div>
           <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
-            <div className={`status-${brain.containerDataReseted}`}>
-              Last reset status: <strong>{brain.containerDataReseted}</strong>.
-            </div>
+            <p>
+              If you want to have a start fresh with an empty library, you can click on the `Reset
+              data` button.
+            </p>
+            <View width="size-1700">
+              <Button
+                onPress={() => {
+                  return Promise.all([
+                    dispatch.brain.clearContainerData(),
+                    dispatch.brain.clearLocalStorage()
+                  ]);
+                }}
+              >
+                Reset data
+              </Button>
+            </View>
           </Flex>
-        ) : null}
-      </div>
+
+          {brain.containerDataReseted != null ? (
+            <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
+              <div className={`status-${brain.containerDataReseted}`}>
+                Last reset status: <strong>{brain.containerDataReseted}</strong>.
+              </div>
+            </Flex>
+          ) : null}
+        </div>
+      </View>
     </View>
   );
 };
