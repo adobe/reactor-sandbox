@@ -147,7 +147,8 @@ module.exports = () => {
   }
 
   const extensionsOutput = {
-    sandbox: { displayName: 'Sandbox' }
+    sandbox: { displayName: 'Sandbox' },
+    ...container.extensions
   };
   const modulesOutput = {};
   container.extensions = extensionsOutput;
