@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const fs = require('fs-extra');
+const path = require('path');
 const glob = require('glob');
 const { EXTENSION_DESCRIPTOR_FILENAME } = require('../constants/files');
 const isSandboxLinked = require('../../helpers/isSandboxLinked');
@@ -31,26 +33,45 @@ if (isSandboxLinked()) {
   );
 }
 
-// Remove duplicate paths.
-extensionJsonPaths = extensionJsonPaths.filter(
-  (value, index, self) => self.indexOf(value) === index
-);
-
-// Order the paths so that `extension.json` is last in the array. We do this because
-// we may use the sandbox when we develop the core extension. We will be in a situation where
-// the core extension has sandbox as a dependency. And the sandbox has the core extension
-// as a dependency (Core -> Sandbox -> Core). We want to load the core extension that has the
-// sandbox as a dependency (meaning we want the extension with extension.json path to always win).
-extensionJsonPaths.sort((a, b) => {
-  if (a === EXTENSION_DESCRIPTOR_FILENAME) {
-    return 1;
+function getExtensionPlatform(filePath) {
+  const fileContents = JSON.parse(fs.readFileSync(path.resolve(filePath)));
+  if (!fileContents.platform) {
+    throw new Error(
+      `Unable to detect the platform the development
+      extension is targeting for path "${filePath}"`
+    );
   }
+  return fileContents.platform;
+}
 
-  if (b === EXTENSION_DESCRIPTOR_FILENAME) {
-    return -1;
-  }
+// if there's only 1 path, skip over this logic
+if (extensionJsonPaths.length > 1) {
+  // Order the paths so that `extension.json` is last in the array. We do this because
+  // we may use the sandbox when we develop the core extension. We will be in a situation where
+  // the core extension has sandbox as a dependency. And the sandbox has the core extension
+  // as a dependency (Core -> Sandbox -> Core). We want to load the core extension that has the
+  // sandbox as a dependency (meaning we want the extension with extension.json path to always win).
+  extensionJsonPaths.sort((a, b) => {
+    if (a === EXTENSION_DESCRIPTOR_FILENAME) {
+      return 1;
+    }
 
-  return 0;
-});
+    if (b === EXTENSION_DESCRIPTOR_FILENAME) {
+      return -1;
+    }
+
+    return 0;
+  });
+
+  const extensionPlatform = getExtensionPlatform(extensionJsonPaths[extensionJsonPaths.length - 1]);
+
+  // Remove duplicate paths and paths that aren't of the same platform as the extension
+  // that's launching the sandbox¸
+  extensionJsonPaths = extensionJsonPaths.filter((filePath, index, self) => {
+    return Boolean(
+      self.indexOf(filePath) === index && getExtensionPlatform(filePath) === extensionPlatform
+    );
+  });
+}
 
 module.exports = extensionJsonPaths;

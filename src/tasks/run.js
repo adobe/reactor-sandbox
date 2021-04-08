@@ -185,6 +185,9 @@ const configureApp = (app) => {
   // javascriptVariable.html (javascript variable data element).
   app.use(express.static(files.SANDBOX_EXTENSION_SRC_PATH));
 
+  // Serve files written by custom code actions
+  app.use('/files', express.static(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, 'files')));
+
   app.get('/editor-container.js', (req, res) => {
     let containerText;
 
@@ -233,7 +236,7 @@ const configureApp = (app) => {
     } catch (error) {
       console.log(error);
       res.status(500);
-      res.send(error.messa);
+      res.send(error.message);
     }
   });
 
