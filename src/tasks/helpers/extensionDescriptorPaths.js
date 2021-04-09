@@ -33,7 +33,7 @@ if (isSandboxLinked()) {
   );
 }
 
-function getExtensionPlatform(filePath) {
+const getExtensionPlatform = (filePath) => {
   const fileContents = JSON.parse(fs.readFileSync(path.resolve(filePath)));
   if (!fileContents.platform) {
     throw new Error(
@@ -42,7 +42,7 @@ function getExtensionPlatform(filePath) {
     );
   }
   return fileContents.platform;
-}
+};
 
 // if there's only 1 path, skip over this logic
 if (extensionJsonPaths.length > 1) {
@@ -63,7 +63,8 @@ if (extensionJsonPaths.length > 1) {
     return 0;
   });
 
-  const extensionPlatform = getExtensionPlatform(extensionJsonPaths[extensionJsonPaths.length - 1]);
+  const topExtensionPathIndex = extensionJsonPaths.indexOf(EXTENSION_DESCRIPTOR_FILENAME);
+  const extensionPlatform = getExtensionPlatform(extensionJsonPaths[topExtensionPathIndex]);
 
   // Remove duplicate paths and paths that aren't of the same platform as the extension
   // that's launching the sandbox¸
