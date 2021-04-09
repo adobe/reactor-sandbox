@@ -238,7 +238,7 @@ const getTransformsData = (type, delegateConfig) => {
     const modulePath = modulePathParts.join('/');
 
     if (extensionName === 'sandbox') {
-      if (delegateConfig.modulePath === 'sandbox/customCode.js') {
+      if (descriptor.platform === 'edge' && delegateConfig.modulePath === 'sandbox/customCode.js') {
         return [
           {
             type: 'function',

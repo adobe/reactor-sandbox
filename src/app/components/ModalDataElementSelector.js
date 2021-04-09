@@ -24,7 +24,7 @@ import {
   Item
 } from '@adobe/react-spectrum';
 
-const handleOnSave = ({ dataElement, tokenize, platform, onSave }) => {
+const handleOnSave = ({ dataElement, tokenize = true, platform, onSave }) => {
   let newDataElement = '';
 
   if (dataElement) {
@@ -54,7 +54,7 @@ export default ({ dataElements, platform, tokenize, onClose, onSave }) => {
   return (
     <DialogContainer>
       <Dialog>
-        <Heading>Datas Element Selector</Heading>
+        <Heading>Data Element Selector</Heading>
         <Divider />
         <Content>
           <Picker
