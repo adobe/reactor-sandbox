@@ -54,7 +54,7 @@ export default ({ dataElements, platform, tokenize, onClose, onSave }) => {
   return (
     <DialogContainer>
       <Dialog>
-        <Heading>Datas Element Selector</Heading>
+        <Heading>Data Element Selector</Heading>
         <Divider />
         <Content>
           <Picker
