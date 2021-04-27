@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import semverDiff from 'semver-diff';
 import { withRouter, useHistory } from 'react-router-dom';
 import {
@@ -31,8 +31,9 @@ import LibraryEditorIcon from '@spectrum-icons/workflow/FileCode';
 import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
 import packageJson from '../../../package.json';
 import { getStatus } from '../api/index';
+import ExtensionDescriptorContext from '../extensionDescriptorContext';
 
-import { NAMED_ROUTES } from '../constants';
+import { PLATFORMS, NAMED_ROUTES } from '../constants';
 
 const Menu = ({ location }) => {
   const history = useHistory();
@@ -58,6 +59,8 @@ const Menu = ({ location }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const { platform } = useContext(ExtensionDescriptorContext);
 
   return (
     <Flex direction="column">
@@ -90,14 +93,18 @@ const Menu = ({ location }) => {
               <ViewSandboxIcon />
               <Text>View Sandbox</Text>
             </Item>
-            <Item key={NAMED_ROUTES.LIB_SANDBOX} textValue="Library Sandbox">
-              <LibrarySandboxIcon />
-              <Text>Library Sandbox</Text>
-            </Item>
-            <Item key={NAMED_ROUTES.LIBRARY_EDITOR} textValue="Library Editor">
-              <LibraryEditorIcon />
-              <Text>Library Editor</Text>
-            </Item>
+            {platform !== PLATFORMS.MOBILE && (
+              <>
+                <Item key={NAMED_ROUTES.LIB_SANDBOX} textValue="Library Sandbox">
+                  <LibrarySandboxIcon />
+                  <Text>Library Sandbox</Text>
+                </Item>
+                <Item key={NAMED_ROUTES.LIBRARY_EDITOR} textValue="Library Editor">
+                  <LibraryEditorIcon />
+                  <Text>Library Editor</Text>
+                </Item>
+              </>
+            )}
           </ActionGroup>
         </Flex>
 

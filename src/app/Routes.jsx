@@ -11,18 +11,18 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
-import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { LastLocationProvider } from 'react-router-last-location';
 import { Flex } from '@adobe/react-spectrum';
 
-import { NAMED_ROUTES } from './constants';
+import { NAMED_ROUTES, PLATFORMS } from './constants';
 /* eslint-disable-next-line import/no-cycle */
 import Home from './Home';
 import ViewSandbox from './viewSandbox';
 import LibSandbox from './LibSandbox';
 import Menu from './components/Menu';
-import ErrorBoundary from './components/ErrorBoundary';
+// import ErrorBoundary from './components/ErrorBoundary';
 import LibraryEditor from './libraryEditor';
 import store from './store';
 import { getExtensionDescriptorFromApi } from './api/index';
@@ -39,30 +39,34 @@ export default function App() {
     <Provider store={store}>
       {extensionDescriptor ? (
         <ExtensionDescriptorContext.Provider value={extensionDescriptor}>
-          <ErrorBoundary>
-            <Router>
-              <LastLocationProvider>
-                <Flex direction="column" height="100%">
-                  <Menu />
-                  <Switch>
-                    <Route exact path={NAMED_ROUTES.HOME}>
-                      <Home />
-                    </Route>
+          <Router>
+            <LastLocationProvider>
+              <Flex direction="column" height="100%">
+                <Menu />
+                <Switch>
+                  <Route exact path={NAMED_ROUTES.HOME}>
+                    <Home />
+                  </Route>
 
-                    <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
-                      <LibSandbox flex />
-                    </Route>
+                  {PLATFORMS.MOBILE !== extensionDescriptor.platform && (
+                    <>
+                      <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
+                        <LibSandbox flex />
+                      </Route>
+                      <Route path={NAMED_ROUTES.LIBRARY_EDITOR} component={LibraryEditor} />
+                    </>
+                  )}
 
-                    <Route path={NAMED_ROUTES.LIBRARY_EDITOR} component={LibraryEditor} />
-
-                    <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
-                      <ViewSandbox flex />
-                    </Route>
-                  </Switch>
-                </Flex>
-              </LastLocationProvider>
-            </Router>
-          </ErrorBoundary>
+                  <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
+                    <ViewSandbox flex />
+                  </Route>
+                  <Route path="*">
+                    <Redirect to="/" />
+                  </Route>
+                </Switch>
+              </Flex>
+            </LastLocationProvider>
+          </Router>
         </ExtensionDescriptorContext.Provider>
       ) : null}
     </Provider>
