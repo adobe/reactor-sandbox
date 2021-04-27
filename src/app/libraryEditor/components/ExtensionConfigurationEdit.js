@@ -19,7 +19,7 @@ import produce from 'immer';
 import { Flex, View, Heading, Picker, Item, ButtonGroup, Button } from '@adobe/react-spectrum';
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES } from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 
 const isNewExtensionConfiguration = ({ extensionConfigurations, extensionConfigurationId }) =>

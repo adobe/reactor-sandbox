@@ -29,7 +29,7 @@ import {
 
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES, PLATFORMS } from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
@@ -314,7 +314,7 @@ export default () => {
 
           <br />
 
-          {extensionDescriptor.platform !== 'edge' && (
+          {extensionDescriptor.platform !== PLATFORMS.EDGE && (
             <Picker
               marginTop="size-150"
               label="Storage duration"

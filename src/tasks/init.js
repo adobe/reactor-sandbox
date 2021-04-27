@@ -18,6 +18,8 @@ governing permissions and limitations under the License.
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
 
+import { PLATFORMS } from '../app/constants';
+
 const fs = require('fs-extra');
 const path = require('path');
 const files = require('./constants/files');
@@ -26,7 +28,7 @@ module.exports = () => {
   return new Promise((resolve, reject) => {
     const descriptor = require(path.resolve(files.EXTENSION_DESCRIPTOR_FILENAME));
 
-    if (descriptor.platform !== 'web' && descriptor.platform !== 'edge') {
+    if (descriptor.platform !== PLATFORMS.WEB && descriptor.platform !== PLATFORMS.EDGE) {
       reject(new Error('The `init` command is supported only for web extensions.'));
     }
 

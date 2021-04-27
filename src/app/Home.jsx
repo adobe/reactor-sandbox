@@ -16,7 +16,7 @@ import { Button, Text, Flex, View } from '@adobe/react-spectrum';
 import LibrarySandboxIcon from '@spectrum-icons/workflow/Code';
 import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
 
-import NAMED_ROUTES from './constants';
+import { NAMED_ROUTES } from './constants';
 
 import packageJson from '../../package.json';
 

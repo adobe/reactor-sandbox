@@ -32,7 +32,7 @@ import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
 import packageJson from '../../../package.json';
 import { getStatus } from '../api/index';
 
-import NAMED_ROUTES from '../constants';
+import { NAMED_ROUTES } from '../constants';
 
 const Menu = ({ location }) => {
   const history = useHistory();

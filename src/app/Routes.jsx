@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import { LastLocationProvider } from 'react-router-last-location';
 import { Flex } from '@adobe/react-spectrum';
 
-import NAMED_ROUTES from './constants';
+import { NAMED_ROUTES } from './constants';
 /* eslint-disable-next-line import/no-cycle */
 import Home from './Home';
 import ViewSandbox from './viewSandbox';

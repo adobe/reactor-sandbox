@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, ButtonGroup } from '@adobe/react-spectrum';
 import { useLastLocation } from 'react-router-last-location';
 import RuleComponentsList from './RuleComponentsList';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES, PLATFORMS } from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
@@ -148,7 +148,7 @@ export default () => {
         }}
       />
 
-      {extensionDescriptor.platform !== 'edge' && (
+      {extensionDescriptor.platform !== PLATFORMS.EDGE && (
         <>
           <Heading level={3}>Events</Heading>
           <RuleComponentsList
