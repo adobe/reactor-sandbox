@@ -39,8 +39,8 @@ export default function App() {
     <Provider store={store}>
       {extensionDescriptor ? (
         <ExtensionDescriptorContext.Provider value={extensionDescriptor}>
-          <Router>
-            <ErrorBoundary>
+          <ErrorBoundary>
+            <Router>
               <LastLocationProvider>
                 <Flex direction="column" height="100%">
                   <Menu />
@@ -73,8 +73,8 @@ export default function App() {
                   </Switch>
                 </Flex>
               </LastLocationProvider>
-            </ErrorBoundary>
-          </Router>
+            </Router>
+          </ErrorBoundary>
         </ExtensionDescriptorContext.Provider>
       ) : null}
     </Provider>
