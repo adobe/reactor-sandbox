@@ -49,16 +49,19 @@ const Menu = ({ location }) => {
         setSandboxOutdatedData({ isOutdated: true, latestVersion });
       }
     });
+  }, []);
 
+  useEffect(() => {
     if (location.pathname.includes(NAMED_ROUTES.LIBRARY_EDITOR)) {
       setSelectedKeys(new Set([NAMED_ROUTES.LIBRARY_EDITOR]));
     } else if (location.pathname.endsWith(NAMED_ROUTES.LIB_SANDBOX)) {
       setSelectedKeys(new Set([NAMED_ROUTES.LIB_SANDBOX]));
     } else if (location.pathname.includes(NAMED_ROUTES.VIEW_SANDBOX)) {
       setSelectedKeys(new Set([NAMED_ROUTES.VIEW_SANDBOX]));
+    } else {
+      setSelectedKeys(new Set([]));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location.pathname]);
 
   const { platform } = useContext(ExtensionDescriptorContext);
   let menuItems = [
@@ -79,7 +82,6 @@ const Menu = ({ location }) => {
             isQuiet
             onPress={() => {
               history.push(NAMED_ROUTES.HOME);
-              setSelectedKeys(new Set([]));
             }}
           >
             <Heading>Reactor Sandbox</Heading>
@@ -93,7 +95,6 @@ const Menu = ({ location }) => {
             onSelectionChange={(key) => {
               const path = [...key][0];
               if (path) {
-                setSelectedKeys(new Set([path]));
                 history.push(path);
               }
             }}
