@@ -22,7 +22,7 @@ import Home from './Home';
 import ViewSandbox from './viewSandbox';
 import LibSandbox from './LibSandbox';
 import Menu from './components/Menu';
-// import ErrorBoundary from './components/ErrorBoundary';
+import ErrorBoundary from './components/ErrorBoundary';
 import LibraryEditor from './libraryEditor';
 import store from './store';
 import { getExtensionDescriptorFromApi } from './api/index';
@@ -40,32 +40,40 @@ export default function App() {
       {extensionDescriptor ? (
         <ExtensionDescriptorContext.Provider value={extensionDescriptor}>
           <Router>
-            <LastLocationProvider>
-              <Flex direction="column" height="100%">
-                <Menu />
-                <Switch>
-                  <Route exact path={NAMED_ROUTES.HOME}>
-                    <Home />
-                  </Route>
+            <ErrorBoundary>
+              <LastLocationProvider>
+                <Flex direction="column" height="100%">
+                  <Menu />
+                  <Switch>
+                    <Route exact path={NAMED_ROUTES.HOME}>
+                      <Home />
+                    </Route>
 
-                  {PLATFORMS.MOBILE !== extensionDescriptor.platform && (
-                    <>
-                      <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
+                    <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
+                      {PLATFORMS.MOBILE === extensionDescriptor.platform ? (
+                        <Redirect to="/" />
+                      ) : (
                         <LibSandbox flex />
-                      </Route>
-                      <Route path={NAMED_ROUTES.LIBRARY_EDITOR} component={LibraryEditor} />
-                    </>
-                  )}
+                      )}
+                    </Route>
+                    <Route path={NAMED_ROUTES.LIBRARY_EDITOR}>
+                      {PLATFORMS.MOBILE === extensionDescriptor.platform ? (
+                        <Redirect to="/" />
+                      ) : (
+                        <LibraryEditor />
+                      )}
+                    </Route>
 
-                  <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
-                    <ViewSandbox flex />
-                  </Route>
-                  <Route path="*">
-                    <Redirect to="/" />
-                  </Route>
-                </Switch>
-              </Flex>
-            </LastLocationProvider>
+                    <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
+                      <ViewSandbox flex />
+                    </Route>
+                    <Route path="*">
+                      <Redirect to="/" />
+                    </Route>
+                  </Switch>
+                </Flex>
+              </LastLocationProvider>
+            </ErrorBoundary>
           </Router>
         </ExtensionDescriptorContext.Provider>
       ) : null}

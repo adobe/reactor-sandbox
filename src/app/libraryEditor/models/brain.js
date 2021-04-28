@@ -18,6 +18,7 @@ import {
 } from '../../api/index';
 import localStorage from './localStorage';
 import saveContainer from '../helpers/saveContainer';
+import { PLATFORMS } from '../../constants';
 
 // eslint-disable-next-line import/no-cycle
 import { dispatch } from '../../store';
@@ -112,7 +113,7 @@ export default {
         dataElements: [],
         property: {
           settings:
-            platform === 'edge'
+            platform === PLATFORMS.EDGE
               ? {}
               : {
                   domains: ['example.com'],
@@ -122,7 +123,7 @@ export default {
                 }
         },
         company:
-          platform === 'edge'
+          platform === PLATFORMS.EDGE
             ? {}
             : {
                 orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'

@@ -61,6 +61,15 @@ const Menu = ({ location }) => {
   }, []);
 
   const { platform } = useContext(ExtensionDescriptorContext);
+  let menuItems = [
+    { key: NAMED_ROUTES.VIEW_SANDBOX, textValue: 'View Sandbox', Icon: ViewSandboxIcon }
+  ];
+  if (platform !== PLATFORMS.MOBILE) {
+    menuItems = menuItems.concat([
+      { key: NAMED_ROUTES.LIB_SANDBOX, textValue: 'Library Sandbox', Icon: LibrarySandboxIcon },
+      { key: NAMED_ROUTES.LIBRARY_EDITOR, textValue: 'Library Editor', Icon: LibraryEditorIcon }
+    ]);
+  }
 
   return (
     <Flex direction="column">
@@ -88,22 +97,13 @@ const Menu = ({ location }) => {
                 history.push(path);
               }
             }}
+            items={menuItems}
           >
-            <Item key={NAMED_ROUTES.VIEW_SANDBOX} textValue="View Sandbox">
-              <ViewSandboxIcon />
-              <Text>View Sandbox</Text>
-            </Item>
-            {platform !== PLATFORMS.MOBILE && (
-              <>
-                <Item key={NAMED_ROUTES.LIB_SANDBOX} textValue="Library Sandbox">
-                  <LibrarySandboxIcon />
-                  <Text>Library Sandbox</Text>
-                </Item>
-                <Item key={NAMED_ROUTES.LIBRARY_EDITOR} textValue="Library Editor">
-                  <LibraryEditorIcon />
-                  <Text>Library Editor</Text>
-                </Item>
-              </>
+            {({ key, textValue, Icon }) => (
+              <Item key={key} textValue={textValue}>
+                <Icon />
+                <Text>{textValue}</Text>
+              </Item>
             )}
           </ActionGroup>
         </Flex>

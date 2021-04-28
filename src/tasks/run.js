@@ -36,6 +36,7 @@ const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
 const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
 const getLatestVersion = require('../helpers/getLatestVersion');
+const { PLATFORMS } = require('../app/constants');
 
 const { platform } = getExtensionDescriptor();
 
@@ -216,7 +217,7 @@ const configureApp = (app) => {
       // eslint-disable-next-line no-undef
       let containerContent = JSON.stringify(container, unTransform);
 
-      if (extensionDescriptor.platform === 'edge') {
+      if (extensionDescriptor.platform === PLATFORMS.EDGE) {
         // Revert edge sanitization. When we save an edge container, any data element token
         // `{{name}}` gets transformed to getDataElementValue(reactor${encodedDataElementName})
         // in order for the JS to be valid. Here we need to revert that transformation so that
@@ -244,7 +245,7 @@ const configureApp = (app) => {
     try {
       saveContainer(req.body);
 
-      if (extensionDescriptor.platform === 'edge') {
+      if (extensionDescriptor.platform === PLATFORMS.EDGE) {
         generateEdgeLibrary.build();
       }
 
@@ -273,7 +274,7 @@ const configureApp = (app) => {
     res.send(JSON.stringify(registryContent));
   });
 
-  if (extensionDescriptor.platform === 'edge') {
+  if (extensionDescriptor.platform === PLATFORMS.EDGE) {
     generateEdgeLibrary.build();
 
     app.post('/process-edge-request', (req, res) => {

@@ -18,6 +18,7 @@ const turbinePkg = require('@adobe/reactor-turbine/package.json');
 const turbineEdgePkg = require('@adobe/reactor-turbine-edge/package.json');
 const beautify = require('js-beautify').js_beautify;
 const { sanitize } = require('@adobe/reactor-token-scripts-edge');
+const { PLATFORMS } = require('../../app/constants');
 const files = require('../constants/files');
 const getExtensionDescriptor = require('./getExtensionDescriptor');
 const getExtensionDescriptors = require('./getExtensionDescriptors');
@@ -238,7 +239,10 @@ const getTransformsData = (type, delegateConfig) => {
     const modulePath = modulePathParts.join('/');
 
     if (extensionName === 'sandbox') {
-      if (descriptor.platform === 'edge' && delegateConfig.modulePath === 'sandbox/customCode.js') {
+      if (
+        descriptor.platform === PLATFORMS.EDGE &&
+        delegateConfig.modulePath === 'sandbox/customCode.js'
+      ) {
         return [
           {
             type: 'function',
@@ -336,7 +340,8 @@ module.exports = (config) => {
 
   config = Object.assign(config, {
     buildInfo: {
-      turbineVersion: descriptor.platform === 'edge' ? turbineEdgePkg.version : turbinePkg.version,
+      turbineVersion:
+        descriptor.platform === PLATFORMS.EDGE ? turbineEdgePkg.version : turbinePkg.version,
       turbineBuildDate: new Date().toISOString(),
       buildDate: new Date().toISOString(),
       environment: 'development'
@@ -348,7 +353,7 @@ module.exports = (config) => {
   const fileContent = `module.exports = ${JSON.stringify(config)}`;
 
   let sanitizeFn = (a) => a;
-  if (descriptor.platform === 'edge') {
+  if (descriptor.platform === PLATFORMS.EDGE) {
     sanitizeFn = sanitize;
   }
 

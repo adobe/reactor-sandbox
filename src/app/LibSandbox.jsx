@@ -21,7 +21,7 @@ export default () => {
 
   return (
     <>
-      {extensionDescriptor?.platform === 'edge' && (
+      {extensionDescriptor?.platform === PLATFORMS.EDGE && (
         <LibSandboxEdge extensionDescriptor={extensionDescriptor} />
       )}
 
