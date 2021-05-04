@@ -32,8 +32,8 @@ export default () => {
         <p>
           Launch, by Adobe, is a next-generation tag management solution enabling simplified
           deployment of marketing technologies. This project provides a sandbox in which you can
-          manually test your views that will be displayed within Launch and your logic that will run
-          within a Launch library on a Launch customer&lsquo;s website.
+          manually test your views that will be displayed within Launch. Web and Edge properties are
+          able to test their logic using our Library Sandbox &amp; Rule Editor.
         </p>
 
         <Button
