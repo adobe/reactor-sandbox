@@ -11,12 +11,12 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
-import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { LastLocationProvider } from 'react-router-last-location';
 import { Flex } from '@adobe/react-spectrum';
 
-import NAMED_ROUTES from './constants';
+import { NAMED_ROUTES, PLATFORMS } from './constants';
 /* eslint-disable-next-line import/no-cycle */
 import Home from './Home';
 import ViewSandbox from './viewSandbox';
@@ -50,13 +50,25 @@ export default function App() {
                     </Route>
 
                     <Route exact path={NAMED_ROUTES.LIB_SANDBOX}>
-                      <LibSandbox flex />
+                      {PLATFORMS.MOBILE === extensionDescriptor.platform ? (
+                        <Redirect to="/" />
+                      ) : (
+                        <LibSandbox flex />
+                      )}
                     </Route>
-
-                    <Route path={NAMED_ROUTES.LIBRARY_EDITOR} component={LibraryEditor} />
+                    <Route path={NAMED_ROUTES.LIBRARY_EDITOR}>
+                      {PLATFORMS.MOBILE === extensionDescriptor.platform ? (
+                        <Redirect to="/" />
+                      ) : (
+                        <LibraryEditor />
+                      )}
+                    </Route>
 
                     <Route path={NAMED_ROUTES.VIEW_SANDBOX}>
                       <ViewSandbox flex />
+                    </Route>
+                    <Route path="*">
+                      <Redirect to="/" />
                     </Route>
                   </Switch>
                 </Flex>

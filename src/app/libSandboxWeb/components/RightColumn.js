@@ -14,7 +14,7 @@ import React from 'react';
 import { Button, Text } from '@adobe/react-spectrum';
 import Draw from '@spectrum-icons/workflow/Draw';
 import { useHistory } from 'react-router-dom';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES } from '../../constants';
 
 export default ({ templateLocation, isLatestTemplate }) => {
   const history = useHistory();

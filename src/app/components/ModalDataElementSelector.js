@@ -23,6 +23,7 @@ import {
   Divider,
   Item
 } from '@adobe/react-spectrum';
+import { PLATFORMS } from '../constants';
 
 const handleOnSave = ({ dataElement, tokenize = true, platform, onSave }) => {
   let newDataElement = '';
@@ -30,7 +31,7 @@ const handleOnSave = ({ dataElement, tokenize = true, platform, onSave }) => {
   if (dataElement) {
     if (!tokenize) {
       newDataElement = dataElement;
-    } else if (platform === 'edge') {
+    } else if (platform === PLATFORMS.EDGE) {
       newDataElement = `{{${dataElement}}}`;
     } else {
       newDataElement = `%${dataElement}%`;

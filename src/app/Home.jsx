@@ -10,18 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Text, Flex, View } from '@adobe/react-spectrum';
 import LibrarySandboxIcon from '@spectrum-icons/workflow/Code';
 import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
+import ExtensionDescriptorContext from './extensionDescriptorContext';
 
-import NAMED_ROUTES from './constants';
+import { NAMED_ROUTES, PLATFORMS } from './constants';
 
 import packageJson from '../../package.json';
 
 export default () => {
   const history = useHistory();
+  const { platform } = useContext(ExtensionDescriptorContext);
 
   return (
     <Flex direction="column" alignItems="center">
@@ -30,8 +32,8 @@ export default () => {
         <p>
           Launch, by Adobe, is a next-generation tag management solution enabling simplified
           deployment of marketing technologies. This project provides a sandbox in which you can
-          manually test your views that will be displayed within Launch and your logic that will run
-          within a Launch library on a Launch customer&lsquo;s website.
+          manually test your views that will be displayed within Launch. Web and Edge properties are
+          able to test their logic using our Library Sandbox &amp; Rule Editor.
         </p>
 
         <Button
@@ -46,16 +48,18 @@ export default () => {
           <Text>Go to View Sandbox</Text>
         </Button>
 
-        <Button
-          variant="primary"
-          marginTop="size-200"
-          onPress={() => {
-            history.push(NAMED_ROUTES.LIB_SANDBOX);
-          }}
-        >
-          <LibrarySandboxIcon />
-          <Text>Go to Library Sandbox</Text>
-        </Button>
+        {platform !== PLATFORMS.MOBILE && (
+          <Button
+            variant="primary"
+            marginTop="size-200"
+            onPress={() => {
+              history.push(NAMED_ROUTES.LIB_SANDBOX);
+            }}
+          >
+            <LibrarySandboxIcon />
+            <Text>Go to Library Sandbox</Text>
+          </Button>
+        )}
       </View>
     </Flex>
   );

@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import semverDiff from 'semver-diff';
 import { withRouter, useHistory } from 'react-router-dom';
 import {
@@ -31,8 +31,9 @@ import LibraryEditorIcon from '@spectrum-icons/workflow/FileCode';
 import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
 import packageJson from '../../../package.json';
 import { getStatus } from '../api/index';
+import ExtensionDescriptorContext from '../extensionDescriptorContext';
 
-import NAMED_ROUTES from '../constants';
+import { PLATFORMS, NAMED_ROUTES } from '../constants';
 
 const Menu = ({ location }) => {
   const history = useHistory();
@@ -48,16 +49,30 @@ const Menu = ({ location }) => {
         setSandboxOutdatedData({ isOutdated: true, latestVersion });
       }
     });
+  }, []);
 
+  useEffect(() => {
     if (location.pathname.includes(NAMED_ROUTES.LIBRARY_EDITOR)) {
       setSelectedKeys(new Set([NAMED_ROUTES.LIBRARY_EDITOR]));
     } else if (location.pathname.endsWith(NAMED_ROUTES.LIB_SANDBOX)) {
       setSelectedKeys(new Set([NAMED_ROUTES.LIB_SANDBOX]));
     } else if (location.pathname.includes(NAMED_ROUTES.VIEW_SANDBOX)) {
       setSelectedKeys(new Set([NAMED_ROUTES.VIEW_SANDBOX]));
+    } else {
+      setSelectedKeys(new Set([]));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location.pathname]);
+
+  const { platform } = useContext(ExtensionDescriptorContext);
+  let menuItems = [
+    { key: NAMED_ROUTES.VIEW_SANDBOX, textValue: 'View Sandbox', Icon: ViewSandboxIcon }
+  ];
+  if (platform !== PLATFORMS.MOBILE) {
+    menuItems = menuItems.concat([
+      { key: NAMED_ROUTES.LIB_SANDBOX, textValue: 'Library Sandbox', Icon: LibrarySandboxIcon },
+      { key: NAMED_ROUTES.LIBRARY_EDITOR, textValue: 'Library Editor', Icon: LibraryEditorIcon }
+    ]);
+  }
 
   return (
     <Flex direction="column">
@@ -67,7 +82,6 @@ const Menu = ({ location }) => {
             isQuiet
             onPress={() => {
               history.push(NAMED_ROUTES.HOME);
-              setSelectedKeys(new Set([]));
             }}
           >
             <Heading>Reactor Sandbox</Heading>
@@ -81,23 +95,17 @@ const Menu = ({ location }) => {
             onSelectionChange={(key) => {
               const path = [...key][0];
               if (path) {
-                setSelectedKeys(new Set([path]));
                 history.push(path);
               }
             }}
+            items={menuItems}
           >
-            <Item key={NAMED_ROUTES.VIEW_SANDBOX} textValue="View Sandbox">
-              <ViewSandboxIcon />
-              <Text>View Sandbox</Text>
-            </Item>
-            <Item key={NAMED_ROUTES.LIB_SANDBOX} textValue="Library Sandbox">
-              <LibrarySandboxIcon />
-              <Text>Library Sandbox</Text>
-            </Item>
-            <Item key={NAMED_ROUTES.LIBRARY_EDITOR} textValue="Library Editor">
-              <LibraryEditorIcon />
-              <Text>Library Editor</Text>
-            </Item>
+            {({ key, textValue, Icon }) => (
+              <Item key={key} textValue={textValue}>
+                <Icon />
+                <Text>{textValue}</Text>
+              </Item>
+            )}
           </ActionGroup>
         </Flex>
 

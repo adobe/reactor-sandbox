@@ -26,7 +26,7 @@ import {
 } from '@adobe/react-spectrum';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES } from '../../constants';
 
 const cardDetails = (item, type, registry) => {
   const component = registry.components[type][item.modulePath];

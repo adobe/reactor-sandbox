@@ -18,7 +18,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import { useHistory, useParams } from 'react-router-dom';
 
 import RuleComponentCard from './RuleComponentCard';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES } from '../../constants';
 
 const handleOnClick = ({ type, ruleId, history }) => {
   history.push(`${NAMED_ROUTES.LIBRARY_EDITOR}/rules/${ruleId}/${type}/new`);

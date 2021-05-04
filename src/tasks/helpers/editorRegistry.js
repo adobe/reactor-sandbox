@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 /* eslint-disable indent */
 /* eslint-disable no-param-reassign */
+const { PLATFORMS } = require('../../app/constants');
 
 const currentExtensionDescriptor = require('./getExtensionDescriptor')();
 
@@ -62,7 +63,7 @@ module.exports = (extensionDescriptorPaths, { platform }, { request, ports }) =>
     },
     components: {
       events:
-        platform === 'edge'
+        platform === PLATFORMS.EDGE
           ? {}
           : {
               'sandbox/pageTop.js': {
@@ -80,7 +81,7 @@ module.exports = (extensionDescriptorPaths, { platform }, { request, ports }) =>
             },
       conditions: {},
       actions:
-        platform !== 'edge'
+        platform !== PLATFORMS.EDGE
           ? {
               'sandbox/logEventInfo.js': {
                 extensionDisplayName: 'Sandbox',
@@ -91,7 +92,7 @@ module.exports = (extensionDescriptorPaths, { platform }, { request, ports }) =>
             }
           : {},
       dataElements:
-        platform === 'edge'
+        platform === PLATFORMS.EDGE
           ? {
               'sandbox/constant.js': {
                 extensionDisplayName: 'Sandbox',

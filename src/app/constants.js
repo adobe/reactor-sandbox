@@ -10,9 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export default {
-  HOME: '/',
-  LIB_SANDBOX: '/libSandbox',
-  VIEW_SANDBOX: '/viewSandbox',
-  LIBRARY_EDITOR: '/libraryEditor'
+module.exports = {
+  NAMED_ROUTES: {
+    HOME: '/',
+    LIB_SANDBOX: '/libSandbox',
+    VIEW_SANDBOX: '/viewSandbox',
+    LIBRARY_EDITOR: '/libraryEditor'
+  },
+  PLATFORMS: {
+    WEB: 'web',
+    MOBILE: 'mobile',
+    EDGE: 'edge'
+  }
 };

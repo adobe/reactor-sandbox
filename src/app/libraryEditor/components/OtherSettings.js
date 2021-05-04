@@ -15,7 +15,7 @@ import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
 import { useHistory } from 'react-router-dom';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES, PLATFORMS } from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
@@ -38,7 +38,7 @@ const handleImsChange = ({ imsAccess, otherSettings, setOtherSettings }) => {
 const isValid = ({ companySettings, otherSettings, setErrors, platform }) => {
   const errors = {};
 
-  if (!companySettings.orgId && platform !== 'edge') {
+  if (!companySettings.orgId && platform !== PLATFORMS.EDGE) {
     errors.orgId = true;
   }
 
@@ -90,7 +90,7 @@ export default () => {
   ) : (
     <Flex direction="column">
       <View width="100%" alignSelf="center">
-        {platform !== 'edge' && (
+        {platform !== PLATFORMS.EDGE && (
           <>
             <Heading level={2}>Company Settings</Heading>
             <Divider />

@@ -17,7 +17,7 @@ import produce from 'immer';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, Flex } from '@adobe/react-spectrum';
-import NAMED_ROUTES from '../../constants';
+import { NAMED_ROUTES, PLATFORMS } from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
@@ -75,7 +75,7 @@ export default () => {
       <View margin="2rem auto" maxWidth="50rem">
         <Heading level={2}>Property Settings</Heading>
         <Divider />
-        {platform === 'edge' ? (
+        {platform === PLATFORMS.EDGE ? (
           <View padding="size-250">At this moment, there are no settings to configure.</View>
         ) : (
           <Flex direction="column" alignItems="center">

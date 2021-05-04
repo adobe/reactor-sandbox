@@ -14,17 +14,18 @@ import React, { useContext } from 'react';
 import LibSandboxEdge from './libSandboxEdge';
 import LibSandboxWeb from './libSandboxWeb';
 import ExtensionDescriptorContext from './extensionDescriptorContext';
+import { PLATFORMS } from './constants';
 
 export default () => {
   const extensionDescriptor = useContext(ExtensionDescriptorContext);
 
   return (
     <>
-      {extensionDescriptor?.platform === 'edge' && (
+      {extensionDescriptor?.platform === PLATFORMS.EDGE && (
         <LibSandboxEdge extensionDescriptor={extensionDescriptor} />
       )}
 
-      {extensionDescriptor?.platform === 'web' && <LibSandboxWeb />}
+      {extensionDescriptor?.platform === PLATFORMS.WEB && <LibSandboxWeb />}
     </>
   );
 };
