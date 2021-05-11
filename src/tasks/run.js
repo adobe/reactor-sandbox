@@ -36,7 +36,7 @@ const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
 const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
 const getLatestVersion = require('../helpers/getLatestVersion');
-const { PLATFORMS } = require('../app/constants');
+const { PLATFORMS } = require('../helpers/sharedConstants');
 
 const { platform } = getExtensionDescriptor();
 

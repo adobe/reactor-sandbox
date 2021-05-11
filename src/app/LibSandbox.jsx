@@ -14,7 +14,7 @@ import React, { useContext } from 'react';
 import LibSandboxEdge from './libSandboxEdge';
 import LibSandboxWeb from './libSandboxWeb';
 import ExtensionDescriptorContext from './extensionDescriptorContext';
-import { PLATFORMS } from './constants';
+import { PLATFORMS } from '../helpers/sharedConstants';
 
 export default () => {
   const extensionDescriptor = useContext(ExtensionDescriptorContext);
