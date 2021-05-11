@@ -18,7 +18,7 @@ import {
 } from '../../api/index';
 import localStorage from './localStorage';
 import saveContainer from '../helpers/saveContainer';
-import { PLATFORMS } from '../../constants';
+import { PLATFORMS } from '../../../helpers/sharedConstants';
 
 // eslint-disable-next-line import/no-cycle
 import { dispatch } from '../../store';

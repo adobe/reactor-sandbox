@@ -33,7 +33,8 @@ import packageJson from '../../../package.json';
 import { getStatus } from '../api/index';
 import ExtensionDescriptorContext from '../extensionDescriptorContext';
 
-import { PLATFORMS, NAMED_ROUTES } from '../constants';
+import { NAMED_ROUTES } from '../constants';
+import { PLATFORMS } from '../../helpers/sharedConstants';
 
 const Menu = ({ location }) => {
   const history = useHistory();

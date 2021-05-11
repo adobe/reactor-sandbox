@@ -23,7 +23,7 @@ import {
   Divider,
   Item
 } from '@adobe/react-spectrum';
-import { PLATFORMS } from '../constants';
+import { PLATFORMS } from '../../helpers/sharedConstants';
 
 const handleOnSave = ({ dataElement, tokenize = true, platform, onSave }) => {
   let newDataElement = '';

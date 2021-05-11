@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 /* eslint-disable indent */
 /* eslint-disable no-param-reassign */
-const { PLATFORMS } = require('../../app/constants');
+const { PLATFORMS } = require('../../helpers/sharedConstants');
 
 const currentExtensionDescriptor = require('./getExtensionDescriptor')();
 

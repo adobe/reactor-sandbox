@@ -17,7 +17,8 @@ import LibrarySandboxIcon from '@spectrum-icons/workflow/Code';
 import ViewSandboxIcon from '@spectrum-icons/workflow/AdDisplay';
 import ExtensionDescriptorContext from './extensionDescriptorContext';
 
-import { NAMED_ROUTES, PLATFORMS } from './constants';
+import { NAMED_ROUTES } from './constants';
+import { PLATFORMS } from '../helpers/sharedConstants';
 
 import packageJson from '../../package.json';
 

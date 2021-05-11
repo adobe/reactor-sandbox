@@ -29,7 +29,8 @@ import {
 
 import ComponentIframe from './ComponentIframe';
 import Backdrop from './Backdrop';
-import { NAMED_ROUTES, PLATFORMS } from '../../constants';
+import { NAMED_ROUTES } from '../../constants';
+import { PLATFORMS } from '../../../helpers/sharedConstants';
 import ErrorMessage from '../../components/ErrorMessage';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
