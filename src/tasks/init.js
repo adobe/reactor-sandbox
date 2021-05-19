@@ -18,11 +18,10 @@ governing permissions and limitations under the License.
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
 
-import { PLATFORMS } from '../helpers/sharedConstants';
-
 const fs = require('fs-extra');
 const path = require('path');
 const files = require('./constants/files');
+const { PLATFORMS } = require('../helpers/sharedConstants');
 
 module.exports = () => {
   return new Promise((resolve, reject) => {
