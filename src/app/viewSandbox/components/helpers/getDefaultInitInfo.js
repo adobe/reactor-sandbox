@@ -16,9 +16,8 @@ export default ({ type, descriptor }) => {
   const info = {
     settings: null,
     propertySettings: {
+      id: 'PR12345',
       domains: ['adobe.com', 'example.com'],
-      linkDelay: 100,
-      trackingCookieName: 'sat_track',
       undefinedVarsReturnEmpty: false
     },
     tokens: {

@@ -62,9 +62,8 @@ module.exports = {
   property: {
     name: 'Sandbox property',
     settings: {
+      id: 'PR12345',
       domains: ['adobe.com', 'example.com'],
-      linkDelay: 100,
-      trackingCookieName: 'sat_track',
       undefinedVarsReturnEmpty: false
     }
   },
