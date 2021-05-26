@@ -27,8 +27,6 @@ export default {
   effects: {
     async savePropertySettings(payload, rootState) {
       const propertySettings = produce(payload, (draft) => {
-        draft.settings.linkDelay = 100;
-        draft.settings.trackingCookieName = 'sat_track';
         draft.settings.undefinedVarsReturnEmpty = false;
       });
 

@@ -114,20 +114,16 @@ export default {
         property: {
           settings:
             platform === PLATFORMS.EDGE
-              ? {}
+              ? { id: 'PR12345' }
               : {
+                  id: 'PR12345',
                   domains: ['example.com'],
-                  linkDelay: 100,
-                  trackingCookieName: 'sat_track',
                   undefinedVarsReturnEmpty: false
                 }
         },
-        company:
-          platform === PLATFORMS.EDGE
-            ? {}
-            : {
-                orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
-              }
+        company: {
+          orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+        }
       };
 
       await this.pushDataDown(emptyContainerData);

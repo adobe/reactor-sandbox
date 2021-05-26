@@ -22,11 +22,15 @@ import { PLATFORMS } from '../../../helpers/sharedConstants';
 import ErrorMessage from '../../components/ErrorMessage';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
-const isValid = ({ domains, setErrors }) => {
+const isValid = ({ domains, propertyId, setErrors }) => {
   const errors = {};
 
   if (!domains) {
     errors.domains = true;
+  }
+
+  if (!propertyId) {
+    errors.propertyId = true;
   }
 
   setErrors(errors);
@@ -35,12 +39,13 @@ const isValid = ({ domains, setErrors }) => {
 
 const handleSave = async ({
   domains,
+  propertyId,
   setErrors,
   history,
   propertySettings,
   savePropertySettings
 }) => {
-  if (!isValid({ domains, setErrors })) {
+  if (!isValid({ domains, propertyId, setErrors })) {
     return false;
   }
 
@@ -48,6 +53,7 @@ const handleSave = async ({
     await savePropertySettings(
       produce(propertySettings, (draft) => {
         draft.settings.domains = domains.split(',').map((s) => s.trim());
+        draft.settings.id = propertyId;
       })
     );
     history.push(NAMED_ROUTES.LIBRARY_EDITOR);
@@ -65,6 +71,7 @@ export default () => {
   const propertySettings = useSelector((state) => state.property);
   const [errors, setErrors] = useState({});
   const [domains, setDomains] = useState((propertySettings.settings.domains || []).join(', '));
+  const [propertyId, setPropertyId] = useState(propertySettings.settings.id);
   const { platform } = useContext(ExtensionDescriptorContext);
 
   return errors.api ? (
@@ -74,13 +81,23 @@ export default () => {
   ) : (
     <View padding="size-200" flex>
       <View margin="2rem auto" maxWidth="50rem">
-        <Heading level={2}>Property Settings</Heading>
+        <Heading level={2}>Propertys Settings</Heading>
         <Divider />
-        {platform === PLATFORMS.EDGE ? (
-          <View padding="size-250">At this moment, there are no settings to configure.</View>
-        ) : (
-          <Flex direction="column" alignItems="center">
-            <View>
+
+        <Flex direction="column" alignItems="center">
+          <TextField
+            label="Property ID"
+            necessityIndicator="label"
+            isRequired
+            width="size-6000"
+            marginTop="size-150"
+            validationState={errors.propertyId ? 'invalid' : ''}
+            value={propertyId}
+            onChange={setPropertyId}
+          />
+
+          {platform !== PLATFORMS.EDGE && (
+            <>
               <TextField
                 label="Domains List"
                 necessityIndicator="label"
@@ -91,27 +108,31 @@ export default () => {
                 value={domains}
                 onChange={setDomains}
               />
-              <Heading level={6} margin="size-100">
+
+              <Heading level={6} margin="size-100" width="size-6000">
                 Comma separated values are accepted.
               </Heading>
-              <Button
-                variant="cta"
-                marginTop="size-100"
-                onPress={() => {
-                  handleSave({
-                    domains,
-                    setErrors,
-                    history,
-                    propertySettings,
-                    savePropertySettings: dispatch.property.savePropertySettings
-                  });
-                }}
-              >
-                Save
-              </Button>
-            </View>
-          </Flex>
-        )}
+            </>
+          )}
+
+          <View marginTop="size-400" alignItems="left" width="size-6000">
+            <Button
+              variant="cta"
+              onPress={() => {
+                handleSave({
+                  domains,
+                  propertyId,
+                  setErrors,
+                  history,
+                  propertySettings,
+                  savePropertySettings: dispatch.property.savePropertySettings
+                });
+              }}
+            >
+              Save
+            </Button>
+          </View>
+        </Flex>
       </View>
     </View>
   );
