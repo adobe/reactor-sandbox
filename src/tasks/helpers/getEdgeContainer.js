@@ -102,11 +102,9 @@ const augmentModules = (modulesOutput, extensionDescriptor, extensionPath) => {
             return;
           }
 
-          const modulePath = path.join(
-            extensionPath,
-            extensionDescriptor.libBasePath || '',
-            featureDescriptor.libPath
-          );
+          const modulePath = path
+            .join(extensionPath, extensionDescriptor.libBasePath || '', featureDescriptor.libPath)
+            .replace(/\\/g, '/');
 
           const moduleMeta = {
             extensionName: extensionDescriptor.name
