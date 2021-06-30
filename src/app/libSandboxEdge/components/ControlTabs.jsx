@@ -11,8 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
-import { Tabs } from '@react-spectrum/tabs';
-import { Item } from '@adobe/react-spectrum';
+import { Item, Tabs, TabList, TabPanels, Flex, Text } from '@adobe/react-spectrum';
+import FileXML from '@spectrum-icons/workflow/FileXML';
+import FileJson from '@spectrum-icons/workflow/FileJson';
 import TabContent from './TabContent';
 import loadRequest from './helpers/loadRequest';
 import { sendEdgeRequest } from '../../api/index';
@@ -75,45 +76,67 @@ export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest,
       }}
       height="100%"
     >
-      <Item title="XDM" key="xdm">
-        <TabContent
-          content={xdm}
-          setContent={setXdm}
-          onSend={() => {
-            const parsedRequest = JSON.parse(request);
-            parsedRequest.body.xdm = JSON.parse(xdm);
+      <div
+        style={{
+          borderBottom:
+            'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'
+        }}
+      >
+        <Flex justifyContent="center">
+          <TabList position="relative" bottom="-0.1rem">
+            <Item key="xdm">
+              <FileXML />
+              <Text>XDM</Text>
+            </Item>
+            <Item key="request">
+              <FileJson />
+              <Text>Request</Text>
+            </Item>
+          </TabList>
+        </Flex>
+      </div>
 
-            sendRequest({
-              request: JSON.stringify(parsedRequest),
-              onSendRequest,
-              onRequestResponseReceived,
-              onError,
-              extensionDescriptor
-            });
-          }}
-          onReset={() => {
-            reset({ extensionDescriptor, setXdm, setRequest });
-          }}
-        />
-      </Item>
-      <Item title="Request" key="request">
-        <TabContent
-          content={request}
-          setContent={setRequest}
-          onSend={() => {
-            sendRequest({
-              request,
-              onSendRequest,
-              onRequestResponseReceived,
-              onError,
-              extensionDescriptor
-            });
-          }}
-          onReset={() => {
-            reset({ extensionDescriptor, setXdm, setRequest });
-          }}
-        />
-      </Item>
+      <TabPanels flexGrow="0" height="calc(100% - 6.5rem)">
+        <Item key="xdm">
+          <TabContent
+            content={xdm}
+            setContent={setXdm}
+            onSend={() => {
+              const parsedRequest = JSON.parse(request);
+              parsedRequest.body.xdm = JSON.parse(xdm);
+
+              sendRequest({
+                request: JSON.stringify(parsedRequest),
+                onSendRequest,
+                onRequestResponseReceived,
+                onError,
+                extensionDescriptor
+              });
+            }}
+            onReset={() => {
+              reset({ extensionDescriptor, setXdm, setRequest });
+            }}
+          />
+        </Item>
+        <Item key="request">
+          <TabContent
+            content={request}
+            setContent={setRequest}
+            onSend={() => {
+              sendRequest({
+                request,
+                onSendRequest,
+                onRequestResponseReceived,
+                onError,
+                extensionDescriptor
+              });
+            }}
+            onReset={() => {
+              reset({ extensionDescriptor, setXdm, setRequest });
+            }}
+          />
+        </Item>
+      </TabPanels>
     </Tabs>
   );
 };

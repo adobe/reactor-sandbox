@@ -56,7 +56,6 @@
     "@ramda/indexby": "^0.26.1",
     "@react-spectrum/icon": "^3.3.1",
     "@react-spectrum/table": "^3.0.0-beta.1",
-    "@react-spectrum/tabs": " 3.0.0-alpha.3",
     "@rematch/core": "^2.0.1",
     "@spectrum-icons/illustrations": "^3.2.1",
     "@spectrum-icons/workflow": "^3.2.0",

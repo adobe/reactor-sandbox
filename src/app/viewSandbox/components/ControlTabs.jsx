@@ -11,8 +11,10 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useEffect } from 'react';
-import { Tabs } from '@react-spectrum/tabs';
-import { Item } from '@adobe/react-spectrum';
+import { Item, TabList, TabPanels, Tabs, Text, Flex } from '@adobe/react-spectrum';
+import BoxImport from '@spectrum-icons/workflow/BoxImport';
+import BoxExport from '@spectrum-icons/workflow/BoxExport';
+import AlertCheck from '@spectrum-icons/workflow/AlertCheck';
 import InitTabContent from './InitTabContent';
 
 import GetSettingsTabContent from './GetSettingsTabContent';
@@ -82,56 +84,82 @@ export default ({
 
   return (
     <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab} height="100%">
-      <Item title="Init" key="init">
-        <InitTabContent
-          content={initContent}
-          onChange={setInitContent}
-          onInitPress={() => {
-            extensionViewInit({
-              extensionDescriptor,
-              selectedDescriptor,
-              extensionBridge: currentExtensionBridge,
-              content: initContent
-            });
-          }}
-          onResetPress={() => {
-            const newInitContent = getDefaultInitInfo(selectedDescriptor);
-            setInitContent(newInitContent);
-            extensionViewInit({
-              extensionDescriptor,
-              selectedDescriptor,
-              extensionBridge: currentExtensionBridge,
-              content: newInitContent
-            });
-          }}
-        />
-      </Item>
-      <Item title="Get Settings" key="settings">
-        <GetSettingsTabContent
-          onCopySettingsPress={(newSettings) => {
-            const newInitContent = mergeSettingsOnTopOfIniContent({
-              initContent,
-              settings: newSettings
-            });
-            setInitContent(newInitContent);
-            extensionViewInit({
-              extensionDescriptor,
-              selectedDescriptor,
-              extensionBridge: currentExtensionBridge,
-              content: newInitContent
-            });
-            setSelectedTab('init');
-          }}
-          extensionBridge={currentExtensionBridge}
-          setSelectedTab={setSelectedTab}
-        />
-      </Item>
-      <Item title="Validate" key="validate">
-        <ValidateTabContent
-          extensionBridge={currentExtensionBridge}
-          selectedDescriptor={selectedDescriptor}
-        />
-      </Item>
+      <div
+        style={{
+          borderBottom:
+            'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'
+        }}
+      >
+        <Flex justifyContent="center">
+          <TabList position="relative" bottom="-0.1rem">
+            <Item key="init">
+              <BoxImport />
+              <Text>Init</Text>
+            </Item>
+            <Item key="settings">
+              <BoxExport />
+              <Text>Get Settings</Text>
+            </Item>
+            <Item key="validate">
+              <AlertCheck />
+              <Text>Validate</Text>
+            </Item>
+          </TabList>
+        </Flex>
+      </div>
+
+      <TabPanels flexGrow="0" height="calc(100% - 6.5rem)">
+        <Item key="init">
+          <InitTabContent
+            content={initContent}
+            onChange={setInitContent}
+            onInitPress={() => {
+              extensionViewInit({
+                extensionDescriptor,
+                selectedDescriptor,
+                extensionBridge: currentExtensionBridge,
+                content: initContent
+              });
+            }}
+            onResetPress={() => {
+              const newInitContent = getDefaultInitInfo(selectedDescriptor);
+              setInitContent(newInitContent);
+              extensionViewInit({
+                extensionDescriptor,
+                selectedDescriptor,
+                extensionBridge: currentExtensionBridge,
+                content: newInitContent
+              });
+            }}
+          />
+        </Item>
+        <Item key="settings">
+          <GetSettingsTabContent
+            onCopySettingsPress={(newSettings) => {
+              const newInitContent = mergeSettingsOnTopOfIniContent({
+                initContent,
+                settings: newSettings
+              });
+              setInitContent(newInitContent);
+              extensionViewInit({
+                extensionDescriptor,
+                selectedDescriptor,
+                extensionBridge: currentExtensionBridge,
+                content: newInitContent
+              });
+              setSelectedTab('init');
+            }}
+            extensionBridge={currentExtensionBridge}
+            setSelectedTab={setSelectedTab}
+          />
+        </Item>
+        <Item key="validate">
+          <ValidateTabContent
+            extensionBridge={currentExtensionBridge}
+            selectedDescriptor={selectedDescriptor}
+          />
+        </Item>
+      </TabPanels>
     </Tabs>
   );
 };
