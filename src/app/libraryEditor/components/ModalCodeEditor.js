@@ -15,15 +15,19 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ModalCodeEditor from '../../components/ModalCodeEditor';
 
-const handleOnSave = ({ codeEditorModal, closeCodeEditorModal }) => (newContent) => {
-  codeEditorModal.onSave(newContent);
-  closeCodeEditorModal();
-};
+const handleOnSave =
+  ({ codeEditorModal, closeCodeEditorModal }) =>
+  (newContent) => {
+    codeEditorModal.onSave(newContent);
+    closeCodeEditorModal();
+  };
 
-const handleOnClose = ({ codeEditorModal, closeCodeEditorModal }) => () => {
-  codeEditorModal.onClose();
-  closeCodeEditorModal();
-};
+const handleOnClose =
+  ({ codeEditorModal, closeCodeEditorModal }) =>
+  () => {
+    codeEditorModal.onClose();
+    closeCodeEditorModal();
+  };
 
 export default () => {
   const codeEditorModal = useSelector((state) => state.modals.codeEditorModal);

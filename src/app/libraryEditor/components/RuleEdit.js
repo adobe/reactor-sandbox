@@ -88,13 +88,15 @@ const handleNameChange = ({ name, rule, setRule, setCurrentRule }) => {
   setRule(newRule);
 };
 
-const handleDeleteClick = ({ rule, setCurrentRule, setRule }) => (type, index) => {
-  const newRule = produce(rule, (draft) => {
-    draft[type].splice(index, 1);
-  });
-  setCurrentRule(newRule);
-  setRule(newRule);
-};
+const handleDeleteClick =
+  ({ rule, setCurrentRule, setRule }) =>
+  (type, index) => {
+    const newRule = produce(rule, (draft) => {
+      draft[type].splice(index, 1);
+    });
+    setCurrentRule(newRule);
+    setRule(newRule);
+  };
 
 export default () => {
   const extensionDescriptor = useContext(ExtensionDescriptorContext);

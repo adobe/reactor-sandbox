@@ -44,11 +44,15 @@ export default ({
         selectedDescriptor: { type, descriptor },
         initInfo,
         openCodeEditor: openCodeEditor
-          ? () => (options = {}) => openCodeEditor(options)
+          ? () =>
+              (options = {}) =>
+                openCodeEditor(options)
           : defaultOpenCodeEditor,
         openRegexTester,
         openDataElementSelector: openDataElementSelector
-          ? () => (options = {}) => openDataElementSelector(options)
+          ? () =>
+              (options = {}) =>
+                openDataElementSelector(options)
           : defaultOpenDataElementSelector
       }).promise;
     }

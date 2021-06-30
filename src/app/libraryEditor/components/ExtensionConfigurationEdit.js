@@ -124,9 +124,11 @@ export default () => {
   const history = useHistory();
   const { extension_configuration_id: extensionConfigurationId } = useParams();
 
-  const { currentIframe, registry, extensions: extensionConfigurations } = useSelector(
-    (state) => state
-  );
+  const {
+    currentIframe,
+    registry,
+    extensions: extensionConfigurations
+  } = useSelector((state) => state);
 
   const [waitingForExtensionResponse, setWaitingForExtensionResponse] = useState(false);
   const [errors, setErrors] = useState({});

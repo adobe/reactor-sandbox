@@ -13,14 +13,13 @@ governing permissions and limitations under the License.
 /* eslint-disable no-unused-vars */
 
 import React, { useEffect, useState } from 'react';
-import { View } from '@adobe/react-spectrum';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
-require('codemirror/mode/javascript/javascript.js');
+require('codemirror/mode/javascript/javascript');
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/material.css');
 require('codemirror/theme/neat.css');
-require('codemirror/mode/xml/xml.js');
+require('codemirror/mode/xml/xml');
 require('codemirror/addon/lint/lint');
 require('codemirror/addon/lint/json-lint');
 require('codemirror/addon/lint/lint.css');
@@ -36,30 +35,31 @@ export default ({ onChange, value = '' }) => {
   }, [value]);
 
   return (
-    <View flexShrink="1" flexGrow="1" height="100%">
-      <CodeMirror
-        className="codeMirror-Wrapper"
-        value={code}
-        options={{
-          lineNumbers: true,
-          mode: 'application/json',
-          gutters: ['CodeMirror-lint-markers'],
-          lint: true,
-          extraKeys: {
-            Tab: (cm) => {
-              cm.replaceSelection('  ', 'end');
-            }
+    <CodeMirror
+      className="codeMirror-Wrapper"
+      value={code}
+      options={{
+        lineNumbers: true,
+        mode: 'application/json',
+        gutters: ['CodeMirror-lint-markers'],
+        lint: true,
+        extraKeys: {
+          Tab: (cm) => {
+            cm.replaceSelection('  ', 'end');
           }
-        }}
-        onBeforeChange={(_editor, _data, newValue) => {
-          setCode(newValue);
-        }}
-        onChange={(_editor, _data, newValue) => {
-          if (onChange) {
-            onChange(newValue);
-          }
-        }}
-      />
-    </View>
+        }
+      }}
+      editorDidMount={(editor) => {
+        editor.setSize('100%', '100%');
+      }}
+      onBeforeChange={(_editor, _data, newValue) => {
+        setCode(newValue);
+      }}
+      onChange={(_editor, _data, newValue) => {
+        if (onChange) {
+          onChange(newValue);
+        }
+      }}
+    />
   );
 };

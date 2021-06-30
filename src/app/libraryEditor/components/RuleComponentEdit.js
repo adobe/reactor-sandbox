@@ -170,10 +170,10 @@ export default () => {
   const [errors, setErrors] = useState({});
   const [component, setComponent] = useState({});
 
-  const componentList = useMemo(() => computeComponentList(registry.components[params.type]), [
-    params.type,
-    registry.components
-  ]);
+  const componentList = useMemo(
+    () => computeComponentList(registry.components[params.type]),
+    [params.type, registry.components]
+  );
 
   const saveMethod = useMemo(() => {
     const { addComponent, updateComponent } = dispatch.currentRule;

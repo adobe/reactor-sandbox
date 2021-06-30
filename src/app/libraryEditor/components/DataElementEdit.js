@@ -175,9 +175,10 @@ export default () => {
   const [errors, setErrors] = useState({});
   const [dataElement, setDataElement] = useState({});
 
-  const dataElementsList = useMemo(() => computeDataElementList(registry.components.dataElements), [
-    registry.components.dataElements
-  ]);
+  const dataElementsList = useMemo(
+    () => computeDataElementList(registry.components.dataElements),
+    [registry.components.dataElements]
+  );
 
   const saveMethod = useMemo(() => {
     const { addAndSaveToContainer, updateAndSaveToContainer } = dispatch.dataElements;
