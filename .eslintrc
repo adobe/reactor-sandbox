@@ -16,7 +16,7 @@
       "arrowFunctions": true
     }
   },
-  "extends": ["react-app", "airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "extends": ["react-app", "airbnb", "plugin:prettier/recommended"],
   "plugins": ["react-hooks", "header"],
   "rules": {
     "prettier/prettier": "error",

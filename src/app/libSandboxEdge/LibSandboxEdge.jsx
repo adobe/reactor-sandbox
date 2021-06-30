@@ -18,8 +18,6 @@ import Spinner from '../components/Spinner';
 import ControlTabs from './components/ControlTabs';
 import ErrorMessage from '../components/ErrorMessage';
 
-import './LibSandboxEdge.css';
-
 const compactResponse = (response) => {
   const compactedResponse = (response?.body?.traces || [])
     .map((t) =>

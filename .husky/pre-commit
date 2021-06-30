@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+$(npm bin)/pretty-quick --staged && $(npm bin)/lint-staged

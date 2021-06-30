@@ -22,7 +22,7 @@ import {
   Heading,
   Divider
 } from '@adobe/react-spectrum';
-import { Cell, Column, Row, Table, TableBody, TableHeader } from '@react-spectrum/table';
+import { Cell, Column, Row, TableView, TableBody, TableHeader } from '@react-spectrum/table';
 import Add from '@spectrum-icons/workflow/Add';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -35,7 +35,7 @@ const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) =
       <Flex direction="column" maxWidth="50rem" margin="2rem auto">
         <Heading level="2">{heading}</Heading>
         <Divider />
-        <Table aria-label="table" overflowMode="wrap" marginTop="size-200">
+        <TableView aria-label="table" overflowMode="wrap" marginTop="size-200">
           <TableHeader>
             <Column key="name">Name</Column>
             <Column key="actions" width="30%">
@@ -74,7 +74,7 @@ const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) =
               </Row>
             ) : null}
           </TableBody>
-        </Table>
+        </TableView>
 
         <View>
           <Button

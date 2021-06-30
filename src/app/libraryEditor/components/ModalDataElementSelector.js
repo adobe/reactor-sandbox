@@ -15,17 +15,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import ModalDataElementSelector from '../../components/ModalDataElementSelector';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
-const handleOnSave = ({ dataElementSelectorModal, closeDataElementSelectorModal }) => (
-  newDataElement
-) => {
-  dataElementSelectorModal.onSave(newDataElement);
-  closeDataElementSelectorModal();
-};
+const handleOnSave =
+  ({ dataElementSelectorModal, closeDataElementSelectorModal }) =>
+  (newDataElement) => {
+    dataElementSelectorModal.onSave(newDataElement);
+    closeDataElementSelectorModal();
+  };
 
-const handleOnClose = ({ dataElementSelectorModal, closeDataElementSelectorModal }) => () => {
-  dataElementSelectorModal.onClose();
-  closeDataElementSelectorModal();
-};
+const handleOnClose =
+  ({ dataElementSelectorModal, closeDataElementSelectorModal }) =>
+  () => {
+    dataElementSelectorModal.onClose();
+    closeDataElementSelectorModal();
+  };
 
 export default () => {
   const dataElementSelectorModal = useSelector((state) => state.modals.dataElementSelectorModal);

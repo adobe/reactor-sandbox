@@ -64,16 +64,15 @@ const onValidatePress = ({ extensionBridge, setValidationState, descriptor }) =>
 export default ({ extensionBridge, selectedDescriptor: { descriptor } }) => {
   const [validationState, setValidationState] = useState(null);
   return (
-    <Flex direction="column" alignItems="left">
-      <div>
-        <Button
-          variant="cta"
-          onPress={() => onValidatePress({ extensionBridge, descriptor, setValidationState })}
-          margin="size-200"
-        >
-          Validate
-        </Button>
-      </div>
+    <Flex direction="column" alignItems="center">
+      <Button
+        justifySelf="center"
+        variant="cta"
+        onPress={() => onValidatePress({ extensionBridge, descriptor, setValidationState })}
+        margin="size-200"
+      >
+        Validate
+      </Button>
 
       {validationState === true && (
         <View

@@ -22,8 +22,6 @@ import ExtensionDescriptorContext from '../extensionDescriptorContext';
 import ModalDataElementSelector from '../components/ModalDataElementSelector';
 import ModalCodeEditor from '../components/ModalCodeEditor';
 
-import './ViewSandbox.css';
-
 export default () => {
   const extensionDescriptor = useContext(ExtensionDescriptorContext);
   const extensionViewDescriptorsByValue = getExtensionDescriptorsByValue(extensionDescriptor);

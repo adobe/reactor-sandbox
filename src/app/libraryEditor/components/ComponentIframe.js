@@ -92,9 +92,11 @@ const renderIframe = ({
 
 export default ({ component, extensionConfiguration, settings, server }) => {
   const iframeRef = useRef();
-  const { property: propertySettings, otherSettings, company: companySettings } = useSelector(
-    (state) => state
-  );
+  const {
+    property: propertySettings,
+    otherSettings,
+    company: companySettings
+  } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   useEffect(() => {
