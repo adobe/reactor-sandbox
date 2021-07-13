@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import getDefaultInitInfo from './getDefaultInitInfo';
 import VIEW_GROUPS from '../../helpers/viewsGroups';
-import { PLATFORMS } from '../../../../helpers/sharedConstants';
 
 export default ({ selectedDescriptor, extensionDescriptor }) => {
   if (!extensionDescriptor || !selectedDescriptor.descriptor) {
@@ -22,7 +21,7 @@ export default ({ selectedDescriptor, extensionDescriptor }) => {
   const { type, descriptor } = selectedDescriptor;
 
   const cachedInitInfo = localStorage.getItem(
-    `initInfo/${extensionDescriptor.platform || PLATFORMS.WEB}/${extensionDescriptor.name}/${type}${
+    `initInfo/${extensionDescriptor.platform}/${extensionDescriptor.name}/${type}${
       type !== VIEW_GROUPS.CONFIGURATION ? `/${descriptor.name}` : ''
     }`
   );

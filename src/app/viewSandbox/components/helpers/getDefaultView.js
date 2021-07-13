@@ -13,10 +13,8 @@ governing permissions and limitations under the License.
 import VIEW_GROUPS from '../../helpers/viewsGroups';
 import getCategorizedItems from './getCategorizedItems';
 import getSortedCategories from './getSortedCategories';
-import { PLATFORMS } from '../../../../helpers/sharedConstants';
 
 export default (platform, extensionName, viewType, viewDescriptorsByType) => {
-  platform = platform || PLATFORMS.WEB;
   if (viewType === VIEW_GROUPS.CONFIGURATION) {
     return null;
   }

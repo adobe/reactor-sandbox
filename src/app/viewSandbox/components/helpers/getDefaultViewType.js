@@ -10,11 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { PLATFORMS } from '../../../../helpers/sharedConstants';
-
 export default (platform, extensionName, extensionViewDescriptorsByValue) => {
-  platform = platform || PLATFORMS.WEB;
-
   const defaultViewType = localStorage.getItem(`lastSelectedViewType/${platform}/${extensionName}`);
   const availableTypes = Object.keys(extensionViewDescriptorsByValue || {})
     .map((delegateName) => delegateName.split('/')[0])

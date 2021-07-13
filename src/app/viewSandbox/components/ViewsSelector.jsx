@@ -18,17 +18,12 @@ import buildViewOptions from './helpers/buildViewOptions';
 import detectViewTypeAndViewValues from './helpers/detectViewTypeAndViewValues';
 import updateSelectedDescriptor from './helpers/updateSelectedDescriptor';
 import VIEW_GROUPS from '../helpers/viewsGroups';
-import { PLATFORMS } from '../../../helpers/sharedConstants';
 
-const saveLastSelectedViewType = (platform, extensionName, viewType) => {
-  platform = platform || PLATFORMS.WEB;
+const saveLastSelectedViewType = (platform, extensionName, viewType) =>
   localStorage.setItem(`lastSelectedViewType/${platform}/${extensionName}`, viewType);
-};
 
-const saveLastSelectedView = (platform, extensionName, view) => {
-  platform = platform || PLATFORMS.WEB;
-  return localStorage.setItem(`lastSelectedView/${platform}/${extensionName}`, view);
-};
+const saveLastSelectedView = (platform, extensionName, view) =>
+  localStorage.setItem(`lastSelectedView/${platform}/${extensionName}`, view);
 
 export default ({
   state: { extensionDescriptor, extensionViewDescriptorsByValue },

@@ -15,14 +15,13 @@ import { ERR_CONNECTION_DESTROYED } from 'penpal';
 import reportFatalError from './reportFatalError';
 import VIEW_GROUPS from '../../helpers/viewsGroups';
 import { LOG_PREFIX } from './constants';
-import { PLATFORMS } from '../../../../helpers/sharedConstants';
 
 export default ({ extensionBridge, selectedDescriptor, extensionDescriptor, content }) => {
   if (!extensionBridge || !selectedDescriptor || !extensionDescriptor) {
     return;
   }
 
-  const { name: extensionName, platform = PLATFORMS.WEB } = extensionDescriptor;
+  const { name: extensionName, platform } = extensionDescriptor;
   const {
     type: delegateType,
     descriptor: { name: delegateName }
