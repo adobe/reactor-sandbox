@@ -22,6 +22,7 @@ export default ({
   setSelectedView
 }) => {
   const defaultViewType = getDefaultViewType(
+    extensionDescriptor?.platform,
     extensionDescriptor?.name,
     extensionViewDescriptorsByValue
   );
@@ -30,6 +31,7 @@ export default ({
   }
 
   const defaultView = getDefaultView(
+    extensionDescriptor?.platform,
     extensionDescriptor?.name,
     selectedViewType,
     selectedViewType ? extensionDescriptor[selectedViewType] : null

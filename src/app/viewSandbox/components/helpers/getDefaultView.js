@@ -13,13 +13,15 @@ governing permissions and limitations under the License.
 import VIEW_GROUPS from '../../helpers/viewsGroups';
 import getCategorizedItems from './getCategorizedItems';
 import getSortedCategories from './getSortedCategories';
+import { PLATFORMS } from '../../../../helpers/sharedConstants';
 
-export default (extensionName, viewType, viewDescriptorsByType) => {
+export default (platform, extensionName, viewType, viewDescriptorsByType) => {
+  platform = platform || PLATFORMS.WEB;
   if (viewType === VIEW_GROUPS.CONFIGURATION) {
     return null;
   }
 
-  const defaultView = localStorage.getItem(`lastSelectedView/${extensionName}`);
+  const defaultView = localStorage.getItem(`lastSelectedView/${platform}/${extensionName}`);
 
   if (
     viewDescriptorsByType &&

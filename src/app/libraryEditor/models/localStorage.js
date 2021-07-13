@@ -14,6 +14,7 @@ import produce from 'immer';
 
 export default {
   extensionName: null,
+  platform: null,
   state: {},
   get(key) {
     return this.state[key];
@@ -21,16 +22,18 @@ export default {
   save() {
     if (this.extensionName) {
       localStorage.setItem(
-        `sandbox-rule-editor-container-${this.extensionName}`,
+        `sandboxRuleEditorContainer/${this.platform}/${this.extensionName}`,
         JSON.stringify(this.state)
       );
     }
   },
-  loadStateFor(extensionName) {
+  loadStateFor(platform, extensionName) {
     this.extensionName = extensionName;
+    this.platform = platform;
 
     const state =
-      JSON.parse(localStorage.getItem(`sandbox-rule-editor-container-${extensionName}`)) || {};
+      JSON.parse(localStorage.getItem(`sandboxRuleEditorContainer/${platform}/${extensionName}`)) ||
+      {};
 
     if (state) {
       this.state = state;
@@ -44,6 +47,6 @@ export default {
   },
 
   delete() {
-    localStorage.removeItem(`sandbox-rule-editor-container-${this.extensionName}`);
+    localStorage.removeItem(`sandboxRuleEditorContainer/${this.platform}/${this.extensionName}`);
   }
 };
