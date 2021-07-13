@@ -14,8 +14,10 @@ const fs = require('fs');
 
 module.exports = () => {
   try {
-    const stat = fs.lstatSync('node_modules/@adobe/reactor-sandbox');
-    return stat.isSymbolicLink();
+    // We no longer test for a symbolic link because of pnpm.
+    // Probably the safest way to detect if we are doing developer
+    // work on sandbox is to search for the Git directory.
+    return fs.existsSync('node_modules/@adobe/reactor-sandbox/.git');
   } catch (e) {
     return false;
   }
