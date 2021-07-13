@@ -19,11 +19,11 @@ import detectViewTypeAndViewValues from './helpers/detectViewTypeAndViewValues';
 import updateSelectedDescriptor from './helpers/updateSelectedDescriptor';
 import VIEW_GROUPS from '../helpers/viewsGroups';
 
-const saveLastSelectedViewType = (extensionName, viewType) =>
-  localStorage.setItem(`lastSelectedViewType/${extensionName}`, viewType);
+const saveLastSelectedViewType = (platform, extensionName, viewType) =>
+  localStorage.setItem(`lastSelectedViewType/${platform}/${extensionName}`, viewType);
 
-const saveLastSelectedView = (extensionName, view) =>
-  localStorage.setItem(`lastSelectedView/${extensionName}`, view);
+const saveLastSelectedView = (platform, extensionName, view) =>
+  localStorage.setItem(`lastSelectedView/${platform}/${extensionName}`, view);
 
 export default ({
   state: { extensionDescriptor, extensionViewDescriptorsByValue },
@@ -65,12 +65,12 @@ export default ({
         items={buildViewTypeOptions(extensionDescriptor)}
         onSelectionChange={(k) => {
           setSelectedViewType(k);
-          saveLastSelectedViewType(extensionDescriptor?.name, k);
+          saveLastSelectedViewType(extensionDescriptor?.platform, extensionDescriptor?.name, k);
 
           // We reset the view data, so that the first view of the
           // current type will be selected from the list.
           setSelectedView('');
-          saveLastSelectedView(extensionDescriptor?.name, '');
+          saveLastSelectedView(extensionDescriptor?.platform, extensionDescriptor?.name, '');
         }}
       >
         {(item) => <Item>{item.name}</Item>}
@@ -83,7 +83,7 @@ export default ({
           items={buildViewOptions(extensionDescriptor, selectedViewType)}
           onSelectionChange={(k) => {
             setSelectedView(k);
-            saveLastSelectedView(extensionDescriptor?.name, k);
+            saveLastSelectedView(extensionDescriptor?.platform, extensionDescriptor?.name, k);
           }}
         >
           {(item) =>

@@ -21,7 +21,7 @@ export default ({ selectedDescriptor, extensionDescriptor }) => {
   const { type, descriptor } = selectedDescriptor;
 
   const cachedInitInfo = localStorage.getItem(
-    `initInfo/${extensionDescriptor.name}/${type}${
+    `initInfo/${extensionDescriptor.platform}/${extensionDescriptor.name}/${type}${
       type !== VIEW_GROUPS.CONFIGURATION ? `/${descriptor.name}` : ''
     }`
   );

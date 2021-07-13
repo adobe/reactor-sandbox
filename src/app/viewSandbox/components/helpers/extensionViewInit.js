@@ -21,7 +21,7 @@ export default ({ extensionBridge, selectedDescriptor, extensionDescriptor, cont
     return;
   }
 
-  const { name: extensionName } = extensionDescriptor;
+  const { name: extensionName, platform } = extensionDescriptor;
   const {
     type: delegateType,
     descriptor: { name: delegateName }
@@ -36,7 +36,7 @@ export default ({ extensionBridge, selectedDescriptor, extensionDescriptor, cont
           .init(parsedContent)
           .then(() => {
             localStorage.setItem(
-              `initInfo/${extensionName}/${delegateType}${
+              `initInfo/${platform}/${extensionName}/${delegateType}${
                 delegateType !== VIEW_GROUPS.CONFIGURATION ? `/${delegateName}` : ''
               }`,
               content

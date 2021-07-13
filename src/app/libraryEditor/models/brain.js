@@ -23,8 +23,8 @@ import { PLATFORMS } from '../../../helpers/sharedConstants';
 // eslint-disable-next-line import/no-cycle
 import { dispatch } from '../../store';
 
-const loadOtherSettings = (extensionName) => {
-  localStorage.loadStateFor(extensionName);
+const loadOtherSettings = (platform, extensionName) => {
+  localStorage.loadStateFor(platform, extensionName);
 
   if (!localStorage.get('otherSettings')) {
     localStorage.update('otherSettings', {
@@ -73,7 +73,7 @@ export default {
       this.setPlatform(platform);
 
       Promise.all([
-        this.loadRegistryData(),
+        this.loadRegistryData(platform),
         this.loadContainerData().catch(() => {
           this.clearContainerData();
         })
@@ -84,7 +84,7 @@ export default {
         .catch((e) => this.setError(e));
     },
 
-    async loadRegistryData() {
+    async loadRegistryData(platform) {
       const data = await getEditorRegistry();
 
       dispatch.registry.setRegistry(
@@ -94,7 +94,7 @@ export default {
       );
 
       this.setExtensionName(data.currentExtensionName);
-      loadOtherSettings(data.currentExtensionName);
+      loadOtherSettings(platform, data.currentExtensionName);
     },
 
     async loadContainerData() {

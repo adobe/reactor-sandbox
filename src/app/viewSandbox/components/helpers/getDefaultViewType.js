@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export default (extensionName, extensionViewDescriptorsByValue) => {
-  const defaultViewType = localStorage.getItem(`lastSelectedViewType/${extensionName}`);
+export default (platform, extensionName, extensionViewDescriptorsByValue) => {
+  const defaultViewType = localStorage.getItem(`lastSelectedViewType/${platform}/${extensionName}`);
   const availableTypes = Object.keys(extensionViewDescriptorsByValue || {})
     .map((delegateName) => delegateName.split('/')[0])
     .filter((value, index, self) => self.indexOf(value) === index);
