@@ -17,7 +17,6 @@ import { Flex, View } from '@adobe/react-spectrum';
 import ViewsSelector from './components/ViewsSelector';
 import ControlTabs from './components/ControlTabs';
 import getExtensionDescriptorsByValue from './helpers/getExtensionDescriptorsByValue';
-import setUpGlobalLoadExtensionView from './helpers/setUpGlobalLoadExtensionView';
 import ExtensionDescriptorContext from '../extensionDescriptorContext';
 import ModalDataElementSelector from '../components/ModalDataElementSelector';
 import ModalCodeEditor from '../components/ModalCodeEditor';
@@ -32,13 +31,6 @@ export default () => {
   const [splitSizes] = useState(JSON.parse(localStorage.getItem('sandbox/splitSizes')) || [72, 28]);
 
   const extensionViewPaneRef = useRef();
-
-  setUpGlobalLoadExtensionView({
-    state: { extensionDescriptor, extensionViewDescriptorsByValue },
-    setDataElementSelectorModal,
-    setCodeEditorModal,
-    extensionViewPaneRef
-  });
 
   return (
     <>
