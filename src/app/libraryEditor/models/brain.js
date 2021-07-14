@@ -30,6 +30,9 @@ const loadOtherSettings = (platform, extensionName) => {
     localStorage.update('otherSettings', {
       tokens: {
         imsAccess: 'fake-ims-access-token'
+      },
+      apiEndpoints: {
+        reactor: '//localhost'
       }
     });
   }

@@ -26,6 +26,9 @@ export default ({ type, descriptor }) => {
     company: {
       orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
     },
+    apiEndpoints: {
+      reactor: '//localhost'
+    },
     schema: descriptor?.schema || null
   };
 
