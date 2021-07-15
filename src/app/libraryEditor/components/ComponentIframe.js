@@ -57,7 +57,8 @@ const renderIframe = ({
     settings,
     company: companySettings,
     propertySettings: propertySettings.settings,
-    tokens: otherSettings.tokens
+    tokens: otherSettings.tokens,
+    apiEndpoints: otherSettings.apiEndpoints
   };
 
   if (extensionConfiguration) {

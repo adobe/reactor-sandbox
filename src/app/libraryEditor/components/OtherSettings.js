@@ -34,6 +34,18 @@ const handleImsChange = ({ imsAccess, otherSettings, setOtherSettings }) => {
   );
 };
 
+const handleReactorApiEndpointChange = ({
+  reactorApiEndpoint,
+  otherSettings,
+  setOtherSettings
+}) => {
+  setOtherSettings(
+    produce(otherSettings, (draft) => {
+      draft.apiEndpoints.reactor = reactorApiEndpoint;
+    })
+  );
+};
+
 const isValid = ({ companySettings, otherSettings, setErrors }) => {
   const errors = {};
 
@@ -43,6 +55,10 @@ const isValid = ({ companySettings, otherSettings, setErrors }) => {
 
   if (!otherSettings.tokens?.imsAccess) {
     errors.imsAccess = true;
+  }
+
+  if (!otherSettings.apiEndpoints?.reactor) {
+    errors.reactorApiEndpoint = true;
   }
 
   setErrors(errors);
@@ -122,8 +138,32 @@ export default () => {
                 handleImsChange({ imsAccess, otherSettings, setOtherSettings });
               }}
             />
-            <br />
+          </View>
+        </Flex>
 
+        <Heading level={2} marginTop="size-400">
+          API Endpoints
+        </Heading>
+        <Divider />
+        <Flex direction="column" alignItems="center">
+          <View>
+            <TextField
+              label="Reactor API Endpoint"
+              necessityIndicator="label"
+              isRequired
+              width="size-6000"
+              marginTop="size-150"
+              validationState={errors.reactorApiEndpoint ? 'invalid' : ''}
+              value={otherSettings?.apiEndpoints?.reactor || ''}
+              onChange={(reactorApiEndpoint) => {
+                handleReactorApiEndpointChange({
+                  reactorApiEndpoint,
+                  otherSettings,
+                  setOtherSettings
+                });
+              }}
+            />
+            <br />
             <Button
               variant="cta"
               marginTop="size-400"
