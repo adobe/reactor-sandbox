@@ -20,9 +20,15 @@ import {
   Flex,
   View,
   Heading,
-  Divider
+  Divider,
+  Cell,
+  Column,
+  Row,
+  TableView,
+  TableBody,
+  TableHeader
 } from '@adobe/react-spectrum';
-import { Cell, Column, Row, TableView, TableBody, TableHeader } from '@react-spectrum/table';
+
 import Add from '@spectrum-icons/workflow/Add';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -38,8 +44,8 @@ const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) =
         <TableView aria-label="table" overflowMode="wrap" marginTop="size-200">
           <TableHeader>
             <Column key="name">Name</Column>
-            <Column key="actions" width="30%">
-              Actions
+            <Column key="actions" align="end" width="30%">
+              <View paddingRight="size-1000">Actions</View>
             </Column>
           </TableHeader>
           <TableBody>
@@ -47,22 +53,25 @@ const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) =
               <Row key={item[keyName]}>
                 <Cell>{item[nameProperty]}</Cell>
                 <Cell>
-                  <ActionGroup
-                    onAction={(key) =>
-                      key === 'delete'
-                        ? deleteFn(i)
-                        : history.push(`${url}${url.endsWith('/') ? '' : '/'}${i}`)
-                    }
-                  >
-                    <Item key="edit" textValue="edit">
-                      <Edit />
-                      <Text>Edit</Text>
-                    </Item>
-                    <Item key="delete" textValue="delete">
-                      <Delete />
-                      <Text>Delete</Text>
-                    </Item>
-                  </ActionGroup>
+                  <Flex direction="column" alignItems="end">
+                    <ActionGroup
+                      width="auto"
+                      onAction={(key) =>
+                        key === 'delete'
+                          ? deleteFn(i)
+                          : history.push(`${url}${url.endsWith('/') ? '' : '/'}${i}`)
+                      }
+                    >
+                      <Item key="edit" textValue="edit">
+                        <Edit />
+                        <Text>Edit</Text>
+                      </Item>
+                      <Item key="delete" textValue="delete">
+                        <Delete />
+                        <Text>Delete</Text>
+                      </Item>
+                    </ActionGroup>
+                  </Flex>
                 </Cell>
               </Row>
             ))}
