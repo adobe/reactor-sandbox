@@ -14,24 +14,26 @@ const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const { EXTENSION_DESCRIPTOR_FILENAME } = require('../constants/files');
-const isSandboxLinked = require('../../helpers/isSandboxLinked');
 
-// We are searching for any extension folder that exists in `node_modules` (scoped or unscoped)
+// We are searching for any extension folder that exists in `node_modules` (scoped or unscoped).
+// This includes searching for extension in the folder
+// `./node_modules/@adobe/reactor-sandbox/node_modules`.
 let extensionJsonPaths = glob.sync(
   `{node_modules/*/,node_modules/@*/*/,}${EXTENSION_DESCRIPTOR_FILENAME}`
 );
 
-// When sandbox is linked, the core extensions will be accessible at a
-// different path than the ones from above. We could use one glob regex to find all the cases,
-// but it may be really slow if we use something like `node_modules/@*/**/*`.
-if (isSandboxLinked()) {
-  const b = 'node_modules/@adobe/reactor-sandbox';
-  extensionJsonPaths = extensionJsonPaths.concat(
-    glob.sync(`{${b}/node_modules/*/,${b}/node_modules/@*/*/}${EXTENSION_DESCRIPTOR_FILENAME}`, {
-      follow: true
+// The sandbox might be in a different folder in one of the following cases:
+// - when it is linked (for developing purposes);
+// - when it is executed via npx;
+// - when it is globally installed. We want to search for the core extension in these cases too.
+extensionJsonPaths = extensionJsonPaths.concat(
+  glob
+    .sync(`{node_modules/*/,node_modules/@*/*/,}${EXTENSION_DESCRIPTOR_FILENAME}`, {
+      follow: true,
+      cwd: path.resolve(__dirname, '../../..')
     })
-  );
-}
+    .map((p) => path.resolve(__dirname, '../../..', p))
+);
 
 const getExtensionPlatform = (filePath) => {
   const fileContents = JSON.parse(fs.readFileSync(path.resolve(filePath)));
