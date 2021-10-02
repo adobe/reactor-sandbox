@@ -4,7 +4,7 @@
 name: Node.js Package
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
     inputs:
       tag:
         description: 'The tag to publish to: latest | next'
