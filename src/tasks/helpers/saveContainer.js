@@ -101,7 +101,7 @@ const deleteValueFromObject = (obj, propertyPath) => {
 };
 
 const functionTransform = (transformData, fnCode) => {
-  return `function(${transformData.parameters.join(', ')}) {${fnCode}}`;
+  return `function(${transformData.parameters.join(', ') || []}) {${fnCode}}`;
 };
 
 const generateFunctionTransformReplacements = (
