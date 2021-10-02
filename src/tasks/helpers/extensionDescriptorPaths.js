@@ -22,17 +22,17 @@ let extensionJsonPaths = glob.sync(
   `{node_modules/*/,node_modules/@*/*/,}${EXTENSION_DESCRIPTOR_FILENAME}`
 );
 
-// The sandbox might be in a different folder in one of the following cases:
-// - when it is linked (for developing purposes);
-// - when it is executed via npx;
-// - when it is globally installed. We want to search for the core extension in these cases too.
+// Searching for the edge core extension based on sandbox folder location:
+// - the extension is inside the sandbox node_modules folder when sandbox is linked
+// (for developing purposes) or installed globally;
+// - the extension in on the same level with the sandbox folder when sandbox is executed via npx.
 extensionJsonPaths = extensionJsonPaths.concat(
   glob
-    .sync(`{node_modules/*/,node_modules/@*/*/,}${EXTENSION_DESCRIPTOR_FILENAME}`, {
+    .sync(`{*/node_modules/*/,*/node_modules/@*/*/,*/,}${EXTENSION_DESCRIPTOR_FILENAME}`, {
       follow: true,
-      cwd: path.resolve(__dirname, '../../..')
+      cwd: path.resolve(__dirname, '../../../..')
     })
-    .map((p) => path.resolve(__dirname, '../../..', p))
+    .map((p) => path.resolve(__dirname, '../../../..', p))
 );
 
 const getExtensionPlatform = (filePath) => {
