@@ -10,18 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable global-require */
+
 const fetch = require('node-fetch');
 const engine = require('@adobe/reactor-turbine-edge/src/index');
 
-const createEdgeExecute = require('./createEdgeExecute');
-const getEdgeContainer = require('./getEdgeContainer');
-
-let execute;
-
 module.exports = {
-  build: () => {
-    execute = createEdgeExecute(engine, getEdgeContainer(), { fetch });
-  },
+  getExecute: () => {
+    delete require.cache[require.resolve('./createEdgeExecute')];
+    delete require.cache[require.resolve('./getEdgeContainer')];
 
-  getExecute: () => execute
+    const createEdgeExecute = require('./createEdgeExecute');
+    const getEdgeContainer = require('./getEdgeContainer');
+
+    return createEdgeExecute(engine, getEdgeContainer(), { fetch });
+  }
 };

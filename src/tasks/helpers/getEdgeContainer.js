@@ -106,6 +106,8 @@ const augmentModules = (modulesOutput, extensionDescriptor, extensionPath) => {
             .join(extensionPath, extensionDescriptor.libBasePath || '', featureDescriptor.libPath)
             .replace(/\\/g, '/');
 
+          delete require.cache[modulePath];
+
           const moduleMeta = {
             extensionName: extensionDescriptor.name
           };

@@ -245,10 +245,6 @@ const configureApp = (app) => {
     try {
       saveContainer(req.body);
 
-      if (extensionDescriptor.platform === PLATFORMS.EDGE) {
-        generateEdgeLibrary.build();
-      }
-
       res.status(200);
       res.send('OK');
     } catch (error) {
@@ -275,8 +271,6 @@ const configureApp = (app) => {
   });
 
   if (extensionDescriptor.platform === PLATFORMS.EDGE) {
-    generateEdgeLibrary.build();
-
     app.post('/process-edge-request', (req, res) => {
       try {
         generateEdgeLibrary
