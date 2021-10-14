@@ -14,6 +14,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const { EXTENSION_DESCRIPTOR_FILENAME } = require('../constants/files');
+const isSandboxLinked = require('../../helpers/isSandboxLinked');
 
 // We are searching for any extension folder that exists in `node_modules` (scoped or unscoped).
 // This includes searching for extension in the folder
@@ -26,14 +27,26 @@ let extensionJsonPaths = glob.sync(
 // - the extension is inside the sandbox node_modules folder when sandbox is linked
 // (for developing purposes) or installed globally;
 // - the extension in on the same level with the sandbox folder when sandbox is executed via npx.
-extensionJsonPaths = extensionJsonPaths.concat(
-  glob
-    .sync(`{*/node_modules/*/,*/node_modules/@*/*/,*/,}${EXTENSION_DESCRIPTOR_FILENAME}`, {
-      follow: true,
-      cwd: path.resolve(__dirname, '../../../..')
+// When sandbox is linked, search inside 'node_modules/@adobe/reactor-sandbox'.
+if (isSandboxLinked()) {
+  const b = 'node_modules/@adobe/reactor-sandbox';
+  extensionJsonPaths = extensionJsonPaths.concat(
+    glob.sync(`{${b}/node_modules/*/,${b}/node_modules/@*/*/}${EXTENSION_DESCRIPTOR_FILENAME}`, {
+      follow: true
     })
-    .map((p) => path.resolve(__dirname, '../../../..', p))
-);
+  );
+} else {
+  // When the extension is run via NPX, the extension folders are on the same level
+  // with reactor-sandbox.
+  extensionJsonPaths = extensionJsonPaths.concat(
+    glob
+      .sync(`{*/node_modules/*/,*/node_modules/@*/*/,*/,}${EXTENSION_DESCRIPTOR_FILENAME}`, {
+        follow: true,
+        cwd: path.resolve(__dirname, '../../../..')
+      })
+      .map((p) => path.resolve(__dirname, '../../../..', p))
+  );
+}
 
 const getExtensionPlatform = (filePath) => {
   const fileContents = JSON.parse(fs.readFileSync(path.resolve(filePath)));
