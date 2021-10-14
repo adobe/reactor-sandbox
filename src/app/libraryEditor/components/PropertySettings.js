@@ -22,10 +22,10 @@ import { PLATFORMS } from '../../../helpers/sharedConstants';
 import ErrorMessage from '../../components/ErrorMessage';
 import ExtensionDescriptorContext from '../../extensionDescriptorContext';
 
-const isValid = ({ domains, propertyId, setErrors }) => {
+const isValid = ({ domains, propertyId, setErrors, platform }) => {
   const errors = {};
 
-  if (!domains) {
+  if (platform !== PLATFORMS.EDGE && !domains) {
     errors.domains = true;
   }
 
@@ -39,13 +39,14 @@ const isValid = ({ domains, propertyId, setErrors }) => {
 
 const handleSave = async ({
   domains,
+  platform,
   propertyId,
   setErrors,
   history,
   propertySettings,
   savePropertySettings
 }) => {
-  if (!isValid({ domains, propertyId, setErrors })) {
+  if (!isValid({ domains, propertyId, setErrors, platform })) {
     return false;
   }
 
@@ -124,6 +125,7 @@ export default () => {
                   propertyId,
                   setErrors,
                   history,
+                  platform,
                   propertySettings,
                   savePropertySettings: dispatch.property.savePropertySettings
                 });
