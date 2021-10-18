@@ -52,3 +52,8 @@ iframe {
 #controlPane .codeMirror-Wrapper {
   height: 100%;
 }
+
+.cm-editor {
+  height: 100%;
+  background-color: white;
+}

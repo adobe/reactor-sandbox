@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from 'react';
 import { ButtonGroup, Button } from '@adobe/react-spectrum';
-import CodeMirrorEditor from './CodeMirrorEditor';
+import CodeMirrorEditor from '../../components/CodeMirrorEditor';
 
 export default ({ onChange, content, onResetPress, onInitPress }) => {
   return (
