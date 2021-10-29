@@ -55,6 +55,8 @@ export default ({
 }) => {
   const [selectedTab, setSelectedTab] = useState('init');
   const [initContent, setInitContent] = useState();
+  const [resetId, setResetId] = useState(0);
+  const [initTabRedrawId, setInitTabRedrawId] = useState(0);
   const [currentExtensionBridge, setCurrentExtensionBridge] = useState({});
 
   useEffect(() => {
@@ -64,6 +66,7 @@ export default ({
 
     const newInitContent = getInitContent({ extensionDescriptor, selectedDescriptor });
     setInitContent(newInitContent);
+    setInitTabRedrawId(initTabRedrawId + 1);
     const parsedContent = JSON.parse(newInitContent);
 
     const newBrige = getNewBridge({
@@ -81,6 +84,23 @@ export default ({
     setCurrentExtensionBridge(newBrige);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDescriptor, extensionDescriptor]);
+
+  useEffect(() => {
+    if (resetId === 0) {
+      return;
+    }
+
+    const newInitContent = getDefaultInitInfo(selectedDescriptor);
+    setInitContent(newInitContent);
+    extensionViewInit({
+      extensionDescriptor,
+      selectedDescriptor,
+      extensionBridge: currentExtensionBridge,
+      content: newInitContent
+    });
+    setInitTabRedrawId(initTabRedrawId + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetId]);
 
   return (
     <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab} height="100%">
@@ -111,6 +131,7 @@ export default ({
       <TabPanels flexGrow="0" height="calc(100% - 6.5rem)">
         <Item key="init">
           <InitTabContent
+            key={initTabRedrawId}
             content={initContent}
             onChange={setInitContent}
             onInitPress={() => {
@@ -122,14 +143,7 @@ export default ({
               });
             }}
             onResetPress={() => {
-              const newInitContent = getDefaultInitInfo(selectedDescriptor);
-              setInitContent(newInitContent);
-              extensionViewInit({
-                extensionDescriptor,
-                selectedDescriptor,
-                extensionBridge: currentExtensionBridge,
-                content: newInitContent
-              });
+              setResetId(resetId + 1);
             }}
           />
         </Item>
