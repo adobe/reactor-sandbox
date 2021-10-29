@@ -16,7 +16,7 @@ import CodeMirrorEditor from '../../components/CodeMirrorEditor';
 import reportFatalError from './helpers/reportFatalError';
 import { LOG_PREFIX } from './helpers/constants';
 
-const onGetSettingsPress = ({ setSettings, extensionBridge }) => {
+const onGetSettingsPress = ({ setSettings, extensionBridge, setCodeEditorId, codeEditorId }) => {
   if (extensionBridge) {
     extensionBridge.promise.then((api) => {
       api
@@ -25,6 +25,7 @@ const onGetSettingsPress = ({ setSettings, extensionBridge }) => {
           // eslint-disable-next-line no-console
           console.log(`${LOG_PREFIX} getSettings() returned`, settings);
           setSettings(JSON.stringify(settings, null, 2));
+          setCodeEditorId(codeEditorId + 1);
         })
         .catch(reportFatalError);
     });
@@ -33,10 +34,11 @@ const onGetSettingsPress = ({ setSettings, extensionBridge }) => {
 
 export default ({ extensionBridge, onCopySettingsPress }) => {
   const [settings, setSettings] = useState('null');
+  const [codeEditorId, setCodeEditorId] = useState(0);
 
   return (
     <>
-      <CodeMirrorEditor value={settings} onChange={setSettings} />
+      <CodeMirrorEditor value={settings} onChange={setSettings} key={codeEditorId} />
 
       <ButtonGroup margin="size-150" position="absolute" bottom="size-0">
         <Button
@@ -44,6 +46,8 @@ export default ({ extensionBridge, onCopySettingsPress }) => {
           onPress={() =>
             onGetSettingsPress({
               setSettings,
+              setCodeEditorId,
+              codeEditorId,
               extensionBridge
             })
           }

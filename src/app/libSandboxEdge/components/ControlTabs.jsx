@@ -49,13 +49,26 @@ export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest,
   const [selectedTab, setSelectedTab] = useState('xdm');
   const [xdm, setXdm] = useState(null);
   const [request, setRequest] = useState(null);
+  const [resetId, setResetId] = useState(0);
+  const [tabRedrawId, setTabRedrawId] = useState(0);
 
   useEffect(() => {
     loadRequest({ extensionDescriptor, setXdm, setRequest });
   }, [extensionDescriptor]);
 
+  useEffect(() => {
+    if (resetId === 0) {
+      return;
+    }
+
+    reset({ extensionDescriptor, setXdm, setRequest });
+    setTabRedrawId(tabRedrawId + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetId]);
+
   return (
     <Tabs
+      key={tabRedrawId}
       selectedKey={selectedTab}
       onSelectionChange={(key) => {
         try {
@@ -114,7 +127,7 @@ export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest,
               });
             }}
             onReset={() => {
-              reset({ extensionDescriptor, setXdm, setRequest });
+              setResetId(resetId + 1);
             }}
           />
         </Item>
@@ -132,7 +145,7 @@ export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest,
               });
             }}
             onReset={() => {
-              reset({ extensionDescriptor, setXdm, setRequest });
+              setResetId(resetId + 1);
             }}
           />
         </Item>

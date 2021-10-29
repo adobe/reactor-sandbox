@@ -47,7 +47,7 @@ const errorGutter = gutter({
   initialSpacer: () => errorMarker
 });
 
-const Editor = ({ value = '', onUpdate: onChange = undefined }) => {
+const Editor = ({ value = '', onChange = undefined }) => {
   const editor = React.useRef(null);
 
   React.useEffect(() => {
@@ -56,7 +56,11 @@ const Editor = ({ value = '', onUpdate: onChange = undefined }) => {
     const extensions = [errorGutter, basicSetup, json(), linter(jsonLiner)];
 
     if (onChange) {
-      extensions.push(EditorView.updateListener.of(onChange));
+      extensions.push(
+        EditorView.updateListener.of(({ state: { doc } }) => {
+          onChange(doc.toString());
+        })
+      );
     }
 
     const state = EditorState.create({
@@ -68,7 +72,8 @@ const Editor = ({ value = '', onUpdate: onChange = undefined }) => {
     view.focus();
 
     return () => view.destroy();
-  }, [editor, value, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, onChange]);
 
   return <div style={{ height: '100%' }} ref={editor} />;
 };
