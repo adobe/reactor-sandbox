@@ -16,15 +16,17 @@ const sandboxPkg = require('../../package.json');
 const getSandboxLatestVersion = require('./getLatestVersion');
 
 module.exports = () => {
-  const sandboxOutdated = semverDiff(sandboxPkg.version, getSandboxLatestVersion());
+  const latestSandboxVersion = getSandboxLatestVersion();
+  const sandboxOutdated = semverDiff(sandboxPkg.version, latestSandboxVersion);
 
   if (sandboxOutdated) {
     // eslint-disable-next-line no-console
     console.log(
       chalk.red(
-        'Your sandbox is out of date. To ensure you are testing against the ' +
-          'latest code, please first update your sandbox by running ' +
-          `${chalk.cyan('npm i @adobe/reactor-sandbox@latest')}.`
+        `Your sandbox is out of date. You are using version "${sandboxPkg.version}", latest
+          version is "${latestSandboxVersion}". To ensure you are testing against the 
+          latest code, please first update your sandbox by running
+          "${chalk.cyan('npm i @adobe/reactor-sandbox@latest')}".`
       )
     );
   }
