@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 /* eslint-disable import/prefer-default-export */
 
+import { LAUNCH_ENVIRONMENT_NAME } from '../constants';
+
 const activePromises = {};
 
 const fetchJson = (endpoint) =>
@@ -49,26 +51,37 @@ export const getStatus = () => {
 export const getEditorRegistry = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/editor-registry.js`);
 export const getContainerData = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`);
 
-export const saveContainerData = (containerData) =>
-  fetch(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`, {
-    method: 'POST',
-    cache: 'no-cache',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(containerData)
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        const body = await response.text();
-        throw new Error(`${response.statusText}: ${body}`);
-      }
-
-      return response;
-    })
-    .catch((e) => {
-      throw new Error(`An error occured when saving the container: ${e.message}.`);
+export const saveContainerData = async (containerData) => {
+  try {
+    const container = await getContainerData();
+    // back support older container files that never had this environment object
+    const fallbackDefaultEnvironment = {
+      id: LAUNCH_ENVIRONMENT_NAME,
+      stage: 'development',
+      backsupported: true
+    };
+    const saveResponse = await fetch(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`, {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...containerData,
+        environment: container.environment || fallbackDefaultEnvironment
+      })
     });
+
+    if (!saveResponse.ok) {
+      const body = await saveResponse.text();
+      throw new Error(`${saveResponse.statusText}: ${body}`);
+    }
+
+    return saveResponse;
+  } catch (e) {
+    throw new Error(`An error occurred when saving the container: ${e.message}.`);
+  }
+};
 
 export const sendEdgeRequest = (body) =>
   fetch(`${window.EXPRESS_PUBLIC_URL}/process-edge-request`, {

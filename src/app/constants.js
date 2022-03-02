@@ -16,5 +16,6 @@ module.exports = {
     LIB_SANDBOX: '/libSandbox',
     VIEW_SANDBOX: '/viewSandbox',
     LIBRARY_EDITOR: '/libraryEditor'
-  }
+  },
+  LAUNCH_ENVIRONMENT_NAME: 'EN00000000000000000000000000000000'
 };
