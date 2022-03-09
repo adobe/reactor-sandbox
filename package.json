@@ -70,10 +70,10 @@
     "glob": "^7.2.0",
     "immer": "^9.0.6",
     "js-beautify": "^1.14.0",
-    "jshint": "^2.13.1",
+    "jshint": "^2.13.4",
     "jsonlint-mod": "^1.7.6",
     "match-requires": "^2.0.1",
-    "node-fetch": "^2.6.2",
+    "node-fetch": "^2.6.7",
     "pkg-dir": "^5.0.0",
     "pkg-up": "^3.1.0",
     "react": "^17.0.2",
@@ -86,26 +86,26 @@
     "semver-diff": "^3.1.1"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.14.5",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-header": "^3.1.1",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.26.1",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-react": "^7.29.3",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "^7.0.2",
     "jest-runner-eslint": "^1.0.0",
     "lint-staged": "^11.2.3",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
-    "react-scripts": "^4.0.3"
+    "react-scripts": "^5.0.0"
   },
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14.17.0"
   }
 }

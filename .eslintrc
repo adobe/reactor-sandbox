@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "env": {
     "browser": true,
     "jasmine": true,
@@ -57,7 +57,9 @@
     ],
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
     "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
-    "header/header": [2, "block", [{ "pattern": "Copyright \\d{4} Adobe" }]]
+    "header/header": [2, "block", [{ "pattern": "Copyright \\d{4} Adobe" }]],
+    "react/function-component-definition": 0,
+    "react/destructuring-assignment": 0
   },
   "globals": {
     "Simulate": true,
