@@ -57,8 +57,7 @@ export const saveContainerData = async (containerData) => {
     // back support older container files that never had this environment object
     const fallbackDefaultEnvironment = {
       id: LAUNCH_ENVIRONMENT_NAME,
-      stage: 'development',
-      backsupported: true
+      stage: 'development'
     };
     const saveResponse = await fetch(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`, {
       method: 'POST',
