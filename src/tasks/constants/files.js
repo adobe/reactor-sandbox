@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const path = require('path');
-const { LAUNCH_ENVIRONMENT_NAME } = require('../../app/constants');
+const APP_CONSTANTS = require('../../app/constants');
 
 const ENGINE_FILENAME = 'engine.js';
 const INIT_FILES_SRC_PATH = path.resolve(__dirname, '../../client/initFiles');
@@ -28,7 +28,7 @@ const files = {
   CONSUMER_PROVIDED_FILES_PATH: path.resolve('.sandbox'),
   CONTAINER_FILENAME: 'container.js',
   ENGINE_FILENAME: 'engine.js',
-  LAUNCH_LIBRARY_FILENAME: `launch-${LAUNCH_ENVIRONMENT_NAME}.js`,
+  LAUNCH_LIBRARY_FILENAME: `launch-${APP_CONSTANTS.LAUNCH_ENVIRONMENT_NAME}.js`,
   TURBINE_ENGINE_PATH: require.resolve(`@adobe/reactor-turbine/dist/${ENGINE_FILENAME}`),
   VIEW_SANDBOX_HTML_FILENAME: 'viewSandbox.html',
   LIB_SANDBOX_HTML_FILENAME: 'libSandbox.html',
