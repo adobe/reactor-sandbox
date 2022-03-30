@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 /* eslint-disable import/prefer-default-export */
 
-import { LAUNCH_ENVIRONMENT_NAME } from '../constants';
+import { LAUNCH_ENVIRONMENT_NAME } from '../../client/constants';
 
 const activePromises = {};
 

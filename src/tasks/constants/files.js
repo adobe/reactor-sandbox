@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const path = require('path');
-const { LAUNCH_ENVIRONMENT_NAME } = require('../../app/constants');
+const { LAUNCH_ENVIRONMENT_NAME } = require('../../client/constants');
 
 const ENGINE_FILENAME = 'engine.js';
 const INIT_FILES_SRC_PATH = path.resolve(__dirname, '../../client/initFiles');
