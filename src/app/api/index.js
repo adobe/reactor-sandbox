@@ -52,13 +52,6 @@ export const getEditorRegistry = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/e
 export const getContainerData = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/editor-container.js`);
 
 export const saveContainerData = async (containerData) => {
-  let container = {};
-  try {
-    // A newly build extension might not have container created.
-    container = await getContainerData();
-    // eslint-disable-next-line no-empty
-  } catch (e) {}
-
   try {
     // back support older container files that never had this environment object
     const fallbackDefaultEnvironment = {
@@ -73,7 +66,7 @@ export const saveContainerData = async (containerData) => {
       },
       body: JSON.stringify({
         ...containerData,
-        environment: container.environment || fallbackDefaultEnvironment
+        environment: containerData.environment || fallbackDefaultEnvironment
       })
     });
 
