@@ -53,7 +53,6 @@ export const getContainerData = () => fetchJson(`${window.EXPRESS_PUBLIC_URL}/ed
 
 export const saveContainerData = async (containerData) => {
   try {
-    const container = await getContainerData();
     // back support older container files that never had this environment object
     const fallbackDefaultEnvironment = {
       id: LAUNCH_ENVIRONMENT_NAME,
@@ -67,7 +66,7 @@ export const saveContainerData = async (containerData) => {
       },
       body: JSON.stringify({
         ...containerData,
-        environment: container.environment || fallbackDefaultEnvironment
+        environment: containerData.environment || fallbackDefaultEnvironment
       })
     });
 
