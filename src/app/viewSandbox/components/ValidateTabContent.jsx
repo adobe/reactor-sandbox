@@ -10,7 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import Ajv from 'ajv';
+import Ajv from 'ajv-draft-04';
+import addAJVFormats from 'ajv-formats';
 import React, { useState } from 'react';
 import { Button, Text, Flex, View } from '@adobe/react-spectrum';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
@@ -32,12 +33,12 @@ const onValidatePress = ({ extensionBridge, setValidationState, descriptor }) =>
           console.log(`${LOG_PREFIX} getSettings() returned`, settings);
 
           if (validationResult === true) {
-            const ajv = Ajv({
+            const ajv = new Ajv({
               loadSchema,
-              schemaId: 'auto'
+              schemaId: 'auto',
+              strict: false
             });
-            // eslint-disable-next-line global-require
-            ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
+            addAJVFormats(ajv);
 
             return ajv.compileAsync(descriptor.schema).then((validate) => {
               const matchesSchema = validate(settings);
