@@ -80,24 +80,32 @@ const setValueToObject = (obj, propertyPath, value) => {
   return true;
 };
 
-const deleteValueFromObject = (obj, propertyPath) => {
-  let parentObj = null;
-  let parentKey = null;
+const deleteValueFromObject = (obj, propertyPath, i = 0) => {
+  const key = propertyPath[i];
 
-  for (let i = 0; i < propertyPath.length; i += 1) {
-    const key = propertyPath[i];
-    if (!obj[key]) {
+  if (i === propertyPath.length - 1) {
+    if (!obj[propertyPath[i]]) {
       return false;
     }
-
-    parentObj = obj;
-    parentKey = key;
-    obj = obj[key];
+    delete obj[propertyPath[i]];
+    return true;
   }
 
-  delete parentObj[parentKey];
+  if (propertyPath[i].endsWith('[]')) {
+    const arrayKey = key.substring(0, key.length - 2);
+    if (!obj[arrayKey] || !Array.isArray(obj[arrayKey])) {
+      return false;
+    }
+    return obj[arrayKey].reduce((memo, subObj) => {
+      return deleteValueFromObject(subObj, propertyPath, i + 1) || memo;
+    }, false);
+  }
 
-  return true;
+  if (!obj[propertyPath[i]]) {
+    return false;
+  }
+
+  return deleteValueFromObject(obj[propertyPath[i]], propertyPath, i + 1);
 };
 
 const functionTransform = (transformData, fnCode) => {
