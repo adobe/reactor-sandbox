@@ -1,12 +1,12 @@
-# Experience Platform Tags Extension Sandbox
+# Adobe Experience Platform Tags Extension Sandbox
 
 [![npm (scoped)](https://img.shields.io/npm/v/@adobe/reactor-sandbox.svg?style=flat)](https://www.npmjs.com/package/@adobe/reactor-sandbox)
 
-Experience Platform Tags, by Adobe, is a next-generation tag management solution enabling simplified deployment of marketing technologies. For more information regarding Experience Platform Tags, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
+Adobe Experience Platform Tags is a next-generation tag management solution enabling simplified deployment of marketing technologies. For more information regarding Tags, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
 
-This project provides a sandbox in which you can manually test your Experience Platform Tags extension. You can test both (1) your views that will eventually appear in the Experience Platform Tags UI and (2) your library logic that will eventually run on the user's website.
+This project provides a sandbox in which you can manually test your Tags extension. You can test both (1) your views that will eventually appear in the Tags UI and (2) your library logic that will eventually run on the user's website.
 
-For more information about developing an extension for Experience Platform Tags, please visit our [extension development guide](https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/overview.html?lang=en).
+For more information about developing an extension for Tags, please visit our [extension development guide](https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/overview.html).
 
 ## Usage
 
@@ -36,8 +36,8 @@ npx @adobe/reactor-sandbox init
 
 This will generate a directory within your project named `.sandbox` that contains two files you may edit to configure the sandbox:
 
-- `container.js` When Experience Platform Tags publishes a library, it consists of two parts: (1) a data structure that stores information about saved rules, data elements, and extension configuration and (2) an engine to operate on such a data structure. `container.js` is the data structure (not the engine) that you may modify to simulate saved rules, data elements, and extension configuration. This template will be used to produce a complete `container.js` (JavaScript from your extension will be added) which will be used in tandem with the `Turbine` engine inside the sandbox. We have tried to provide inline comments on how to modify `container.js`, but if you need further help, please [let the Experience Platform Tags team know](https://launch-developers.slack.com/) and we can help you out.
-- `libSandbox.html` includes some simple HTML along with a single script tag called `launch-EN00000000000000000000000000000000.js`, which simulates a production Experience Platform Tags library. The simulated library contains the combined contents of your `container.js` file and the `Turbine` engine.
+- `container.js` When Tags publishes a library, it consists of two parts: (1) a data structure that stores information about saved rules, data elements, and extension configuration and (2) an engine to operate on such a data structure. `container.js` is the data structure (not the engine) that you may modify to simulate saved rules, data elements, and extension configuration. This template will be used to produce a complete `container.js` (JavaScript from your extension will be added) which will be used in tandem with the `Turbine` engine inside the sandbox. We have tried to provide inline comments on how to modify `container.js`, but if you need further help, please [let the Tags team know](https://launch-developers.slack.com/) and we can help you out.
+- `libSandbox.html` includes some simple HTML along with a single script tag called `launch-EN00000000000000000000000000000000.js`, which simulates a production Tags library. The simulated library contains the combined contents of your `container.js` file and the `Turbine` engine.
 
   `libSandbox.html` can be modified to manually test whatever you would like. For example, if you'd like to test that your brand new "focus" event type is working as desired, you can add a text input to the `libSandbox.html` to ensure your dummy rule fires when a form element receives focus.
 
