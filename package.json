@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "12.5.0-beta.1",
+  "version": "12.5.0",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
