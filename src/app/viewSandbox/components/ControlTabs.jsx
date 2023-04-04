@@ -22,9 +22,9 @@ import ValidateTabContent from './ValidateTabContent';
 import getInitContent from './helpers/getInitContent';
 import extensionViewInit from './helpers/extensionViewInit';
 import reportFatalError from './helpers/reportFatalError';
-import getDefaultInitInfo from './helpers/getDefaultInitInfo';
 import getNewBridge from '../helpers/getNewBridge';
 import { LOG_PREFIX } from './helpers/constants';
+import { getDefaultInitInfoFromApi } from '../../api';
 
 const mergeSettingsOnTopOfIniContent = ({ initContent, settings }) => {
   try {
@@ -64,24 +64,27 @@ export default ({
       return;
     }
 
-    const newInitContent = getInitContent({ extensionDescriptor, selectedDescriptor });
-    setInitContent(newInitContent);
-    setInitTabRedrawId(initTabRedrawId + 1);
-    const parsedContent = JSON.parse(newInitContent);
+    const run = async () => {
+      const newInitContent = await getInitContent({ extensionDescriptor, selectedDescriptor });
+      setInitContent(newInitContent);
+      setInitTabRedrawId(initTabRedrawId + 1);
+      const parsedContent = JSON.parse(newInitContent);
 
-    const newBrige = getNewBridge({
-      setDataElementSelectorModal,
-      setCodeEditorModal,
-      parentContainerRef: extensionViewPaneRef,
-      extensionDescriptor,
-      selectedDescriptor,
-      initInfo: parsedContent
-    });
+      const newBrige = getNewBridge({
+        setDataElementSelectorModal,
+        setCodeEditorModal,
+        parentContainerRef: extensionViewPaneRef,
+        extensionDescriptor,
+        selectedDescriptor,
+        initInfo: parsedContent
+      });
+      // eslint-disable-next-line no-console
+      console.log(`${LOG_PREFIX} init() with`, parsedContent);
 
-    // eslint-disable-next-line no-console
-    console.log(`${LOG_PREFIX} init() with`, parsedContent);
+      setCurrentExtensionBridge(newBrige);
+    };
+    run();
 
-    setCurrentExtensionBridge(newBrige);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDescriptor, extensionDescriptor]);
 
@@ -89,16 +92,23 @@ export default ({
     if (resetId === 0) {
       return;
     }
-
-    const newInitContent = getDefaultInitInfo(selectedDescriptor);
-    setInitContent(newInitContent);
-    extensionViewInit({
-      extensionDescriptor,
-      selectedDescriptor,
-      extensionBridge: currentExtensionBridge,
-      content: newInitContent
-    });
-    setInitTabRedrawId(initTabRedrawId + 1);
+    const run = async () => {
+      const { type, descriptor } = selectedDescriptor;
+      const newInitContent = JSON.stringify(
+        await getDefaultInitInfoFromApi(type, descriptor.name),
+        null,
+        2
+      );
+      setInitContent(newInitContent);
+      extensionViewInit({
+        extensionDescriptor,
+        selectedDescriptor,
+        extensionBridge: currentExtensionBridge,
+        content: newInitContent
+      });
+      setInitTabRedrawId(initTabRedrawId + 1);
+    };
+    run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetId]);
 

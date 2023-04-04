@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getDefaultInitInfo from './getDefaultInitInfo';
+import { getDefaultInitInfoFromApi } from '../../../api';
 import VIEW_GROUPS from '../../helpers/viewsGroups';
 
-export default ({ selectedDescriptor, extensionDescriptor }) => {
+export default async ({ selectedDescriptor, extensionDescriptor }) => {
   if (!extensionDescriptor || !selectedDescriptor.descriptor) {
     return '';
   }
@@ -30,5 +30,5 @@ export default ({ selectedDescriptor, extensionDescriptor }) => {
     return cachedInitInfo;
   }
 
-  return getDefaultInitInfo(selectedDescriptor);
+  return JSON.stringify(await getDefaultInitInfoFromApi(type, descriptor.name), null, 2);
 };
