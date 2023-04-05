@@ -236,7 +236,9 @@ const augmentSandboxEvents = (extensionsOutput) => {
   }
 };
 
-module.exports = () => {
+module.exports = (options = {}) => {
+  const { container: containerOption } = options;
+
   // When running this task from a turbine extension project we want to include the
   // extension descriptor from that extension as well as any extensions we find under its
   // node_modules.
@@ -244,17 +246,21 @@ module.exports = () => {
   // under this project's node_modules or under a folder starting with @(as for npm scopes).
   let container;
 
-  // Try to use the consumer-defined container first and fallback to the default if they haven't
-  // provided one.
-  try {
-    // Make sure we get the latest.
-    delete require.cache[CONSUMER_CONTAINER_TEMPLATE_PATH];
-    container = require(CONSUMER_CONTAINER_TEMPLATE_PATH);
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND') {
+  if (containerOption) {
+    container = containerOption;
+  } else {
+    // Try to use the consumer-defined container first and fallback to the default if they haven't
+    // provided one.
+    try {
       // Make sure we get the latest.
-      delete require.cache[DEFAULT_CONTAINER_TEMPLATE_PATH];
-      container = require(DEFAULT_CONTAINER_TEMPLATE_PATH);
+      delete require.cache[CONSUMER_CONTAINER_TEMPLATE_PATH];
+      container = require(CONSUMER_CONTAINER_TEMPLATE_PATH);
+    } catch (error) {
+      if (error.code === 'MODULE_NOT_FOUND') {
+        // Make sure we get the latest.
+        delete require.cache[DEFAULT_CONTAINER_TEMPLATE_PATH];
+        container = require(DEFAULT_CONTAINER_TEMPLATE_PATH);
+      }
     }
   }
 
