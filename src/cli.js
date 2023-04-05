@@ -17,25 +17,37 @@ const chalk = require('chalk');
 const validateSandboxVersion = require('./helpers/validateSandboxVersion');
 const validateExtensionBridge = require('./helpers/validateExtensionBridge');
 
-validateSandboxVersion();
-validateExtensionBridge();
+(async () => {
+  validateSandboxVersion();
+  validateExtensionBridge();
 
-const task = process.argv.slice(2)[0];
+  const task = process.argv.slice(2)[0];
 
-let execute;
+  let execute;
+  let build;
 
-switch (task) {
-  case 'init':
-    execute = require('./tasks/init');
-    break;
-  default:
+  switch (task) {
+    case 'build':
+      build = require('./tasks/build');
+      execute = () => {
+        // eslint-disable-next-line no-console
+        console.log(build());
+      };
+      break;
+    case 'init':
+      execute = require('./tasks/init');
+      break;
+    default:
+      // eslint-disable-next-line no-console
+      execute = require('./tasks/run');
+      break;
+  }
+
+  try {
+    await execute();
+  } catch (error) {
     // eslint-disable-next-line no-console
-    execute = require('./tasks/run');
-    break;
-}
-
-execute().catch((error) => {
-  // eslint-disable-next-line no-console
-  console.error(chalk.red(error));
-  process.exit(1);
-});
+    console.error(chalk.red(error));
+    process.exit(1);
+  }
+})();
