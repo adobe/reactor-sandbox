@@ -1,5 +1,5 @@
-﻿/*
-Copyright 2019 Adobe. All rights reserved.
+/*
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,47 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-prototype-builtins */
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
-
 const fs = require('fs');
 const path = require('path');
 const matchRequires = require('match-requires');
-const files = require('../constants/files');
 const extensionDescriptorPaths = require('./extensionDescriptorPaths');
+const Replacement = require('./Replacement');
 
 const FEATURE_TYPES = ['events', 'conditions', 'actions', 'dataElements', 'sharedModules', 'main'];
-
-const DEFAULT_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.INIT_FILES_SRC_PATH,
-  files.CONTAINER_FILENAME
-);
-
-const CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
-  files.CONSUMER_PROVIDED_FILES_PATH,
-  files.CONTAINER_FILENAME
-);
 
 const wrapInFunction = (content, argNames) => {
   const argsStr = argNames ? argNames.join(', ') : '';
   return `function(${argsStr}) {\n${content}\n}\n`;
-};
-
-const functionTokenRegistry = {
-  _tokenIdCounter: 0,
-  _functionStrByToken: {},
-  FUNCTION_TOKEN_REGEX: /"\{\{sandbox:function:(.+?)\}\}"/g,
-  getToken(functionStr) {
-    // eslint-disable-next-line no-plusplus
-    const tokenId = ++this._tokenIdCounter;
-    this._functionStrByToken[tokenId] = functionStr;
-    return `{{sandbox:function:${tokenId}}}`;
-  },
-  getFunctionStr(tokenId) {
-    return this._functionStrByToken[tokenId];
-  }
 };
 
 const augmentModule = (modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) => {
@@ -86,16 +56,14 @@ const augmentModule = (modulesOutput, extensionName, extensionPath, modulePath, 
       // to JSON that the token should be replaced with an actual, executable function
       // which wraps the delegate code. We can't just set the value to a function right
       // now because it wouldn't be properly serialized.
-      script: functionTokenRegistry.getToken(
-        wrapInFunction(source, ['module', 'exports', 'require', 'turbine'])
-      )
+      script: new Replacement(wrapInFunction(source, ['module', 'exports', 'require', 'turbine']))
     };
     modulesOutput[referencePath] = moduleOutput;
   }
 
   // Merge meta information.
   Object.keys(moduleMeta).forEach((key) => {
-    if (!moduleOutput.hasOwnProperty(key)) {
+    if (!Object.prototype.hasOwnProperty.call(moduleOutput, key)) {
       moduleOutput[key] = moduleMeta[key];
     }
   });
@@ -105,7 +73,7 @@ const augmentModules = (extensionOutput, extensionDescriptor, extensionPath) => 
   extensionOutput.modules = extensionOutput.modules || {};
 
   FEATURE_TYPES.forEach((featureType) => {
-    if (extensionDescriptor.hasOwnProperty(featureType)) {
+    if (Object.prototype.hasOwnProperty.call(extensionDescriptor, featureType)) {
       let featureDescriptors = extensionDescriptor[featureType];
 
       if (typeof featureDescriptors === 'string') {
@@ -236,28 +204,7 @@ const augmentSandboxEvents = (extensionsOutput) => {
   }
 };
 
-module.exports = () => {
-  // When running this task from a turbine extension project we want to include the
-  // extension descriptor from that extension as well as any extensions we find under its
-  // node_modules.
-  // When running this task from within this builder project we care about any extensions we find
-  // under this project's node_modules or under a folder starting with @(as for npm scopes).
-  let container;
-
-  // Try to use the consumer-defined container first and fallback to the default if they haven't
-  // provided one.
-  try {
-    // Make sure we get the latest.
-    delete require.cache[CONSUMER_CONTAINER_TEMPLATE_PATH];
-    container = require(CONSUMER_CONTAINER_TEMPLATE_PATH);
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND') {
-      // Make sure we get the latest.
-      delete require.cache[DEFAULT_CONTAINER_TEMPLATE_PATH];
-      container = require(DEFAULT_CONTAINER_TEMPLATE_PATH);
-    }
-  }
-
+module.exports = (container) => {
   let extensionsOutput = container.extensions;
 
   if (!extensionsOutput) {
@@ -266,7 +213,9 @@ module.exports = () => {
   }
 
   extensionDescriptorPaths.forEach((extensionDescriptorPath) => {
+    // eslint-disable-next-line global-require, import/no-dynamic-require
     const extensionDescriptor = require(path.resolve(extensionDescriptorPath));
+    // eslint-disable-next-line global-require, import/no-dynamic-require
     const extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
 
     // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because
@@ -283,40 +232,10 @@ module.exports = () => {
 
     extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
     extensionOutput.hostedLibFilesBaseUrl = `/hostedLibFiles/\
-${extensionDescriptor.name}/${extensionDescriptor.version}/`;
+  ${extensionDescriptor.name}/${extensionDescriptor.version}/`;
 
     augmentModules(extensionOutput, extensionDescriptor, extensionPath);
   });
 
   augmentSandboxEvents(extensionsOutput);
-
-  // Stringify the container so we can wrap it with some additional code (see down below).
-  container = JSON.stringify(
-    container,
-    (key, value) => {
-      // When consumers have placed functions in their container, we need to maintain them as
-      // executable functions in the final output. Consumers may place functions in their container
-      // in order to simulate the "function" transform that typically occurs on the server.
-      if (typeof value === 'function') {
-        return functionTokenRegistry.getToken(value.toString());
-      }
-
-      return value;
-    },
-    2
-  );
-
-  // Replace all function tokens in the JSON with executable functions.
-  container = container.replace(functionTokenRegistry.FUNCTION_TOKEN_REGEX, (token, tokenId) => {
-    return functionTokenRegistry.getFunctionStr(tokenId);
-  });
-
-  container = `${
-    '' +
-    '(function() {\n' +
-    '  window._satellite = window._satellite || {};\n' +
-    '  window._satellite.container = '
-  }${container}\n})();`;
-
-  return container;
 };

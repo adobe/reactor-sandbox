@@ -17,26 +17,24 @@ governing permissions and limitations under the License.
  */
 
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const https = require('https');
 const express = require('express');
 const chalk = require('chalk');
-const hexDecode = require('@adobe/reactor-token-scripts-edge/src/hexDecode');
 const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const bodyParser = require('body-parser');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 const getExtensionDescriptors = require('./helpers/getExtensionDescriptors');
-const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 const editorRegistry = require('./helpers/editorRegistry');
 const saveContainer = require('./helpers/saveContainer');
 const generateEdgeLibrary = require('./helpers/generateEdgeLibrary');
-const unTransform = require('./helpers/unTransform');
 const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
 const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
 const getLatestVersion = require('../helpers/getLatestVersion');
 const { PLATFORMS } = require('../helpers/sharedConstants');
+const build = require('./helpers/build');
 
 const { platform } = getExtensionDescriptor();
 
@@ -91,11 +89,20 @@ const configureApp = (app) => {
       console.error(chalk.red(validationError));
       res.status(500).send(validationError);
     } else {
-      const containerJS = getContainer();
-      const turbine = fs.readFileSync(files.TURBINE_ENGINE_PATH);
-      const launchLibContents = containerJS + turbine;
+      const buildFiles = build();
+
+      // write external files to disk so they can be served by the static express server
+      fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
+      Object.keys(buildFiles).forEach((fileName) => {
+        if (fileName.startsWith('/files/')) {
+          fs.writeFileSync(
+            `${files.CONSUMER_PROVIDED_FILES_PATH}${fileName}`,
+            buildFiles[fileName]
+          );
+        }
+      });
       res.setHeader('Content-Type', 'application/javascript');
-      res.send(launchLibContents);
+      res.send(buildFiles[files.LAUNCH_LIBRARY_FILENAME]);
     }
   });
 
@@ -215,22 +222,7 @@ const configureApp = (app) => {
 
       // container will be available after eval finishes.
       // eslint-disable-next-line no-undef
-      let containerContent = JSON.stringify(container, unTransform);
-
-      if (extensionDescriptor.platform === PLATFORMS.EDGE) {
-        // Revert edge sanitization. When we save an edge container, any data element token
-        // `{{name}}` gets transformed to getDataElementValue(reactor${encodedDataElementName})
-        // in order for the JS to be valid. Here we need to revert that transformation so that
-        // in the Library editor, the user will see the value that he entered.
-        containerContent = containerContent.replace(
-          /getDataElementValue\(reactor([^)]+)\)/g,
-          (match, encodedDataElementName) =>
-            match.replace(
-              `getDataElementValue(reactor${encodedDataElementName})`,
-              `{{${hexDecode(encodedDataElementName)}}}`
-            )
-        );
-      }
+      const containerContent = JSON.stringify(container);
 
       res.setHeader('Content-Type', 'application/json');
       res.send(containerContent);
