@@ -68,12 +68,6 @@ module.exports = {
       undefinedVarsReturnEmpty: false
     }
   },
-  buildInfo: {
-    turbineVersion: '27.2.0',
-    turbineBuildDate: '2021-08-11T20:25:49Z',
-    buildDate: '2022-01-01T12:10:33Z',
-    environment: 'development' // deprecated, use environment block instead
-  },
   environment: {
     id: 'EN00000000000000000000000000000000',
     stage: 'development'
