@@ -14,6 +14,7 @@ governing permissions and limitations under the License.
 /* eslint-disable global-require */
 
 const chalk = require('chalk');
+
 const validateSandboxVersion = require('./helpers/validateSandboxVersion');
 const validateExtensionBridge = require('./helpers/validateExtensionBridge');
 
@@ -24,15 +25,10 @@ const validateExtensionBridge = require('./helpers/validateExtensionBridge');
   const task = process.argv.slice(2)[0];
 
   let execute;
-  let build;
 
   switch (task) {
     case 'build':
-      build = require('./tasks/build');
-      execute = () => {
-        // eslint-disable-next-line no-console
-        console.log(build());
-      };
+      execute = require('./tasks/build');
       break;
     case 'init':
       execute = require('./tasks/init');

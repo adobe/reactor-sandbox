@@ -10,25 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const chalk = require('chalk');
-const fs = require('fs');
-
-const validateExtensionDescriptor = require('@adobe/reactor-validator');
-const getContainer = require('./helpers/getContainer');
-const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
+const fs = require('fs-extra');
+const build = require('./helpers/build');
 const files = require('./constants/files');
 
-module.exports = (options) => {
-  const extensionDescriptor = getExtensionDescriptor();
-  const validationError = validateExtensionDescriptor(extensionDescriptor);
-  if (validationError) {
-    // eslint-disable-next-line no-console
-    console.error(chalk.red(validationError));
-    process.exit(1);
-  }
-  const containerJS = getContainer(options);
-  const turbine = fs.readFileSync(files.TURBINE_ENGINE_PATH);
-  const launchLibContents = containerJS + turbine;
+module.exports = () => {
+  const buildFiles = build();
 
-  return launchLibContents;
+  fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
+  Object.keys(buildFiles).forEach((fileName) => {
+    fs.writeFileSync(`${files.CONSUMER_PROVIDED_FILES_PATH}${fileName}`, buildFiles[fileName]);
+  });
 };
