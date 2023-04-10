@@ -20,6 +20,10 @@ const extensionDescriptors = getExtensionDescriptors(platform);
 const LIBRARY_LOADED_LIB_PATH = 'core/src/lib/events/libraryLoaded.js';
 const PAGE_BOTTOM_LIB_PATH = 'core/src/lib/events/pageBottom.js';
 
+const splitPath = (path) => {
+  return path.split(/(\[\]|\.)/).filter((match) => match !== '.' && match !== '');
+};
+
 const addExternalFile = (content, externalFiles) => {
   const i = Object.keys(externalFiles).length + 1;
   const filename = `/files/file${i}.js`;
@@ -129,7 +133,7 @@ const deleteValueFromObject = (obj, propertyPath) => {
 };
 
 const executeFunctionTransform = (transformData, propertyPath, containerConfig) => {
-  propertyPath = propertyPath.concat(transformData.propertyPath.split('.'));
+  propertyPath = propertyPath.concat(splitPath(transformData.propertyPath));
   transformValueFromObject(containerConfig, propertyPath, (functionContent) => {
     return new Replacement(
       `function(${transformData.parameters.join(', ') || []}) {${functionContent}}`
@@ -138,7 +142,7 @@ const executeFunctionTransform = (transformData, propertyPath, containerConfig) 
 };
 
 const executeFileTransform = (transformData, propertyPath, containerConfig, externalFiles) => {
-  propertyPath = propertyPath.concat(transformData.propertyPath.split('.'));
+  propertyPath = propertyPath.concat(splitPath(transformData.propertyPath));
   transformValueFromObject(containerConfig, propertyPath, (fileContent) => {
     return addExternalFile(fileContent, externalFiles);
   });
@@ -182,7 +186,7 @@ const executeCustomCodeTransform = (
 };
 
 const executeRemoveTransform = (transformData, propertyPath, containerConfig) => {
-  propertyPath = propertyPath.concat(transformData.propertyPath.split('.'));
+  propertyPath = propertyPath.concat(splitPath(transformData.propertyPath));
   deleteValueFromObject(containerConfig, propertyPath);
 };
 

@@ -102,7 +102,7 @@ const configureApp = (app) => {
         }
       });
       res.setHeader('Content-Type', 'application/javascript');
-      res.send(buildFiles[files.LAUNCH_LIBRARY_FILENAME]);
+      res.send(buildFiles[`/${files.LAUNCH_LIBRARY_FILENAME}`]);
     }
   });
 
