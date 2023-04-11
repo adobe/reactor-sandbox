@@ -10,17 +10,16 @@ on:
 jobs:
   notify-on-success:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && steps.publish-npm.outputs.npm-tag == 'latest' }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Branch
+        uses: actions/checkout@v2
       - name: Get latest tag
         uses: oprypin/find-latest-tag@v1
         with:
           repository: '${{ github.repository }}' # The repository to scan.
           releases-only: true # We know that all relevant tags have a GitHub release for them.
         id: repoTag # The step ID to refer to later.
-      - name: Show ENV
-        run: env
       - name: Notify Slack of Release
         uses: tokorom/action-slack-incoming-webhook@main
         env:
