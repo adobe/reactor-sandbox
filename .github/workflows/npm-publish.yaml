@@ -8,7 +8,7 @@ on:
     inputs:
       tag:
         description: 'The tag to publish to: latest | next'
-        required: false
+        required: true
         default: 'latest'
   release:
     types: [created]
@@ -16,14 +16,18 @@ on:
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
+    outputs:
+      npm-tag: ${{ github.event.inputs.tag }}
     steps:
     - name: Check Tag Name
       if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag != 'latest' && github.event.inputs.tag != 'next' }}
       run: |
         echo 'Only the tags "latest" or "next" are supported. You entered "${{ github.event.inputs.tag }}"'
         exit 1
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - name: Checkout Branch
+      uses: actions/checkout@v2
+    - name: Check Dependency Cache
+      uses: actions/setup-node@v1
       with:
         node-version: '14.x'
         registry-url: https://registry.npmjs.org/
@@ -34,9 +38,12 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
     - name: Install dependencies
       if: steps.npm-cache.outputs.cache-hit != 'true'
-      run: npm ci
-    - run: npm test
-    - uses: JS-DevTools/npm-publish@v1
+      run: |
+        npm ci && npm run build --if-present
+    - name: Test
+      run: npm test
+    - name: Publish to NPM
+      uses: JS-DevTools/npm-publish@v1
       with:
         token: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
-        tag: ${{ github.event.inputs.tag || 'latest' }}
+        tag: ${{ github.event.inputs.tag }}
