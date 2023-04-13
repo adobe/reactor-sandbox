@@ -21,7 +21,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/fermium'
-          fetch-depth: 0
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
       - name: Install & Test
