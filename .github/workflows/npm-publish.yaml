@@ -35,7 +35,7 @@ jobs:
           npm ci
           npm test
       - name: Publish to NPM
-        uses: JS-DevTools/npm-publish@v1
+        uses: JS-DevTools/npm-publish@v2
         with:
           tag: ${{ github.event.inputs.tag }}
           token: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
