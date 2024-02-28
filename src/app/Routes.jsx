@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { LastLocationProvider } from 'react-router-last-location';
+import { LastLocationProvider } from 'react-router-last-location-17';
 import { Flex } from '@adobe/react-spectrum';
 
 import { NAMED_ROUTES } from './constants';

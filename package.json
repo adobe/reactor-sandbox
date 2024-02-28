@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "12.5.0",
+  "version": "12.6.0-beta.2",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -49,10 +49,10 @@
     "@adobe/reactor-turbine": "^27.2.0",
     "@adobe/reactor-turbine-edge": "^2.1.0",
     "@adobe/reactor-validator": "^2.3.0",
-    "@babel/core": "^7.15.8",
-    "@babel/generator": "^7.15.8",
-    "@babel/parser": "^7.15.8",
-    "@babel/traverse": "^7.15.4",
+    "@babel/core": "^7.24.0",
+    "@babel/generator": "^7.23.6",
+    "@babel/parser": "^7.24.0",
+    "@babel/traverse": "^7.24.0",
     "@codemirror/basic-setup": "^0.19.0",
     "@codemirror/gutter": "^0.19.2",
     "@codemirror/lang-json": "^0.19.1",
@@ -83,14 +83,14 @@
     "react-json-view": "^1.21.3",
     "react-redux": "^7.2.5",
     "react-router-dom": "^5.3.0",
-    "react-router-last-location": "^2.0.1",
+    "react-router-last-location-17": "2.0.4",
     "react-split": "^2.0.13",
     "semver-diff": "^3.1.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.17.0",
-    "@babel/preset-env": "^7.15.8",
-    "@babel/preset-react": "^7.14.5",
+    "@babel/eslint-parser": "^7.23.10",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.23.3",
     "eslint": "^8.10.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -100,14 +100,14 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.3",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "husky": "^7.0.2",
+    "husky": "^7.0.4",
     "jest-runner-eslint": "^1.0.0",
-    "lint-staged": "^11.2.3",
+    "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
-    "pretty-quick": "^3.1.1",
-    "react-scripts": "^5.0.0"
+    "pretty-quick": "^3.3.1",
+    "react-scripts": "^5.0.1"
   },
   "engines": {
-    "node": ">=14.21.2"
+    "node": ">=18.19.0"
   }
 }
