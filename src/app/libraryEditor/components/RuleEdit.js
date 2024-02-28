@@ -15,7 +15,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Heading, Divider, TextField, Button, ButtonGroup } from '@adobe/react-spectrum';
-import { useLastLocation } from 'react-router-last-location';
+import { useLastLocation } from 'react-router-last-location-17';
 import RuleComponentsList from './RuleComponentsList';
 import { NAMED_ROUTES } from '../../constants';
 import { PLATFORMS } from '../../../helpers/sharedConstants';
