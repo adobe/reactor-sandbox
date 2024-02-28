@@ -1,18 +1,16 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: CI
+name: ci
 
 on:
   pull_request:
-    branches: [master]
-  push:
-    branches: [master]
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
-  build:
-    name: 'Unit Test'
+  unit-test:
+    name: "Unit Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,10 +18,15 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: 'lts/fermium'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
-      - name: Install & Test
-        run: |
-          npm ci
-          npm test
+          node-version: 'lts/hydrogen'
+          registry-url: https://registry.npmjs.org/
+      - uses: actions/cache@v2
+        id: npm-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Run Unit Test
+        run: npm test
