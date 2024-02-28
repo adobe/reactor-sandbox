@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-$(npm bin)/pretty-quick --staged && $(npm bin)/lint-staged
+./node_modules/.bin/pretty-quick --staged && ./node_modules/.bin/lint-staged
