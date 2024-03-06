@@ -37,6 +37,7 @@ const executeSandboxComponents = require('../helpers/executeSandboxComponents');
 const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
 const getLatestVersion = require('../helpers/getLatestVersion');
 const { PLATFORMS } = require('../helpers/sharedConstants');
+const injectGetDefaultInitInfo = require('./helpers/injectGetDefaultInitInfo');
 
 const { platform } = getExtensionDescriptor();
 
@@ -48,7 +49,10 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-const configureApp = (app) => {
+const configureApp = (app, options) => {
+  const { getDefaultInitInfo: getDefaultInitInfoOption = null } = options;
+  const getDefaultInitInfo = injectGetDefaultInitInfo(getDefaultInitInfoOption);
+
   let validationError;
 
   app.use((_, res, next) => {
@@ -102,6 +106,26 @@ const configureApp = (app) => {
   app.get(`/${files.EXTENSION_DESCRIPTOR_SCRIPT_FILENAME}`, (req, res) => {
     res.send(getExtensionDescriptor());
   });
+
+  const asyncHandler = (handler) => (req, res, next) => {
+    return handler(req, res, next).catch(next);
+  };
+
+  app.get(
+    `/${files.DEFAULT_INIT_INFO_SCRIPT_FILENAME}/configuration`,
+    asyncHandler(async (req, res) => {
+      res.send(await getDefaultInitInfo('configuration'));
+    })
+  );
+
+  app.get(
+    `/${files.DEFAULT_INIT_INFO_SCRIPT_FILENAME}/:type/:name`,
+    asyncHandler(async (req, res) => {
+      const { params } = req;
+      const { type, name } = params;
+      res.send(await getDefaultInitInfo(type, name));
+    })
+  );
 
   app.get('/extensionbridge/extensionbridge-child.js', (req, res) => {
     res.sendFile(files.EXTENSION_BRIDGE_CHILD_PATH);
@@ -294,11 +318,11 @@ if (isSandboxLinked() && !process.env.SKIP_DEV_SERVER) {
   executeSandboxComponents();
 }
 
-module.exports = () => {
+module.exports = (options = {}) => {
   return new Promise((resolve, reject) => {
     const app = express();
 
-    configureApp(app);
+    configureApp(app, options);
 
     app.listen(PORT, (error) => {
       if (error) {

@@ -23,6 +23,7 @@ const EXTENSION_BRIDGE_PATH = path.join(require.resolve('@adobe/reactor-bridge')
 const files = {
   EXTENSION_DESCRIPTOR_FILENAME: 'extension.json',
   EXTENSION_DESCRIPTOR_SCRIPT_FILENAME: 'extensionDescriptor',
+  DEFAULT_INIT_INFO_SCRIPT_FILENAME: 'defaultInitInfo',
   INIT_FILES_SRC_PATH,
   SANDBOX_EXTENSION_SRC_PATH,
   CONSUMER_PROVIDED_FILES_PATH: path.resolve('.sandbox'),

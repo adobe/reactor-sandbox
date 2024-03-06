@@ -37,6 +37,10 @@ export const getExtensionDescriptorFromApi = () => {
   return activePromises.getExtensionDescriptor;
 };
 
+export const getDefaultInitInfoFromApi = (type, name) => {
+  return fetchJson(`${window.EXPRESS_PUBLIC_URL}/defaultInitInfo/${type}${name ? `/${name}` : ''}`);
+};
+
 export const getStatus = () => {
   activePromises.getStatus =
     activePromises.getStatus ||
