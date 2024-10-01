@@ -120,7 +120,10 @@ export default ({ component, extensionConfiguration, settings, server }) => {
       <iframe
         title="iframe"
         data-private="true"
-        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
+        sandbox={
+          'allow-popups allow-popups-to-escape-sandbox allow-same-origin ' +
+          'allow-scripts allow-downloads'
+        }
         ref={iframeRef}
       />
     </div>
