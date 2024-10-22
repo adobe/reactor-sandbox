@@ -59,7 +59,7 @@ export default ({
   iframe.src = buildExtensionViewUrl({ selectedDescriptor, extensionDescriptor });
   iframe.setAttribute(
     'sandbox',
-    'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts'
+    'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads'
   );
 
   const newBridge = loadIframe({
