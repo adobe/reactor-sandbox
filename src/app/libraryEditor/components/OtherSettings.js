@@ -18,10 +18,15 @@ import { useHistory } from 'react-router-dom';
 import { NAMED_ROUTES } from '../../constants';
 import ErrorMessage from '../../components/ErrorMessage';
 
-const handleOrgIdChange = ({ orgId, setCompanySettings, companySettings }) => {
+const handleCompanySettingChange = ({
+  settingKey,
+  settingValue,
+  setCompanySettings,
+  companySettings
+}) => {
   setCompanySettings(
     produce(companySettings, (draft) => {
-      draft.orgId = orgId;
+      draft[settingKey] = settingValue;
     })
   );
 };
@@ -115,7 +120,12 @@ export default () => {
             validationState={errors.orgId ? 'invalid' : ''}
             value={companySettings.orgId || ''}
             onChange={(orgId) => {
-              handleOrgIdChange({ orgId, companySettings, setCompanySettings });
+              handleCompanySettingChange({
+                settingKey: 'orgId',
+                settingValue: orgId,
+                companySettings,
+                setCompanySettings
+              });
             }}
           />
         </Flex>

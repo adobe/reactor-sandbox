@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "12.5.1",
+  "version": "13.0.0-beta.1",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -105,9 +105,9 @@
     "lint-staged": "^11.2.3",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
-    "react-scripts": "^5.0.0"
+    "react-scripts": "^5.0.1"
   },
   "engines": {
-    "node": ">=14.21.2"
+    "node": ">=20.17.0"
   }
 }
