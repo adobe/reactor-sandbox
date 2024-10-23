@@ -57,7 +57,8 @@ module.exports = {
     // }
   },
   company: {
-    orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+    orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg',
+    tenantId: 'fake-tenant-id'
   },
   property: {
     name: 'Sandbox property',
