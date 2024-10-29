@@ -45,6 +45,8 @@ jobs:
           token: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
           tag: ${{ github.event.inputs.tag || 'latest' }}
           access: 'public'
+      - name: Log Current Branch
+        run: echo "Current branch is "${{ github.ref_name }}
 
   ci-notify:
     needs: publish-npm
