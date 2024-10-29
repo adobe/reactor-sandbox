@@ -16,7 +16,7 @@ jobs:
         run: echo "Tag is ${{ inputs.tag }}"
   notify-on-success:
     runs-on: ubuntu-latest
-    if: ${{ inputs.tag == 'latest' || inputs.tag == 'next}}
+    if: ${{ inputs.tag == 'latest' || inputs.tag == 'next'}}
     steps:
       - uses: actions/checkout@v4
       - name: Get latest tag
