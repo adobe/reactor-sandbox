@@ -12,14 +12,9 @@ on:
         required: true
 
 jobs:
-  log-tag:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Log Tag
-        run: echo "Tag is ${{ inputs.tag }}"
   notify-on-success:
     runs-on: ubuntu-latest
-    if: ${{ inputs.tag == 'latest' || inputs.tag == 'next'}}
+    if: ${{ inputs.tag == 'latest'}}
     steps:
       - uses: actions/checkout@v4
       - name: Get latest tag
