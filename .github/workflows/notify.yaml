@@ -9,6 +9,11 @@ on:
         type: 'string'
 
 jobs:
+  log-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Tag
+        run: echo "Tag is ${{ inputs.tag }}"
   notify-on-success:
     runs-on: ubuntu-latest
     if: ${{ inputs.tag == 'latest'}}

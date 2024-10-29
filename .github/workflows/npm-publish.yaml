@@ -8,7 +8,7 @@ on:
     inputs:
       tag:
         description: 'The tag to publish to: latest | next'
-        required: false
+        required: true
         default: 'latest'
   release:
     types: [created]
