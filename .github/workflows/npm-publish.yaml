@@ -48,12 +48,9 @@ jobs:
 
   ci-notify:
     needs: publish-npm
-    runs-on: ubuntu-latest
-    steps:
-      - name: Call Notify Workflow
-        uses: adobe/reactor-sandbox/.github/workflows/notify.yaml@master
-        with:
-          tag: ${{ github.event.inputs.tag }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}  # Set the environment variable here
+    uses: adobe/reactor-sandbox/.github/workflows/notify.yaml@master
+    with:
+      tag: ${{github.event.inputs.tag}}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
