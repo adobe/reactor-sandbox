@@ -51,3 +51,4 @@ jobs:
     uses: adobe/reactor-sandbox/.github/workflows/notify.yaml@master
     with:
       tag: ${{github.event.inputs.tag}}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
