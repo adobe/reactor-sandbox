@@ -26,5 +26,7 @@ jobs:
       - name: Install dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
+      - name: Build Production
+        run: npm run build
       - name: Run Unit Test
         run: npm test
