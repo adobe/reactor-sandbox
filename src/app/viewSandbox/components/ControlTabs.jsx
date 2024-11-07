@@ -118,16 +118,22 @@ export default ({
         <Flex justifyContent="center">
           <TabList position="relative" bottom="-0.1rem">
             <Item key="init" textValue="Init">
-              <BoxImport />
-              <Text>Init</Text>
+              <Flex alignItems="center">
+                <BoxImport size="S" marginEnd="size-50" />
+                <Text>Init</Text>
+              </Flex>
             </Item>
             <Item key="settings" textValue="Get settings">
-              <BoxExport />
-              <Text>Get Settings</Text>
+              <Flex alignItems="center">
+                <BoxExport size="S" marginEnd="size-50" />
+                <Text>Get Settings</Text>
+              </Flex>
             </Item>
             <Item key="validate" textValue="Validate">
-              <AlertCheck />
-              <Text>Validate</Text>
+              <Flex alignItems="center">
+                <AlertCheck size="S" marginEnd="size-50" />
+                <Text>Validate</Text>
+              </Flex>
             </Item>
           </TabList>
         </Flex>

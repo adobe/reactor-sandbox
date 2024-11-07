@@ -62,7 +62,7 @@ export default ({ templateLocation, isLatestTemplate }) => {
               history.push(NAMED_ROUTES.LIBRARY_EDITOR);
             }}
           >
-            <Draw />
+            <Draw marginEnd="size-50" />
             <Text>Go to Library Editor</Text>
           </Button>
         </>
@@ -98,7 +98,7 @@ export default ({ templateLocation, isLatestTemplate }) => {
               history.push(NAMED_ROUTES.LIBRARY_EDITOR);
             }}
           >
-            <Draw />
+            <Draw marginEnd="size-50" />
             <Text>Go to Library Editor</Text>
           </Button>
         </>

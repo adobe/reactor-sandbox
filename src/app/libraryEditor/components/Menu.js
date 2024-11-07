@@ -41,7 +41,7 @@ export default () => {
   }, []);
 
   return (
-    <Flex direction="column" height="100%" width="size-3000">
+    <Flex direction="column" height="100%" width="size-3200">
       <View borderEndWidth="thin" borderEndColor="gray-400" height="100%" padding="size-200">
         <ActionGroup
           isQuiet
@@ -61,26 +61,26 @@ export default () => {
             key={`${NAMED_ROUTES.LIBRARY_EDITOR}/extension_configurations`}
             textValue="Extension Configuration"
           >
-            <ExtenionConfigurationIcon />
+            <ExtenionConfigurationIcon marginStart="size-100" marginEnd="size-50" />
             <Text>Extension Configurations</Text>
           </Item>
           <Item key={`${NAMED_ROUTES.LIBRARY_EDITOR}/data_elements`} textValue="Data Elements">
-            <DataElementsIcon />
+            <DataElementsIcon marginStart="size-100" marginEnd="size-50" />
             <Text>Data Elements</Text>
           </Item>
           <Item key={`${NAMED_ROUTES.LIBRARY_EDITOR}/rules`} textValue="Rules">
-            <RuleIcon />
+            <RuleIcon marginStart="size-100" marginEnd="size-50" />
             <Text>Rules</Text>
           </Item>
           <Item
             key={`${NAMED_ROUTES.LIBRARY_EDITOR}/property_settings`}
             textValue="Property Settings"
           >
-            <PropertySettingsIcon />
+            <PropertySettingsIcon marginStart="size-100" marginEnd="size-50" />
             <Text>Property Settings</Text>
           </Item>
           <Item key={`${NAMED_ROUTES.LIBRARY_EDITOR}/settings`} textValue="Settings">
-            <SettingsIcon />
+            <SettingsIcon marginStart="size-100" marginEnd="size-50" />
             <Text>Settings</Text>
           </Item>
         </ActionGroup>

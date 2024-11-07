@@ -103,7 +103,7 @@ const Menu = ({ location }) => {
           >
             {({ key, textValue, Icon }) => (
               <Item key={key} textValue={textValue}>
-                <Icon />
+                <Icon marginStart="size-200" marginEnd="size-50" />
                 <Text>{textValue}</Text>
               </Item>
             )}
