@@ -103,7 +103,12 @@ export default ({
   }, [resetId]);
 
   return (
-    <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab} height="100%">
+    <Tabs
+      selectedKey={selectedTab}
+      onSelectionChange={setSelectedTab}
+      height="100%"
+      aria-label="Actions tabs"
+    >
       <div
         style={{
           borderBottom:
@@ -112,15 +117,15 @@ export default ({
       >
         <Flex justifyContent="center">
           <TabList position="relative" bottom="-0.1rem">
-            <Item key="init">
+            <Item key="init" textValue="Init">
               <BoxImport />
               <Text>Init</Text>
             </Item>
-            <Item key="settings">
+            <Item key="settings" textValue="Get settings">
               <BoxExport />
               <Text>Get Settings</Text>
             </Item>
-            <Item key="validate">
+            <Item key="validate" textValue="Validate">
               <AlertCheck />
               <Text>Validate</Text>
             </Item>
