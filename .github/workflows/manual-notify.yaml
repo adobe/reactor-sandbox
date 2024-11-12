@@ -1,20 +1,17 @@
-name: CI notify
+name: Manual notify
 
-# Only trigger, when the build workflow succeeded
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       tag:
+        description: 'The tag to publish to: latest | next'
         required: true
-        type: 'string'
-    secrets:
-      SLACK_WEBHOOK_URL:
-        required: true
+        default: 'latest'
 
 jobs:
   notify-on-success:
     runs-on: ubuntu-latest
-    if: ${{ inputs.tag == 'latest'}}
+    if: ${{ inputs.tag == 'latest' }}
     steps:
       - uses: actions/checkout@v4
       - name: Get latest tag
