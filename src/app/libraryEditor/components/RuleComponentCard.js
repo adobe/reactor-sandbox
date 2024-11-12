@@ -63,13 +63,13 @@ export default ({ item, type, index, handleDeleteClick }) => {
       >
         <TooltipTrigger>
           <Item key="edit" textValue="edit">
-            <Edit />
+            <Edit marginEnd="size-50" />
           </Item>
           <Tooltip>Edit Component</Tooltip>
         </TooltipTrigger>
         <TooltipTrigger>
           <Item key="delete" textValue="delete">
-            <Delete />
+            <Delete marginEnd="size-50" />
           </Item>
           <Tooltip>Delete Component</Tooltip>
         </TooltipTrigger>

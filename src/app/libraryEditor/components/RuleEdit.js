@@ -152,7 +152,7 @@ export default () => {
       />
 
       {extensionDescriptor.platform !== PLATFORMS.EDGE && (
-        <>
+        <View paddingY="size-100">
           <Heading level={3}>Events</Heading>
           <RuleComponentsList
             addLabel="Add new event"
@@ -164,31 +164,37 @@ export default () => {
             items={rule.events || []}
             type="events"
           />
-        </>
+        </View>
       )}
 
-      <Heading level={3}>Conditions</Heading>
-      <RuleComponentsList
-        addLabel="Add new condition"
-        handleDeleteClick={handleDeleteClick({
-          rule,
-          setRule,
-          setCurrentRule: dispatch.currentRule.setCurrentRule
-        })}
-        items={rule.conditions || []}
-        type="conditions"
-      />
-      <Heading level={3}>Actions</Heading>
-      <RuleComponentsList
-        addLabel="Add new action"
-        handleDeleteClick={handleDeleteClick({
-          rule,
-          setRule,
-          setCurrentRule: dispatch.currentRule.setCurrentRule
-        })}
-        items={rule.actions || []}
-        type="actions"
-      />
+      <View paddingY="size-100">
+        <Heading level={3}>Conditions</Heading>
+        <RuleComponentsList
+          addLabel="Add new condition"
+          handleDeleteClick={handleDeleteClick({
+            rule,
+            setRule,
+            setCurrentRule: dispatch.currentRule.setCurrentRule
+          })}
+          items={rule.conditions || []}
+          type="conditions"
+        />
+      </View>
+
+      <View paddingY="size-100">
+        <Heading level={3}>Actions</Heading>
+        <RuleComponentsList
+          addLabel="Add new action"
+          handleDeleteClick={handleDeleteClick({
+            rule,
+            setRule,
+            setCurrentRule: dispatch.currentRule.setCurrentRule
+          })}
+          items={rule.actions || []}
+          type="actions"
+        />
+      </View>
+
       <Divider marginTop="size-300" />
       <ButtonGroup marginTop="size-150" marginBottom="size-150">
         <Button

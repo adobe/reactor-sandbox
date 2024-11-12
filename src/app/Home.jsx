@@ -45,7 +45,7 @@ export default () => {
             history.push(NAMED_ROUTES.VIEW_SANDBOX);
           }}
         >
-          <ViewSandboxIcon />
+          <ViewSandboxIcon marginEnd="size-50" />
           <Text>Go to View Sandbox</Text>
         </Button>
 
@@ -57,7 +57,7 @@ export default () => {
               history.push(NAMED_ROUTES.LIB_SANDBOX);
             }}
           >
-            <LibrarySandboxIcon />
+            <LibrarySandboxIcon marginEnd="size-50" />
             <Text>Go to Library Sandbox</Text>
           </Button>
         )}

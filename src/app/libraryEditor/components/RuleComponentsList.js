@@ -56,7 +56,7 @@ export default ({ items, type, handleDeleteClick, addLabel = 'Add' }) => {
         }}
         marginTop="size-150"
       >
-        <Add />
+        <Add marginEnd="size-50" />
         <Text>{addLabel}</Text>
       </ActionButton>
     </>

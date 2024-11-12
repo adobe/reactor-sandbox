@@ -98,12 +98,16 @@ export default ({ extensionDescriptor, onRequestResponseReceived, onSendRequest,
         <Flex justifyContent="center">
           <TabList position="relative" bottom="-0.1rem">
             <Item key="xdm">
-              <FileXML />
-              <Text>XDM</Text>
+              <Flex alignItems="center">
+                <FileXML size="S" marginEnd="size-50" />
+                <Text>XDM</Text>
+              </Flex>
             </Item>
             <Item key="request">
-              <FileJson />
-              <Text>Request</Text>
+              <Flex alignItems="center">
+                <FileJson size="S" marginEnd="size-50" />
+                <Text>Request</Text>
+              </Flex>
             </Item>
           </TabList>
         </Flex>

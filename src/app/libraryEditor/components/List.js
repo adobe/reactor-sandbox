@@ -63,11 +63,11 @@ const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) =
                       }
                     >
                       <Item key="edit" textValue="edit">
-                        <Edit />
+                        <Edit marginStart="size-200" />
                         <Text>Edit</Text>
                       </Item>
                       <Item key="delete" textValue="delete">
-                        <Delete />
+                        <Delete marginStart="size-200" />
                         <Text>Delete</Text>
                       </Item>
                     </ActionGroup>
@@ -91,7 +91,7 @@ const List = ({ items, nameProperty, keyName, deleteFn, heading = 'Unknows' }) =
             marginTop="size-150"
             onPress={() => history.push(`${url}${url.endsWith('/') ? '' : '/'}new`)}
           >
-            <Add />
+            <Add marginEnd="size-50" />
             <Text>Add</Text>
           </Button>
         </View>
