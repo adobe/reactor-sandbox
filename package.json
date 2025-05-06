@@ -41,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.39.0",
+    "@adobe/react-spectrum": "^3.41.0",
     "@adobe/reactor-babel-plugin-replace-tokens-edge": "^1.2.0",
     "@adobe/reactor-bridge": "^12.0.0",
     "@adobe/reactor-extension-core-edge": "^1.4.0",
