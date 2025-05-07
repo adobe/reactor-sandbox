@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "13.2.1-beta.1",
+  "version": "13.2.1-beta.2",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -60,7 +60,7 @@
     "@ramda/indexby": "^0.26.1",
     "@rematch/core": "^2.2.0",
     "@spectrum-icons/illustrations": "^3.6.18",
-    "@spectrum-icons/workflow": "^4.2.17",
+    "@spectrum-icons/workflow": "^4.2.20",
     "ajv": "^8.17.1",
     "ajv-draft-04": "^1.0.0",
     "ajv-formats": "^2.1.1",
