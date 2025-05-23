@@ -10,6 +10,4 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = {
-  LAUNCH_ENVIRONMENT_NAME: 'EN00000000000000000000000000000000'
-};
+export const LAUNCH_ENVIRONMENT_NAME = 'EN00000000000000000000000000000000';
