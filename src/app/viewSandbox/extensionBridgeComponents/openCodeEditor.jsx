@@ -10,15 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports =
-  ({ platform }, openDataElementSelectorModal) =>
-  (options = {}) => {
-    return new Promise((resolve, reject) => {
-      openDataElementSelectorModal({
-        platform,
-        options,
-        onSave: resolve,
-        onClose: reject
-      });
-    }).catch(() => '');
-  };
+export default (openCodeEditorModal) =>
+  (options = {}) =>
+    new Promise((resolve, reject) => {
+      openCodeEditorModal({ options, code: options.code, onSave: resolve, onClose: reject });
+    }).catch(() => {});

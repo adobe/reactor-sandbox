@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const build = require('./tasks/build');
 const init = require('./tasks/init');
-const run = require('./tasks/run');
 const validateSandboxVersion = require('./helpers/validateSandboxVersion');
 const validateExtensionBridge = require('./helpers/validateExtensionBridge');
 
@@ -19,6 +19,13 @@ validateSandboxVersion();
 validateExtensionBridge();
 
 module.exports = {
+  build,
   init,
-  run
+  run: () => {
+    // Some things are run when run.js is required, so we require it here
+    // conditionally.
+    // eslint-disable-next-line global-require
+    const run = require('./tasks/run');
+    return run();
+  }
 };

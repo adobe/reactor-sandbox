@@ -10,10 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = {
-  PLATFORMS: {
-    WEB: 'web',
-    MOBILE: 'mobile',
-    EDGE: 'edge'
-  }
+export const PLATFORMS = {
+  WEB: 'web',
+  MOBILE: 'mobile',
+  EDGE: 'edge'
 };

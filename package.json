@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "13.2.1",
+  "version": "14.0.0-beta.1",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -26,9 +26,9 @@
     "reactor-bridge-update": "mkdir -p public/extensionbridge && cp node_modules/@adobe/reactor-bridge/dist/extensionbridge-child.js public/extensionbridge/extensionbridge-child.js",
     "reactor-bridge-check": "cmp --silent public/extensionbridge/extensionbridge-child.js node_modules/@adobe/reactor-bridge/dist/extensionbridge-child.js || (echo 'Extension bridge is out of date. Please go to the sandbox folder and run `npm run reactor-bridge-update`.' && exit 1)",
     "lint": "eslint 'src/**'",
-    "build:reactApp": "npm run reactor-bridge-update && react-scripts build",
+    "build:reactApp": "npm run reactor-bridge-update && vite build",
     "build": "rm -rf dist && npm run build:reactApp",
-    "start:reactApp": "npm run reactor-bridge-update && react-scripts start --no-cache",
+    "start:reactApp": "npm run reactor-bridge-update && vite",
     "start": "rm -rf dist && npm run start:reactApp",
     "prepack": "npm run build",
     "format": "pretty-quick",
@@ -90,6 +90,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.26.5",
     "@babel/preset-react": "^7.26.3",
+    "@vitejs/plugin-react": "^4.5.0",
     "eslint": "^8.10.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -104,7 +105,7 @@
     "lint-staged": "^11.2.3",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
-    "react-scripts": "^5.0.1"
+    "vite": "^6.3.5"
   },
   "engines": {
     "node": ">=20.17.0"
