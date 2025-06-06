@@ -42,3 +42,6 @@ const store = init({
 
 export default store;
 export const { dispatch } = store;
+
+// expose store for easier debugging
+window.getStore = () => store;

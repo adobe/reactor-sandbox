@@ -54,6 +54,10 @@ const handleReactorApiEndpointChange = ({
 const isValid = ({ companySettings, otherSettings, setErrors }) => {
   const errors = {};
 
+  if (!companySettings.id) {
+    errors.id = true;
+  }
+
   if (!companySettings.orgId) {
     errors.orgId = true;
   }
@@ -111,6 +115,21 @@ export default () => {
         <Heading level={2}>Company Settings</Heading>
         <Divider />
         <Flex direction="column" alignItems="center">
+          <TextField
+            label="Company ID"
+            width="size-6000"
+            marginTop="size-150"
+            validationState={errors.id ? 'invalid' : ''}
+            value={companySettings.id || ''}
+            onChange={(id) => {
+              handleCompanySettingChange({
+                settingKey: 'id',
+                settingValue: id,
+                companySettings,
+                setCompanySettings
+              });
+            }}
+          />
           <TextField
             label="Organization ID"
             necessityIndicator="label"

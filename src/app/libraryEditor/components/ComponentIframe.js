@@ -58,7 +58,9 @@ const renderIframe = ({
     company: companySettings,
     propertySettings: propertySettings.settings,
     tokens: otherSettings.tokens,
-    apiEndpoints: otherSettings.apiEndpoints
+    apiEndpoints: otherSettings.apiEndpoints,
+    userConsentPermissions: {},
+    preferredLanguages: ['en-us']
   };
 
   if (extensionConfiguration) {

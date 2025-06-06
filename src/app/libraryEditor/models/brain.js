@@ -125,6 +125,7 @@ export default {
                 }
         },
         company: {
+          id: 'CO12345',
           orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
         }
       };
