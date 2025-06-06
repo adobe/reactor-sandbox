@@ -55,6 +55,7 @@ const renderIframe = ({
 
   const extensionInitOptions = {
     settings,
+    company: companySettings,
     propertySettings: propertySettings.settings,
     tokens: otherSettings.tokens,
     apiEndpoints: otherSettings.apiEndpoints,
