@@ -24,12 +24,15 @@ export default ({ type, descriptor }) => {
       imsAccess: 'X34DF56GHHBBFFGH'
     },
     company: {
+      id: 'CO12345',
       orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg',
       tenantId: 'fake-tenant-id'
     },
     apiEndpoints: {
       reactor: '//localhost'
     },
+    userConsentPermissions: {},
+    preferredLanguages: ['en-us'],
     schema: descriptor?.schema || null
   };
 

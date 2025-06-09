@@ -57,6 +57,7 @@ module.exports = {
     // }
   },
   company: {
+    id: 'CO12345',
     orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg',
     tenantId: 'fake-tenant-id'
   },

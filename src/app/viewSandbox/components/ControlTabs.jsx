@@ -69,7 +69,7 @@ export default ({
     setInitTabRedrawId(initTabRedrawId + 1);
     const parsedContent = JSON.parse(newInitContent);
 
-    const newBrige = getNewBridge({
+    const newBridge = getNewBridge({
       setDataElementSelectorModal,
       setCodeEditorModal,
       parentContainerRef: extensionViewPaneRef,
@@ -81,7 +81,7 @@ export default ({
     // eslint-disable-next-line no-console
     console.log(`${LOG_PREFIX} init() with`, parsedContent);
 
-    setCurrentExtensionBridge(newBrige);
+    setCurrentExtensionBridge(newBridge);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDescriptor, extensionDescriptor]);
 

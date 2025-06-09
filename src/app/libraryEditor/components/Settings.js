@@ -19,14 +19,14 @@ import './Settings.css';
 
 export default () => {
   const brain = useSelector((state) => state.brain);
-  const orgId = useSelector((state) => state.company.orgId);
+  const company = useSelector((state) => state.company);
   const imsAccess = useSelector((state) => state.otherSettings?.tokens?.imsAccess);
   const dispatch = useDispatch();
 
   return (
     <View padding="size-200" flex>
       <View margin="2rem auto" maxWidth="50rem">
-        <OtherSettings key={`${orgId}${imsAccess}`} />
+        <OtherSettings key={`${company.id}${company.orgId}${imsAccess}`} />
         <div>
           <Flex direction="row" gap="size-100" justifyContent="center" alignItems="center">
             <p>
