@@ -3,28 +3,36 @@
   "env": {
     "browser": true,
     "jasmine": true,
-    "node": true
+    "node": true,
+    "es2021": true
   },
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 12,
     "sourceType": "module",
     "ecmaFeatures": {
-      "modules": true,
       "jsx": true,
       "classes": true,
       "spread": true,
       "arrowFunctions": true
     }
   },
-  "extends": ["react-app", "airbnb", "plugin:prettier/recommended"],
-  "plugins": ["react-hooks", "header"],
+  "extends": [
+    "eslint:recommended",
+    "airbnb",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["react", "react-hooks", "jsx-a11y", "header"],
   "rules": {
+    "react/display-name": "off",
     "prettier/prettier": "error",
     "react/prop-types": 0,
     "react/jsx-filename-extension": 0,
     "jsx-a11y/label-has-for": 0,
     "camelcase": [2, { "properties": "always" }],
-    "indent": 0, // Disabled because we use prettier. Sometimes they are colliding.
+    "indent": 0,
     "semi": [2, "always"],
     "keyword-spacing": ["error"],
     "space-before-function-paren": [
@@ -55,11 +63,26 @@
         "destructuring": "all"
       }
     ],
-    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-    "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "header/header": [2, "block", [{ "pattern": "Copyright \\d{4} Adobe" }]],
     "react/function-component-definition": 0,
-    "react/destructuring-assignment": 0
+    "react/destructuring-assignment": 0,
+
+    // Added disables for your specific errors:
+    "no-restricted-exports": "off",
+    "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["**/*.test.js", "**/__tests__/**", "src/tasks/**"]
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   },
   "globals": {
     "Simulate": true,

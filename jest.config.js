@@ -17,6 +17,21 @@ module.exports = {
       displayName: 'lint',
       runner: 'jest-runner-eslint',
       testMatch: ['<rootDir>/src/**']
+    },
+    {
+      displayName: 'unit-tests',
+      testEnvironment: 'jsdom',
+      testMatch: ['<rootDir>/src/**/*.test.js'],
+      transform: {
+        '^.+\\.(js|jsx)$': 'babel-jest'
+      },
+      moduleFileExtensions: ['js', 'jsx', 'json', 'node']
+      // If you have path aliases like '@/' in Vite, uncomment and update:
+      // moduleNameMapper: {
+      //   '^@/(.*)$': '<rootDir>/src/$1'
+      // },
+      // Uncomment if you have setup files (like RTL configs)
+      // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     }
   ],
 
