@@ -10,14 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from 'vite';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  publicDir: false, // disable vite's default behavior to copy "public" directory assets to the build output
+  // disable vite's default behavior to copy "public" directory assets to the build output
+  publicDir: false,
   build: {
-    outDir: 'build',
+    outDir: 'dist',
     emptyOutDir: true,
     sourcemap: true
   }
