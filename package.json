@@ -27,7 +27,7 @@
     "reactor-bridge-check": "cmp --silent public/extensionbridge/extensionbridge-child.js node_modules/@adobe/reactor-bridge/dist/extensionbridge-child.js || (echo 'Extension bridge is out of date. Please go to the sandbox folder and run `npm run reactor-bridge-update`.' && exit 1)",
     "lint": "eslint 'src/**'",
     "build:reactApp": "npm run reactor-bridge-update && vite build",
-    "build": "rm -rf dist && npm run build:reactApp",
+    "build": "rm -rf dist && npm run build:reactApp && node scripts/generateAssetManifest.js",
     "start:reactApp": "npm run reactor-bridge-update && vite",
     "start": "rm -rf dist && npm run start:reactApp",
     "prepack": "npm run build",
