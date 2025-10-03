@@ -1,17 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My App</title>
+    <meta charset="utf-8" />
 
-    <!-- You can add favicon, theme-color, meta here as needed -->
-    <!-- <link rel="icon" href="/favicon.ico" /> -->
+    <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    <script>
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+      const appPort = port === '3001' ? 3000 : port;
+
+      window.EXPRESS_PUBLIC_URL = `${protocol}//${hostname}${appPort ? ':' + appPort : ''}`;
+    </script>
+    <title>Reactor Extension Sandbox</title>
   </head>
-  <body>
-    <div id="root"></div>
 
-    <!-- Vite will inject the built JS bundle here -->
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <div id="root"></div>
+    <!--
+      Vite uses this /index.html as a real entry point. We need to load our index.jsx.
+    -->
     <script type="module" src="/src/index.jsx"></script>
   </body>
 </html>
