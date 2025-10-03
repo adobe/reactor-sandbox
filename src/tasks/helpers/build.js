@@ -10,11 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-prototype-builtins */
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
-
 const fs = require('fs-extra');
 const path = require('path');
 const beautify = require('js-beautify').js_beautify;

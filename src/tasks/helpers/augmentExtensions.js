@@ -162,7 +162,6 @@ const augmentSandboxEvents = (extensionsOutput) => {
           name: 'log-event-info',
           script: (module) => {
             module.exports = (settings, event) => {
-              // eslint-disable-next-line no-console
               console.log('Event object received by action:', event);
             };
           }
@@ -175,7 +174,7 @@ const augmentSandboxEvents = (extensionsOutput) => {
               // window.localStorage without being inside a try-catch should be avoided.
               try {
                 return window.localStorage.getItem(settings.name);
-              } catch (e) {
+              } catch {
                 return null;
               }
             };
@@ -213,9 +212,8 @@ module.exports = (container) => {
   }
 
   extensionDescriptorPaths.forEach((extensionDescriptorPath) => {
-    // eslint-disable-next-line global-require, import/no-dynamic-require
     const extensionDescriptor = require(path.resolve(extensionDescriptorPath));
-    // eslint-disable-next-line global-require, import/no-dynamic-require
+
     const extensionPath = path.dirname(path.resolve(extensionDescriptorPath));
 
     // We take care to not just overwrite extensionsOutput[extensionDescriptor.name] because

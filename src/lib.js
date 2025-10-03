@@ -24,7 +24,7 @@ module.exports = {
   run: () => {
     // Some things are run when run.js is required, so we require it here
     // conditionally.
-    // eslint-disable-next-line global-require
+
     const run = require('./tasks/run');
     return run();
   }

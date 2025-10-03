@@ -51,7 +51,7 @@ module.exports = (engine, containerInitFunction, { fetch }) => {
         try {
           headersForSubrequests[key] = new Date(value).toISOString(dateFormat);
           // eslint-disable-next-line no-empty
-        } catch (e) {}
+        } catch {}
       }
     });
 

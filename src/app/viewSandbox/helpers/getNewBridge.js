@@ -51,7 +51,6 @@ export default ({
     throw new Error('There was an error initializing the view.');
   }
 
-  // eslint-disable-next-line no-param-reassign
   parentContainerRef.current.innerHTML = '';
 
   const iframe = document.createElement('iframe');

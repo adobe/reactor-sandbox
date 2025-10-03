@@ -20,7 +20,7 @@ import property from './libraryEditor/models/property';
 import company from './libraryEditor/models/company';
 import otherSettings from './libraryEditor/models/otherSettings';
 import extensions from './libraryEditor/models/extensions';
-// eslint-disable-next-line import/no-cycle
+
 import brain from './libraryEditor/models/brain';
 import modals from './libraryEditor/models/modals';
 

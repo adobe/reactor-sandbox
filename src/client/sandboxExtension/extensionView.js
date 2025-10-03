@@ -15,7 +15,6 @@ const allValues = {};
 // eslint-disable-next-line no-unused-vars
 const Form = {
   create(fields, root) {
-    // eslint-disable-next-line no-param-reassign
     root.innerHTML = this.buildForm(fields);
     this.setupExtensionBridge(fields);
   },

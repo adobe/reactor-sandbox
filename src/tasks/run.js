@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-console */
-
 /**
  * Runs a webserver that provides the sandbox environment. Refreshing will load the latest content.
  */
@@ -124,7 +122,7 @@ const configureApp = (app) => {
     const extensionDescriptors = getExtensionDescriptors(platform);
 
     // Get the descriptor that matches the extension name and the version from the request.
-    // eslint-disable-next-line no-shadow
+
     const extensionDescriptor = extensionDescriptors[extensionName];
     console.log('GETTING EXTENSION DESCRIPTION FOR ', extensionName);
 
@@ -203,7 +201,7 @@ const configureApp = (app) => {
       containerText = fs
         .readFileSync(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME))
         .toString('utf8');
-    } catch (error) {
+    } catch {
       res.status(404);
       res.send('File not found.');
 
@@ -211,7 +209,6 @@ const configureApp = (app) => {
     }
 
     try {
-      // eslint-disable-next-line no-eval
       eval(
         containerText
           .replace("'use strict';", '')
