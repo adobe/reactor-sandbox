@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "14.0.0-beta.7",
+  "version": "14.0.0-beta.8",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -53,8 +53,10 @@
     "@babel/generator": "^7.26.5",
     "@babel/parser": "^7.26.7",
     "@babel/traverse": "^7.26.7",
-    "@codemirror/lang-json": "^0.19.1",
-    "@codemirror/lint": "^0.19.2",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lint": "^6.9.0",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.4",
     "@ramda/indexby": "^0.26.1",
     "@rematch/core": "^2.2.0",
     "@spectrum-icons/illustrations": "^3.6.18",
