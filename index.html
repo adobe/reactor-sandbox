@@ -11,12 +11,7 @@
     <link rel="shortcut icon" href="/favicon.ico" />
 
     <script>
-      const protocol = window.location.protocol;
-      const hostname = window.location.hostname;
-      const port = window.location.port;
-      const appPort = port === '3001' ? 3000 : port;
-
-      window.EXPRESS_PUBLIC_URL = `${protocol}//${hostname}${appPort ? ':' + appPort : ''}`;
+      window.EXPRESS_PUBLIC_URL = window.location.origin;
     </script>
     <title>Reactor Extension Sandbox</title>
   </head>

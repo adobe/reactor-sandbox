@@ -20,7 +20,9 @@ const validateExtensionBridge = require('./helpers/validateExtensionBridge');
   validateSandboxVersion();
   validateExtensionBridge();
 
-  const task = process.argv.slice(2)[0];
+  // The structure of process.argv is:
+  // [/*nodePath*/, /*executablePath*/, ...userArgs ]
+  const [, , task] = process.argv;
 
   let execute;
 

@@ -31,8 +31,7 @@ const CONSUMER_CONTAINER_TEMPLATE_PATH = path.resolve(
   files.CONTAINER_FILENAME
 );
 
-module.exports = (options = {}) => {
-  const { container: containerOption } = options;
+module.exports = ({ container: userDefinedContainer } = {}) => {
   // When running this task from a turbine extension project we want to include the
   // extension descriptor from that extension as well as any extensions we find under its
   // node_modules.
@@ -40,8 +39,8 @@ module.exports = (options = {}) => {
   // under this project's node_modules or under a folder starting with @(as for npm scopes).
   let container;
 
-  if (containerOption) {
-    container = containerOption;
+  if (userDefinedContainer) {
+    container = userDefinedContainer;
   } else {
     // Try to use the consumer-defined container first and fallback to the default if they haven't
     // provided one.

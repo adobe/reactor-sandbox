@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "14.0.0-beta.9",
+  "version": "14.0.0-beta.10",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -28,8 +28,8 @@
     "lint": "eslint 'src/**'",
     "build:reactApp": "npm run reactor-bridge-update && vite build",
     "build": "rm -rf dist && npm run build:reactApp && node scripts/generateAssetManifest.js",
-    "start:reactApp": "npm run reactor-bridge-update && vite",
-    "start": "rm -rf dist && npm run start:reactApp",
+    "start:reactApp": "npm run reactor-bridge-update && node src/cli.js",
+    "start": "npm run start:reactApp",
     "prepack": "npm run build",
     "format": "pretty-quick",
     "test": "jest",

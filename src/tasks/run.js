@@ -44,7 +44,7 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-const configureApp = (app) => {
+const configureApp = (app, viteDevServer) => {
   let validationError;
 
   app.use((_, res, next) => {
@@ -64,9 +64,6 @@ const configureApp = (app) => {
       app
     )
     .listen(SSL_PORT);
-
-  // Serve the React App
-  app.use(express.static(path.resolve(`${__dirname}/../../build`)));
 
   const extensionDescriptor = getExtensionDescriptor();
   validationError = validateExtensionDescriptor(extensionDescriptor);
@@ -277,18 +274,32 @@ const configureApp = (app) => {
       }
     });
   }
+
+  if (viteDevServer) {
+    app.use(viteDevServer.middlewares);
+  } else {
+    app.use(express.static(path.resolve(`${__dirname}/../../build`)));
+  }
 };
 
 if (isSandboxLinked() && !process.env.SKIP_DEV_SERVER) {
   executeSandboxComponents();
 }
 
-module.exports = () => {
+module.exports = async () => {
+  let viteDevServer;
+  if (!fs.existsSync(path.resolve(`${__dirname}/../../build/index.html`))) {
+    const { createServer: createViteServer } = await import('vite');
+    viteDevServer = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'custom'
+    });
+  }
+
+  const app = express();
+  configureApp(app, viteDevServer);
+
   return new Promise((resolve, reject) => {
-    const app = express();
-
-    configureApp(app);
-
     app.listen(PORT, (error) => {
       if (error) {
         reject(error);
