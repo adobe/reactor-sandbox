@@ -10,9 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
-
 const path = require('path');
 const extensionDescriptorPaths = require('./extensionDescriptorPaths');
 

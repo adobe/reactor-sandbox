@@ -10,8 +10,6 @@ governing permissions and limitations under the License.
 */
 
 /* eslint-disable no-prototype-builtins */
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
 
 const { transform } = require('@babel/core');
 const pkgDir = require('pkg-dir');
@@ -28,7 +26,6 @@ const functionTokenRegistry = {
   _functionStrByToken: {},
   FUNCTION_TOKEN_REGEX: /"\{\{sandbox:function:(.+?)\}\}"/g,
   getToken(functionStr) {
-    // eslint-disable-next-line no-plusplus
     const tokenId = ++this._tokenIdCounter;
     this._functionStrByToken[tokenId] = functionStr;
     return `{{sandbox:function:${tokenId}}}`;
@@ -142,7 +139,7 @@ module.exports = () => {
   delete require.cache[containerPath];
   try {
     container = require(containerPath);
-  } catch (e) {
+  } catch {
     container = {};
   }
 
@@ -206,9 +203,7 @@ module.exports = () => {
     plugins: [babelPluginDir]
   }).code;
 
-  // eslint-disable-next-line no-eval
   eval(container);
 
-  // eslint-disable-next-line no-unused-vars
   return container;
 };

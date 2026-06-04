@@ -28,8 +28,7 @@ module.exports = () => {
     })
       .toString('utf8')
       .replace(/\n$/, '');
-  } catch (e) {
-    // eslint-disable-next-line no-console
+  } catch {
     console.log(
       chalk.red(
         `Extension bridge is out of date. \

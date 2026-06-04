@@ -45,6 +45,16 @@ Mobile extensions don't have a Library Sandbox portion. Running `npx @adobe/reac
 
 You are welcome to commit `.sandbox` to your version control repository.
 
+### Building the Library
+
+While the sandbox includes a way to build the resulting library and test, it may be useful to build the library without running the sandbox server. This command will output the library code:
+
+```
+npx @adobe/reactor-sandbox build
+```
+
+It will use the `.sandbox/container.js` file as the settings for the library.
+
 ### Installing as a Dependency
 
 If you find yourself using the the sandbox tool frequently, you may wish to install it as a dependency in your project. This will allow the sandbox tool to run more quickly and provide more control over when you upgrade to newer versions of the sandbox.
@@ -81,6 +91,8 @@ The sandbox module provides the following methods:
 `run` - Runs the sandbox. A promise will be returned that will be resolved once the server is ready.
 
 `init` - Initializes sandbox configuration files. A promise will be returned that will be resolved once the files have been generated.
+
+`build` - Build the library and return it as a string.
 
 ## Contributing
 

@@ -20,7 +20,6 @@ module.exports = () => {
   const sandboxOutdated = semverDiff(sandboxPkg.version, latestSandboxVersion);
 
   if (sandboxOutdated) {
-    // eslint-disable-next-line no-console
     console.log(
       chalk.red(
         `Your sandbox is out of date. You are using version "${sandboxPkg.version}", latest

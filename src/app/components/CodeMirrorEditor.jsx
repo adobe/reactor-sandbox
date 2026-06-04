@@ -11,9 +11,10 @@ governing permissions and limitations under the License.
 */
 
 import React from 'react';
-import { basicSetup, EditorView, EditorState } from '@codemirror/basic-setup';
+import { basicSetup, EditorView } from 'codemirror';
+import { EditorState } from '@codemirror/state';
+import { gutter, GutterMarker } from '@codemirror/view';
 import { linter, openLintPanel } from '@codemirror/lint';
-import { gutter, GutterMarker } from '@codemirror/gutter';
 import { jsonParseLinter, json } from '@codemirror/lang-json';
 
 const errorMarker = new (class extends GutterMarker {

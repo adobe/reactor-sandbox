@@ -15,9 +15,6 @@ governing permissions and limitations under the License.
  * is ".sandbox" and will be placed in the current working directory.
  */
 
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
-
 const fs = require('fs-extra');
 const path = require('path');
 const files = require('./constants/files');

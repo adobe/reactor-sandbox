@@ -10,4 +10,4 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = () => Promise.resolve(`Edited Regex ${Math.round(Math.random() * 10000)}`);
+export default () => Promise.resolve(`Edited Regex ${Math.round(Math.random() * 10000)}`);

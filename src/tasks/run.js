@@ -10,33 +10,29 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-console */
-
 /**
  * Runs a webserver that provides the sandbox environment. Refreshing will load the latest content.
  */
 
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const https = require('https');
 const express = require('express');
 const chalk = require('chalk');
-const hexDecode = require('@adobe/reactor-token-scripts-edge/src/hexDecode');
 const validateExtensionDescriptor = require('@adobe/reactor-validator');
 const bodyParser = require('body-parser');
 const getExtensionDescriptor = require('./helpers/getExtensionDescriptor');
 const getExtensionDescriptors = require('./helpers/getExtensionDescriptors');
-const getContainer = require('./helpers/getContainer');
 const files = require('./constants/files');
 const editorRegistry = require('./helpers/editorRegistry');
 const saveContainer = require('./helpers/saveContainer');
 const generateEdgeLibrary = require('./helpers/generateEdgeLibrary');
-const unTransform = require('./helpers/unTransform');
 const isSandboxLinked = require('../helpers/isSandboxLinked');
 const executeSandboxComponents = require('../helpers/executeSandboxComponents');
 const { templateLocation, isLatestTemplate } = require('./helpers/librarySandbox');
 const getLatestVersion = require('../helpers/getLatestVersion');
 const { PLATFORMS } = require('../helpers/sharedConstants');
+const build = require('./helpers/build');
 
 const { platform } = getExtensionDescriptor();
 
@@ -48,7 +44,7 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-const configureApp = (app) => {
+const configureApp = (app, viteDevServer) => {
   let validationError;
 
   app.use((_, res, next) => {
@@ -69,9 +65,6 @@ const configureApp = (app) => {
     )
     .listen(SSL_PORT);
 
-  // Serve the React App
-  app.use(express.static(path.resolve(`${__dirname}/../../build`)));
-
   const extensionDescriptor = getExtensionDescriptor();
   validationError = validateExtensionDescriptor(extensionDescriptor);
 
@@ -91,11 +84,20 @@ const configureApp = (app) => {
       console.error(chalk.red(validationError));
       res.status(500).send(validationError);
     } else {
-      const containerJS = getContainer();
-      const turbine = fs.readFileSync(files.TURBINE_ENGINE_PATH);
-      const launchLibContents = containerJS + turbine;
+      const buildFiles = build();
+
+      // write external files to disk so they can be served by the static express server
+      fs.ensureDirSync(`${files.CONSUMER_PROVIDED_FILES_PATH}/files`);
+      Object.keys(buildFiles).forEach((fileName) => {
+        if (fileName.startsWith('/files/')) {
+          fs.writeFileSync(
+            `${files.CONSUMER_PROVIDED_FILES_PATH}${fileName}`,
+            buildFiles[fileName]
+          );
+        }
+      });
       res.setHeader('Content-Type', 'application/javascript');
-      res.send(launchLibContents);
+      res.send(buildFiles[`/${files.LAUNCH_LIBRARY_FILENAME}`]);
     }
   });
 
@@ -117,7 +119,7 @@ const configureApp = (app) => {
     const extensionDescriptors = getExtensionDescriptors(platform);
 
     // Get the descriptor that matches the extension name and the version from the request.
-    // eslint-disable-next-line no-shadow
+
     const extensionDescriptor = extensionDescriptors[extensionName];
     console.log('GETTING EXTENSION DESCRIPTION FOR ', extensionName);
 
@@ -196,7 +198,7 @@ const configureApp = (app) => {
       containerText = fs
         .readFileSync(path.resolve(files.CONSUMER_PROVIDED_FILES_PATH, files.CONTAINER_FILENAME))
         .toString('utf8');
-    } catch (error) {
+    } catch {
       res.status(404);
       res.send('File not found.');
 
@@ -204,7 +206,6 @@ const configureApp = (app) => {
     }
 
     try {
-      // eslint-disable-next-line no-eval
       eval(
         containerText
           .replace("'use strict';", '')
@@ -215,22 +216,7 @@ const configureApp = (app) => {
 
       // container will be available after eval finishes.
       // eslint-disable-next-line no-undef
-      let containerContent = JSON.stringify(container, unTransform);
-
-      if (extensionDescriptor.platform === PLATFORMS.EDGE) {
-        // Revert edge sanitization. When we save an edge container, any data element token
-        // `{{name}}` gets transformed to getDataElementValue(reactor${encodedDataElementName})
-        // in order for the JS to be valid. Here we need to revert that transformation so that
-        // in the Library editor, the user will see the value that he entered.
-        containerContent = containerContent.replace(
-          /getDataElementValue\(reactor([^)]+)\)/g,
-          (match, encodedDataElementName) =>
-            match.replace(
-              `getDataElementValue(reactor${encodedDataElementName})`,
-              `{{${hexDecode(encodedDataElementName)}}}`
-            )
-        );
-      }
+      const containerContent = JSON.stringify(container);
 
       res.setHeader('Content-Type', 'application/json');
       res.send(containerContent);
@@ -288,18 +274,32 @@ const configureApp = (app) => {
       }
     });
   }
+
+  if (viteDevServer) {
+    app.use(viteDevServer.middlewares);
+  } else {
+    app.use(express.static(path.resolve(`${__dirname}/../../build`)));
+  }
 };
 
 if (isSandboxLinked() && !process.env.SKIP_DEV_SERVER) {
   executeSandboxComponents();
 }
 
-module.exports = () => {
+module.exports = async () => {
+  let viteDevServer;
+  if (!fs.existsSync(path.resolve(`${__dirname}/../../build/index.html`))) {
+    const { createServer: createViteServer } = await import('vite');
+    viteDevServer = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'custom'
+    });
+  }
+
+  const app = express();
+  configureApp(app, viteDevServer);
+
   return new Promise((resolve, reject) => {
-    const app = express();
-
-    configureApp(app);
-
     app.listen(PORT, (error) => {
       if (error) {
         reject(error);

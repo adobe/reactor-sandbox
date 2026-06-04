@@ -11,11 +11,9 @@ governing permissions and limitations under the License.
 */
 
 // These constants should only represent data used within the React App bundling.
-module.exports = {
-  NAMED_ROUTES: {
-    HOME: '/',
-    LIB_SANDBOX: '/libSandbox',
-    VIEW_SANDBOX: '/viewSandbox',
-    LIBRARY_EDITOR: '/libraryEditor'
-  }
+export const NAMED_ROUTES = {
+  HOME: '/',
+  LIB_SANDBOX: '/libSandbox',
+  VIEW_SANDBOX: '/viewSandbox',
+  LIBRARY_EDITOR: '/libraryEditor'
 };
