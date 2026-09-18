@@ -1,0 +1,13 @@
+{
+  "name": "legacy-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "Legacy ECMAScript Extension",
+  "actions": [
+    {
+      "name": "custom-code",
+      "displayName": "Custom Code",
+      "libPath": "src/lib/actions/customCode.js"
+    }
+  ]
+}
