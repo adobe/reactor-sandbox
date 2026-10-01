@@ -1,0 +1,19 @@
+{
+  "name": "meta-merge-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "meta-merge-extension",
+  "actions": [
+    {
+      "name": "a",
+      "libPath": "src/lib/actions/a.js",
+      "displayName": "A"
+    }
+  ],
+  "sharedModules": [
+    {
+      "name": "h",
+      "libPath": "src/lib/helpers/h.js"
+    }
+  ]
+}

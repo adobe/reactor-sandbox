@@ -1,0 +1,12 @@
+{
+  "name": "diamond-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "diamond-extension",
+  "actions": [
+    {
+      "name": "top",
+      "libPath": "src/lib/actions/top.js"
+    }
+  ]
+}

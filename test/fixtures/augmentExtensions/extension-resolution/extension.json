@@ -1,0 +1,12 @@
+{
+  "name": "resolution-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "resolution-extension",
+  "actions": [
+    {
+      "name": "entry",
+      "libPath": "src/lib/actions/nested/entry.js"
+    }
+  ]
+}

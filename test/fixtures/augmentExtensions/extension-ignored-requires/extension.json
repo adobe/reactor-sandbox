@@ -1,0 +1,12 @@
+{
+  "name": "ignored-requires-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "ignored-requires-extension",
+  "actions": [
+    {
+      "name": "ignored",
+      "libPath": "src/lib/actions/ignored.js"
+    }
+  ]
+}

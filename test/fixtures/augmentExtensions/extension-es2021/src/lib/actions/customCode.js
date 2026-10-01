@@ -1,6 +1,5 @@
 // This delegate module intentionally uses newer ECMAScript syntax (optional chaining,
-// nullish coalescing) that the legacy babylon@6 parser (pulled in via
-// match-requires -> strip-comments@1 -> babel-extract-comments) cannot parse.
+// nullish coalescing) to verify the require() scanner can parse it.
 var logger = require('../helpers/logger');
 
 module.exports = function (settings, event) {
