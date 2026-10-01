@@ -14,6 +14,8 @@ export default [
   {
     ignores: [
       'src/client/initFiles/container.js',
+      // Intentionally invalid JavaScript used by augmentExtensions.test.js
+      'test/fixtures/augmentExtensions/extension-syntax-error/src/lib/actions/broken.js',
       '*.css',
       '*.html',
       'node_modules/',

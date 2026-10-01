@@ -1,0 +1,12 @@
+{
+  "name": "top-level-return-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "top-level-return-extension",
+  "actions": [
+    {
+      "name": "early-exit",
+      "libPath": "src/lib/actions/earlyExit.js"
+    }
+  ]
+}

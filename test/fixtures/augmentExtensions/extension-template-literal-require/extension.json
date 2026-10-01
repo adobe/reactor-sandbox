@@ -1,0 +1,12 @@
+{
+  "name": "template-literal-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "template-literal-extension",
+  "actions": [
+    {
+      "name": "custom-code",
+      "libPath": "src/lib/actions/customCode.js"
+    }
+  ]
+}

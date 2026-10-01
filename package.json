@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-sandbox",
-  "version": "14.0.0",
+  "version": "14.0.1-beta.1",
   "description": "Tasks for creating a sandbox for manually testing Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -73,7 +73,6 @@
     "glob": "^7.2.0",
     "immer": "^9.0.6",
     "js-beautify": "^1.15.1",
-    "match-requires": "^2.0.1",
     "node-fetch": "^2.6.7",
     "pkg-dir": "^5.0.0",
     "pkg-up": "^3.1.0",
@@ -113,8 +112,5 @@
   },
   "engines": {
     "node": ">=24.0.0"
-  },
-  "overrides": {
-    "strip-comments": "^2.0.1"
   }
 }

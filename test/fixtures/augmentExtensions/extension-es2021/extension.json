@@ -1,0 +1,13 @@
+{
+  "name": "es2021-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "ES2021 Extension",
+  "actions": [
+    {
+      "name": "custom-code",
+      "displayName": "Custom Code",
+      "libPath": "src/lib/actions/customCode.js"
+    }
+  ]
+}

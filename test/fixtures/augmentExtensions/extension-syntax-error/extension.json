@@ -1,0 +1,12 @@
+{
+  "name": "syntax-error-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "syntax-error-extension",
+  "actions": [
+    {
+      "name": "broken",
+      "libPath": "src/lib/actions/broken.js"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "esm-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "esm-extension",
+  "actions": [
+    {
+      "name": "esm",
+      "libPath": "src/lib/actions/esm.js"
+    }
+  ]
+}

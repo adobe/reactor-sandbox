@@ -12,7 +12,8 @@ governing permissions and limitations under the License.
 
 const fs = require('fs');
 const path = require('path');
-const matchRequires = require('match-requires');
+const { parse } = require('@babel/parser');
+const traverse = require('@babel/traverse').default;
 const extensionDescriptorPaths = require('./extensionDescriptorPaths');
 const Replacement = require('./Replacement');
 
@@ -23,18 +24,84 @@ const wrapInFunction = (content, argNames) => {
   return `function(${argsStr}) {\n${content}\n}\n`;
 };
 
-const augmentModule = (modulesOutput, extensionName, extensionPath, modulePath, moduleMeta) => {
+// Returns the string passed to require(), or null if it isn't a static string.
+const getRequireSpecifier = (arg) => {
+  if (arg.type === 'StringLiteral') {
+    return arg.value;
+  }
+  // Backtick strings with no `${}` placeholders are static, e.g. require(`./foo`). Babel stores the
+  // text pieces of a template literal in `quasis`; with no placeholders there is exactly one piece,
+  // and its `cooked` value is the runtime string (escape sequences already processed).
+  if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+    const text = arg.quasis[0] && arg.quasis[0].value && arg.quasis[0].value.cooked;
+    if (typeof text === 'string') {
+      return text;
+    }
+  }
+  return null;
+};
+
+// Statically collect the relative paths a module pulls in via CommonJS `require('...')` calls.
+// We parse the source into a syntax tree (a structured representation of the code) and walk it,
+// rather than scanning raw text, so `require` mentions inside comments or strings are ignored and
+// modern JS syntax (optional chaining, nullish coalescing, etc.) parses cleanly.
+//
+// We only keep `./` and `../` specifiers because that mirrors what turbine's runtime `require`
+// actually resolves: relative paths are looked up in the container's module map, while core
+// `@adobe/reactor-*` modules are provided by turbine and must not be inlined here.
+//
+// Modules are parsed as scripts with top-level `return` allowed, matching the previous
+// match-requires/babylon behavior: turbine wraps each module in a function before it runs.
+const getRelativeRequirePaths = (source) => {
+  const syntaxTree = parse(source, { allowReturnOutsideFunction: true });
+  const relativePaths = [];
+
+  traverse(syntaxTree, {
+    CallExpression({ node }) {
+      const { callee, arguments: args } = node;
+      if (callee.type !== 'Identifier' || callee.name !== 'require' || args.length === 0) {
+        return;
+      }
+      const specifier = getRequireSpecifier(args[0]);
+      if (specifier && (specifier.startsWith('./') || specifier.startsWith('../'))) {
+        relativePaths.push(specifier);
+      }
+    }
+  });
+
+  return relativePaths;
+};
+
+const augmentModule = (
+  modulesOutput,
+  extensionName,
+  extensionPath,
+  modulePath,
+  moduleMeta,
+  visited = new Set()
+) => {
+  // Guard against circular requires (e.g. a.js requires b.js which requires a.js).
+  if (visited.has(modulePath)) {
+    return;
+  }
+  visited.add(modulePath);
+
   const source = fs.readFileSync(modulePath, { encoding: 'utf8' });
-  matchRequires(source, true)
-    // matchRequires returns objects with some cruft. We just care about the module paths.
-    .map((result) => result.name)
-    // Only care about relative paths. We don't care about require statements for core modules.
-    .filter((module) => module.indexOf('.') === 0)
+  let relativeRequirePaths;
+  try {
+    relativeRequirePaths = getRelativeRequirePaths(source);
+  } catch (error) {
+    throw new Error(`Unable to scan ${modulePath} for require() calls: ${error.message}`, {
+      cause: error
+    });
+  }
+
+  relativeRequirePaths
     // Allow extension devs to require JS files without the js extension
     .map((module) => (path.extname(module) === '.js' ? module : `${module}.js`))
     .forEach((requiredRelativePath) => {
       const requiredPath = path.resolve(path.dirname(modulePath), requiredRelativePath);
-      augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {});
+      augmentModule(modulesOutput, extensionName, extensionPath, requiredPath, {}, visited);
     });
 
   // The reference path is a unique path that starts with the extension name, then a slash,
@@ -229,8 +296,8 @@ module.exports = (container) => {
     }
 
     extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
-    extensionOutput.hostedLibFilesBaseUrl = `/hostedLibFiles/\
-  ${extensionDescriptor.name}/${extensionDescriptor.version}/`;
+    const { name, version } = extensionDescriptor;
+    extensionOutput.hostedLibFilesBaseUrl = `/hostedLibFiles/${name}/${version}/`;
 
     augmentModules(extensionOutput, extensionDescriptor, extensionPath);
   });

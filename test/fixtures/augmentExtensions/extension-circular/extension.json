@@ -1,0 +1,17 @@
+{
+  "name": "circular-extension",
+  "platform": "web",
+  "version": "1.0.0",
+  "displayName": "circular-extension",
+  "actions": [
+    {
+      "name": "a",
+      "libPath": "src/lib/actions/a.js",
+      "displayName": "A"
+    },
+    {
+      "name": "self",
+      "libPath": "src/lib/actions/self.js"
+    }
+  ]
+}
