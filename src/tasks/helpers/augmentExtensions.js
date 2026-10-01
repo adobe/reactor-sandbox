@@ -296,8 +296,8 @@ module.exports = (container) => {
     }
 
     extensionOutput.displayName = extensionOutput.displayName || extensionDescriptor.displayName;
-    extensionOutput.hostedLibFilesBaseUrl = `/hostedLibFiles/\
-  ${extensionDescriptor.name}/${extensionDescriptor.version}/`;
+    const { name, version } = extensionDescriptor;
+    extensionOutput.hostedLibFilesBaseUrl = `/hostedLibFiles/${name}/${version}/`;
 
     augmentModules(extensionOutput, extensionDescriptor, extensionPath);
   });

@@ -63,6 +63,36 @@ describe('augmentExtensions', () => {
     );
   });
 
+  describe('hostedLibFilesBaseUrl', () => {
+    // Turbine requests hosted lib files at `hostedLibFilesBaseUrl + file`, and the sandbox serves
+    // them from `/hostedLibFiles/:extensionName/:extensionVersion/:file` (see src/tasks/run.js).
+    const getRequestedUrl = () => {
+      const { hostedLibFilesBaseUrl } =
+        runAugment('extension-es2021').extensions['es2021-extension'];
+      return {
+        hostedLibFilesBaseUrl,
+        requestedUrl: encodeURI(`${hostedLibFilesBaseUrl}hosted.js`)
+      };
+    };
+
+    it('builds the base URL from the extension name and version', () => {
+      expect(getRequestedUrl().hostedLibFilesBaseUrl).toBe(
+        '/hostedLibFiles/es2021-extension/1.0.0/'
+      );
+    });
+
+    it('produces a requested URL whose segments match the extension descriptor', () => {
+      const segments = getRequestedUrl().requestedUrl.split('/').slice(1).map(decodeURIComponent);
+      expect(segments).toEqual(['hostedLibFiles', 'es2021-extension', '1.0.0', 'hosted.js']);
+    });
+
+    it('does not include whitespace that would be encoded as %20 in the requested URL', () => {
+      const { hostedLibFilesBaseUrl, requestedUrl } = getRequestedUrl();
+      expect(hostedLibFilesBaseUrl).not.toMatch(/\s/);
+      expect(requestedUrl).not.toContain('%20');
+    });
+  });
+
   it('allows a top-level return since turbine wraps modules in a function', () => {
     const { modules } = runAugment('extension-top-level-return').extensions[
       'top-level-return-extension'
